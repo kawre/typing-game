@@ -4,7 +4,7 @@ export const theme = {
     md: "6px",
     lg: "9px",
   },
-  font: `'Fira Code', monospace`,
+  font: "'Fira Code', monospace",
   colors: {
     background: "hsl(0, 0%, 93%)",
     main: "hsl(0, 0%, 27%)",
@@ -14,6 +14,7 @@ export const theme = {
     error: "hsl(0, 100%, 42%)",
     errorExtra: "hsl(0, 100%, 42%)",
     main15: "hsla(0, 0%, 70%, 15%)",
+    main30: "hsla(0, 0%, 70%, 30%)",
   },
 };
 

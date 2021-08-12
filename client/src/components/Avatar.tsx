@@ -25,7 +25,7 @@ const Wrapper = styled.div<Props>`
 	cursor: pointer;
 
   svg {
-    color: ${({ theme }) => theme.colors.text};
+    /* color: ${({ theme }) => theme.colors.text}; */
     width: 100%;
     height: 100%;
   }

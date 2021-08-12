@@ -1,9 +1,9 @@
 import * as React from "react";
-import Header from "../components/Header/Header";
+import TypingGame from "../components/TypingGame/TypingGame";
 
 const IndexPage = () => (
   <>
-    <Header />
+    <TypingGame />
   </>
 );
 

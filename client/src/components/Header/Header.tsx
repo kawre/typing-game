@@ -1,9 +1,9 @@
 import React from "react";
+import { FaShoppingCart } from "react-icons/fa";
 import styled from "styled-components";
+import Avatar from "../Avatar";
 import Heading from "../Heading";
 import Text from "../Text";
-import { FaRegUserCircle, FaShoppingCart, FaUserCircle } from "react-icons/fa";
-import Avatar from "../Avatar";
 // Types -------------------------------------------------------------------------
 
 interface Props {}

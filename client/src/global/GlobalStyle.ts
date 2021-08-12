@@ -11,8 +11,13 @@ html {
 	background-color: ${({ theme }) => theme.colors.background};
 }
 
-body {
+body, input {
 	font-family: ${({ theme }) => theme.font};
+}
+
+input, button {
+	border: none;
+	background: none;
 }
 
 h1 {
