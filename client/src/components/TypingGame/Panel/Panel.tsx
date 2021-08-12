@@ -14,17 +14,11 @@ const quote =
 const Panel: React.FC<Props> = () => {
   const wordsRef = useRef<HTMLDivElement>(null);
   const [crntWord, setCrntWord] = useState(0);
-  const [crntChar, setCrntChar] = useState(0);
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
 
   // current letter
-  useEffect(() => {
-    setCrntChar(input.length);
-
-    if (input.length > words[crntWord].length) {
-    }
-  }, [input]);
+  useEffect(() => {}, [input]);
 
   return (
     <Wrapper>
@@ -36,10 +30,8 @@ const Panel: React.FC<Props> = () => {
                 let state = "";
 
                 if (crntWord === wi && li < input.length) {
-                  const len = input.length - 2;
                   if (input[li] === l) state = "correct";
-                  else if (word[len] !== input[len] && li < input.length)
-                    state = "incorrect";
+                  else state = "incorrect";
                 } else if (crntWord > wi) state = "correct";
 
                 return (
