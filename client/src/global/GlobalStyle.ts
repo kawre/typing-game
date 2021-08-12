@@ -35,6 +35,10 @@ h5 {
 	font-size: 1.125rem;
 	font-weight: 400;
 }
+
+svg {
+	color: ${({ theme }) => theme.colors.main};
+}
 `;
 
 export default GlobalStyle;

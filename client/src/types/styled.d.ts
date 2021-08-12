@@ -1,20 +1,7 @@
 // import original module declarations
 import "styled-components";
+import { ThemeProps as MyTheme } from "../static/theme";
 
-// and extend them!
 declare module "styled-components" {
-  export interface DefaultTheme {
-    borderRadius: string;
-    font: string;
-
-    colors: {
-      background: string;
-      main: string;
-      sub: string;
-      text: string;
-      caret: string;
-      error: string;
-      errorExtra: string;
-    };
-  }
+  export interface DefaultTheme extends MyTheme {}
 }

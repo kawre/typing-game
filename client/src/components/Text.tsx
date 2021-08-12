@@ -1,12 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import { space, SpaceProps, typography, TypographyProps } from "styled-system";
+import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-interface Props {
-  color?: string;
-  padding?: string;
-  margin?: string;
-}
+type Props = SpaceProps & TypographyProps & ColorProps;
 
 // Component ---------------------------------------------------------------------
 const Text: React.FC<Props> = ({ children, ...props }) => {
@@ -18,7 +16,13 @@ export default Text;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.p<Props>`
-  color: ${(p) => (p.color ? p.color : p.theme.colors.text)};
-  font-size: 1rem;
-  font-weight: 400;
+  ${color}
+  ${space} 
+  ${typography}
 `;
+
+Wrapper.defaultProps = {
+  textColor: "text",
+  fontSize: "1rem",
+  fontWeight: 400,
+};

@@ -5,11 +5,11 @@ import styled from "styled-components";
 interface Props {}
 
 // Component ---------------------------------------------------------------------
-const layout: React.FC<Props> = ({ children }) => {
+const Layout: React.FC<Props> = ({ children }) => {
   return <Wrapper>{children}</Wrapper>;
 };
 
-export default layout;
+export default Layout;
 
 // Styled ------------------------------------------------------------------------
 

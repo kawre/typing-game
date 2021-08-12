@@ -1,11 +1,9 @@
 import * as React from "react";
-import Heading from "../components/Heading";
-import Text from "../components/Text";
+import Header from "../components/Header/Header";
 
 const IndexPage = () => (
   <>
-    <Heading>TypeRacer</Heading>
-    <Text>hello</Text>
+    <Header />
   </>
 );
 

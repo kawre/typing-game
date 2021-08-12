@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { space, SpaceProps, typography, TypographyProps } from "styled-system";
+import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-interface Props {
+interface Props extends SpaceProps, TypographyProps, ColorProps {
   as?: any;
-  padding?: string;
-  margin?: string;
-  color?: string;
 }
 
 // Component ---------------------------------------------------------------------
@@ -19,7 +18,11 @@ export default Heading;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.h1<Props>`
-  padding: ${(p) => p.padding};
-  margin: ${(p) => p.margin};
-  color: ${(p) => (p.color ? p.color : p.theme.colors.main)};
+  ${color}
+  ${space}
+  ${typography}
 `;
+
+Wrapper.defaultProps = {
+  textColor: "main",
+};
