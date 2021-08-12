@@ -24,8 +24,8 @@ export default Track;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 16px 24px;
-  border-bottom: 3px dashed ${({ theme }) => theme.colors.text};
+  padding: 1rem 1.5rem;
+  border-bottom: 0.1875rem dashed ${({ theme }) => theme.colors.text};
   display: flex;
   align-items: center;
   justify-content: space-between;

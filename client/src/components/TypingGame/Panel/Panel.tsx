@@ -1,46 +1,46 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PanelInput from "./Input/PanelInput";
-import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
+import { useRef } from "react";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
 
+const quote =
+  "Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.";
+
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = () => {
+  const wordsRef = useRef<HTMLDivElement>(null);
   const [crntWord, setCrntWord] = useState(0);
   const [crntChar, setCrntChar] = useState(0);
   const [input, setInput] = useState("");
-  const [words] = useState(
-    "Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.".split(
-      " "
-    )
-  );
+  const [words] = useState(quote.split(" "));
 
   // current letter
   useEffect(() => {
     setCrntChar(input.length);
-  }, [input]);
 
-  console.log(crntWord);
+    if (input.length > words[crntWord].length) {
+    }
+  }, [input]);
 
   return (
     <Wrapper>
-      <Words>
+      <Words ref={wordsRef}>
         {words.map((word, wi) => {
-          let active = wi === crntWord ? "active" : "";
           return (
-            <Word key={word + wi} className={active}>
+            <Word key={word + wi} className={wi === crntWord ? "active" : ""}>
               {word.split("").map((l, li) => {
                 let state = "";
 
-                if (crntWord > wi) state = "correct";
-
                 if (crntWord === wi && li < input.length) {
+                  const len = input.length - 2;
                   if (input[li] === l) state = "correct";
-                  else state = "incorrect";
-                }
+                  else if (word[len] !== input[len] && li < input.length)
+                    state = "incorrect";
+                } else if (crntWord > wi) state = "correct";
 
                 return (
                   <Char className={state} key={l + li}>
@@ -57,6 +57,7 @@ const Panel: React.FC<Props> = () => {
         input={input}
         setInput={setInput}
         crntWord={words[crntWord]}
+        wordsRef={wordsRef}
       />
     </Wrapper>
   );
@@ -67,7 +68,7 @@ export default Panel;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 24px;
+  padding: 1.5rem;
   background-color: ${({ theme }) => theme.colors.main15};
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
@@ -75,7 +76,7 @@ const Wrapper = styled.div`
 const Words = styled.div``;
 
 const Word = styled.div`
-  padding: 0.125rem 0.6rem 0.125rem 0;
+  padding: 0.125rem 1ch 0.125rem 0;
   display: inline-block;
 
   &.active span {
@@ -89,7 +90,7 @@ const Word = styled.div`
 `;
 
 const Char = styled.span`
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   color: ${({ theme }) => theme.colors.main};
   font-weight: 500;
   user-select: none;

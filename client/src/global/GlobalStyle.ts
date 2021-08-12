@@ -11,7 +11,7 @@ html {
 	background-color: ${({ theme }) => theme.colors.background};
 }
 
-body, input {
+body, input, button {
 	font-family: ${({ theme }) => theme.font};
 }
 
@@ -43,6 +43,21 @@ h5 {
 
 svg {
 	color: ${({ theme }) => theme.colors.main};
+}
+
+extra {
+	font-size: 1.25rem;
+  color: ${({ theme }) => theme.colors.main};
+  font-weight: 500;
+  user-select: none;
+
+  &.correct {
+    color: ${({ theme }) => theme.colors.correct};
+  }
+
+  &.incorrect {
+    background-color: ${({ theme }) => theme.colors.error};
+  }
 }
 `;
 

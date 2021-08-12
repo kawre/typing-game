@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 // Types -------------------------------------------------------------------------
 
@@ -7,6 +7,7 @@ interface Props {
   setInput: React.Dispatch<React.SetStateAction<string>>;
   setCrntWord: React.Dispatch<React.SetStateAction<number>>;
   crntWord: string;
+  wordsRef: React.RefObject<HTMLDivElement>;
 }
 
 // Component ---------------------------------------------------------------------
@@ -15,10 +16,11 @@ const PanelInput: React.FC<Props> = ({
   crntWord,
   setInput,
   setCrntWord,
+  wordsRef,
 }) => {
-  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const key = (e.nativeEvent as any).data;
+  const [key, setKey] = useState("");
 
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     // space handler
     if (key === " " && input === crntWord) {
       setCrntWord((i) => (i += 1));
@@ -26,15 +28,16 @@ const PanelInput: React.FC<Props> = ({
       return;
     }
 
-    setInput(e.currentTarget.value);
+    setInput(e.target.value);
   };
 
   return (
     <Input
       autoFocus
-      onChange={inputHandler}
+      onKeyPress={(e) => setKey(e.key)}
+      onChange={handleInput}
       value={input}
-      // onKeyPress={inputHandler}
+      maxLength={crntWord.length + 6}
     />
   );
 };
@@ -45,16 +48,16 @@ export default PanelInput;
 
 const Input = styled.input`
   appearance: none;
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
   width: 100%;
   background-color: ${({ theme }) => theme.colors.main15};
   border-radius: ${({ theme }) => theme.rounded.sm};
   color: ${({ theme }) => theme.colors.main};
   outline: none;
-  margin-top: 24px;
-  padding: 8px 12px;
+  margin-top: 1.5rem;
+  padding: 0.5rem 0.75rem;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 1.125rem;
   user-select: none;
 
   &:focus {

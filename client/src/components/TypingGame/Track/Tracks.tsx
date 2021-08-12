@@ -8,7 +8,6 @@ interface Props {}
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = () => {
   const trackz = [1, 2];
-  console.log("siema");
 
   return (
     <Wrapper>
@@ -24,5 +23,5 @@ export default Tracks;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 24px;
+  padding: 1.5rem;
 `;
