@@ -1,15 +1,42 @@
 import React from "react";
-import { ChangeEvent } from "react";
 import styled from "styled-components";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props {
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  setCrntWord: React.Dispatch<React.SetStateAction<number>>;
+  crntWord: string;
+}
 
 // Component ---------------------------------------------------------------------
-const PanelInput: React.FC<Props> = () => {
-  const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {};
+const PanelInput: React.FC<Props> = ({
+  input,
+  crntWord,
+  setInput,
+  setCrntWord,
+}) => {
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const key = (e.nativeEvent as any).data;
 
-  return <Input onChange={inputHandler} />;
+    // space handler
+    if (key === " " && input === crntWord) {
+      setCrntWord((i) => (i += 1));
+      setInput("");
+      return;
+    }
+
+    setInput(e.currentTarget.value);
+  };
+
+  return (
+    <Input
+      autoFocus
+      onChange={inputHandler}
+      value={input}
+      // onKeyPress={inputHandler}
+    />
+  );
 };
 
 export default PanelInput;
