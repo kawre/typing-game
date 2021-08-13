@@ -1,9 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import PanelInput from "./Input/Panel-Input";
-import { useEffect } from "react";
-import { useRef } from "react";
-import Caret from "./Caret";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -20,6 +16,8 @@ const Panel: React.FC<Props> = () => {
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
+  // const [error, setError] = useState(false);
+  const [errors, setErrors] = useState("");
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     // space handler
@@ -29,57 +27,52 @@ const Panel: React.FC<Props> = () => {
       return;
     }
 
-    setNext({ ...next, chars: "" });
-
     setInput(e.target.value);
   };
 
   // current letter
-  // useEffect(() => {
-  //   setPrev({
-  //     chars: words[crntWord].slice(0, input.length),
-  //     words: words.slice(0, crntWord).join(" ") + " ",
-  //   });
+  useEffect(() => {
+    if (errors) return;
 
-  //   setNext({
-  //     chars: words[crntWord].slice(input.length + 1),
-  //     words: " " + words.slice(crntWord + 1).join(" "),
-  //   });
-  // }, [crntWord, input]);
+    setPrev({
+      chars: words[crntWord].slice(0, input.length),
+      words: words.slice(0, crntWord).join(" "),
+    });
+
+    setNext({
+      chars: words[crntWord].slice(input.length + 1),
+      words: words.slice(crntWord + 1).join(" "),
+    });
+  }, [crntWord, input]);
 
   return (
     <Wrapper>
       <Container>
         {/* <Caret charRef={charRef} /> */}
         <Game>
-          <Correct>{prev.words}</Correct>
-          <CharsCorrect>{prev.chars}</CharsCorrect>
+          {prev.words && <Correct>{prev.words} </Correct>}
+          {prev.chars && <CharsCorrect>{prev.chars}</CharsCorrect>}
           {words.map((w, wi) => {
             if (wi !== crntWord) return;
 
             return w.split("").map((c, ci) => {
-              if (ci !== input.length) return;
-
-              let state = "";
-              if (crntWord === wi && ci < input.length) {
-                if (input[ci] === c) state = "correct";
-                else state = "incorrect";
-              }
+              if (ci !== input.length || errors !== "") return;
 
               return (
-                <Char ref={charRef} className={state} key={c + ci}>
+                <Char ref={charRef} key={c + ci}>
                   {c}
                 </Char>
               );
             });
           })}
+          {errors && <Incorrect>{errors}</Incorrect>}
           {next.chars && <CharsComing>{next.chars}</CharsComing>}
-          <Coming>{next.words}</Coming>
+          {next.words && <Coming> {next.words}</Coming>}
         </Game>
       </Container>
       <Input
         autoFocus
-        onKeyPress={(e) => setKey(e.key)}
+        onKeyDown={(e) => setKey(e.key)}
         onChange={handleInput}
         value={input}
         maxLength={words[crntWord].length + 6}
@@ -135,6 +128,10 @@ const CharsCorrect = styled.span`
 
 const CharsComing = styled.span`
   text-decoration: underline;
+`;
+
+const Incorrect = styled.span`
+  background-color: ${({ theme }) => theme.colors.error};
 `;
 
 const Coming = styled.span``;
