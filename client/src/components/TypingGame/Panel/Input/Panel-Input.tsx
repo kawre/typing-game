@@ -7,6 +7,18 @@ interface Props {
   setInput: React.Dispatch<React.SetStateAction<string>>;
   setCrntWord: React.Dispatch<React.SetStateAction<number>>;
   crntWord: string;
+  setNext: React.Dispatch<
+    React.SetStateAction<{
+      words: string;
+      chars: string;
+    }>
+  >;
+  setPrev: React.Dispatch<
+    React.SetStateAction<{
+      words: string;
+      chars: string;
+    }>
+  >;
 }
 
 // Component ---------------------------------------------------------------------
@@ -15,7 +27,8 @@ const PanelInput: React.FC<Props> = ({
   crntWord,
   setInput,
   setCrntWord,
-  // wordsRef,
+  setPrev,
+  setNext,
 }) => {
   const [key, setKey] = useState("");
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +49,6 @@ const PanelInput: React.FC<Props> = ({
       onChange={handleInput}
       value={input}
       maxLength={crntWord.length + 6}
-      autoComplete="off"
-      autoCorrect="off"
     />
   );
 };

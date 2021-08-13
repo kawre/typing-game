@@ -1,29 +1,36 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { IPos } from "./Panel";
 // Types -------------------------------------------------------------------------
 
-interface ICaret {
+export interface IPos {
+  left: number;
+  top: number;
   height: number;
 }
 
 interface Props {
-  position: IPos;
+  charRef: React.RefObject<HTMLSpanElement>;
 }
 
 // Component ---------------------------------------------------------------------
-const Caret: React.FC<Props> = ({ position: { top, left, ...rest } }) => {
-  if (left === 0) return null;
+const Caret: React.FC<Props> = ({ charRef }) => {
+  const [{ left, top, height }, setPosition] = useState({} as IPos);
+
+  // caret position
+  useEffect(() => {
+    if (!charRef.current) return;
+    const { top, left, height } = charRef.current.getBoundingClientRect();
+    setPosition({ top, left, height });
+  }, [charRef.current]);
 
   return (
     <Wrapper
       animate={{
         top,
         left,
-        transition: { duration: 0.1, ease: "easeOut" },
       }}
-      {...rest}
+      height={height}
     />
   );
 };
@@ -32,7 +39,7 @@ export default Caret;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled(motion.div)<ICaret>`
+const Wrapper = styled(motion.div)<{ height: number }>`
   width: 0.1rem;
   position: absolute;
   height: ${(p) => p.height}px;
