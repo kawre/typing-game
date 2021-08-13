@@ -16,7 +16,7 @@ const Panel: React.FC<Props> = () => {
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState(0);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     // space handler
@@ -29,7 +29,9 @@ const Panel: React.FC<Props> = () => {
     setInput(e.target.value);
   };
 
-  console.log(errors);
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   // current letter
   useEffect(() => {
@@ -51,19 +53,11 @@ const Panel: React.FC<Props> = () => {
         <Game>
           {prev.words && <Correct>{prev.words} </Correct>}
           {prev.chars && <CharsCorrect>{prev.chars}</CharsCorrect>}
-          {words.map((w, wi) => {
-            if (wi !== crntWord) return;
-
-            return w.split("").map((c, ci) => {
-              if (ci !== input.length) return;
-
-              return (
-                <Char ref={charRef} key={c + ci}>
-                  {c}
-                </Char>
-              );
-            });
-          })}
+          {!errors ? (
+            <Char ref={charRef}>{words[crntWord][input.length]}</Char>
+          ) : (
+            <Incorrect>{errors}</Incorrect>
+          )}
           {next.chars && <CharsComing>{next.chars}</CharsComing>}
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
