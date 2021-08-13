@@ -16,7 +16,6 @@ const Panel: React.FC<Props> = () => {
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
-  // const [error, setError] = useState(false);
   const [errors, setErrors] = useState("");
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,10 +29,10 @@ const Panel: React.FC<Props> = () => {
     setInput(e.target.value);
   };
 
+  console.log(errors);
+
   // current letter
   useEffect(() => {
-    if (errors) return;
-
     setPrev({
       chars: words[crntWord].slice(0, input.length),
       words: words.slice(0, crntWord).join(" "),
@@ -56,7 +55,7 @@ const Panel: React.FC<Props> = () => {
             if (wi !== crntWord) return;
 
             return w.split("").map((c, ci) => {
-              if (ci !== input.length || errors !== "") return;
+              if (ci !== input.length) return;
 
               return (
                 <Char ref={charRef} key={c + ci}>
@@ -65,7 +64,6 @@ const Panel: React.FC<Props> = () => {
               );
             });
           })}
-          {errors && <Incorrect>{errors}</Incorrect>}
           {next.chars && <CharsComing>{next.chars}</CharsComing>}
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
