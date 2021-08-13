@@ -3,7 +3,14 @@ import styled from "styled-components";
 import PanelInput from "./Input/PanelInput";
 import { useEffect } from "react";
 import { useRef } from "react";
+import Caret from "./Caret";
 // Types -------------------------------------------------------------------------
+
+export interface IPos {
+  left: number;
+  top: number;
+  height: number;
+}
 
 interface Props {}
 
@@ -12,44 +19,95 @@ const quote =
 
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = () => {
-  const wordsRef = useRef<HTMLDivElement>(null);
+  const charRef = useRef<HTMLSpanElement>(null);
+  const [prev, setPrev] = useState({ words: "", chars: "" });
+  const [next, setNext] = useState({ words: "", chars: "" });
+  const [error, setError] = useState(0);
+
+  const [position, setPosition] = useState({} as IPos);
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
+  const [len, setLen] = useState(0);
   const [words] = useState(quote.split(" "));
 
+  console.log(len);
+
   // current letter
-  useEffect(() => {}, [input]);
+  useEffect(() => {
+    if (!error) {
+      setPrev({
+        chars: words[crntWord].slice(0, input.length),
+        words: words.slice(0, crntWord).join(" ") + " ",
+      });
+
+      setNext({
+        chars: words[crntWord].slice(input.length + 1),
+        words: " " + words.slice(crntWord + 1).join(" "),
+      });
+    } else {
+    }
+  }, [crntWord, input, error]);
+
+  // errors length
+  useEffect(() => {
+    setError(document.querySelectorAll(".incorrect").length);
+  }, [document.querySelectorAll(".incorrect")]);
+
+  // length including errors
+  useEffect(() => {
+    setLen(input.length + error);
+  }, [input, error]);
+
+  // caret position
+  useEffect(() => {
+    if (!charRef.current) return;
+
+    const { top, left, height } = charRef.current.getBoundingClientRect();
+
+    setPosition({ top, left, height });
+  }, [charRef.current]);
 
   return (
     <Wrapper>
-      <Words ref={wordsRef}>
-        {words.map((word, wi) => {
-          return (
-            <Word key={word + wi} className={wi === crntWord ? "active" : ""}>
-              {word.split("").map((l, li) => {
-                let state = "";
+      <Container>
+        <Caret position={position} />
+        <Game>
+          <Correct>{prev.words}</Correct>
+          <CharsCorrect>{prev.chars}</CharsCorrect>
+          {words.map((w, wi) => {
+            if (wi !== crntWord) return;
 
-                if (crntWord === wi && li < input.length) {
-                  if (input[li] === l) state = "correct";
-                  else state = "incorrect";
-                } else if (crntWord > wi) state = "correct";
+            return w.split("").map((c, ci) => {
+              if (ci !== len) return;
 
-                return (
-                  <Char className={state} key={l + li}>
-                    {l}
-                  </Char>
-                );
-              })}
-            </Word>
-          );
-        })}
-      </Words>
+              let state = "";
+
+              if (crntWord === wi && ci < input.length) {
+                if (input[ci] === c) state = "correct";
+                else state = "incorrect";
+              }
+
+              // const ca = wordsRef.current?.children[ci];
+              // console.log(ca);
+
+              // setPosition({});
+
+              return (
+                <Char ref={charRef} className={`${state}`} key={c + ci}>
+                  {c}
+                </Char>
+              );
+            });
+          })}
+          {!error && <CharsComing>{next.chars}</CharsComing>}
+          <Coming>{next.words}</Coming>
+        </Game>
+      </Container>
       <PanelInput
         setCrntWord={setCrntWord}
         input={input}
         setInput={setInput}
         crntWord={words[crntWord]}
-        wordsRef={wordsRef}
       />
     </Wrapper>
   );
@@ -65,27 +123,9 @@ const Wrapper = styled.div`
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
 
-const Words = styled.div``;
-
-const Word = styled.div`
-  padding: 0.125rem 1ch 0.125rem 0;
-  display: inline-block;
-
-  &.active span {
-    text-decoration: underline;
-    text-decoration-color: inherit;
-  }
-
-  &:last-child {
-    padding-right: 0;
-  }
-`;
-
 const Char = styled.span`
-  font-size: 1.125rem;
-  color: ${({ theme }) => theme.colors.main};
-  font-weight: 500;
-  user-select: none;
+  text-decoration: underline;
+  text-decoration-color: inherit;
 
   &.correct {
     color: ${({ theme }) => theme.colors.correct};
@@ -95,3 +135,31 @@ const Char = styled.span`
     background-color: ${({ theme }) => theme.colors.error};
   }
 `;
+
+const Container = styled.div``;
+
+const Game = styled.div`
+  font-size: 1.25rem;
+  color: ${({ theme }) => theme.colors.main};
+  font-weight: 500;
+  user-select: none;
+
+  & span {
+    text-decoration-thickness: 0.125rem;
+  }
+`;
+
+const Correct = styled.span`
+  color: ${({ theme }) => theme.colors.correct};
+`;
+
+const CharsCorrect = styled.span`
+  color: ${({ theme }) => theme.colors.correct};
+  text-decoration: underline;
+`;
+
+const CharsComing = styled.span`
+  text-decoration: underline;
+`;
+
+const Coming = styled.span``;

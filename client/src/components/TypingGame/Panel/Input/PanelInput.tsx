@@ -7,7 +7,6 @@ interface Props {
   setInput: React.Dispatch<React.SetStateAction<string>>;
   setCrntWord: React.Dispatch<React.SetStateAction<number>>;
   crntWord: string;
-  wordsRef: React.RefObject<HTMLDivElement>;
 }
 
 // Component ---------------------------------------------------------------------
@@ -16,10 +15,9 @@ const PanelInput: React.FC<Props> = ({
   crntWord,
   setInput,
   setCrntWord,
-  wordsRef,
+  // wordsRef,
 }) => {
   const [key, setKey] = useState("");
-
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     // space handler
     if (key === " " && input === crntWord) {
@@ -38,6 +36,8 @@ const PanelInput: React.FC<Props> = ({
       onChange={handleInput}
       value={input}
       maxLength={crntWord.length + 6}
+      autoComplete="off"
+      autoCorrect="off"
     />
   );
 };
@@ -52,12 +52,14 @@ const Input = styled.input`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.main15};
   border-radius: ${({ theme }) => theme.rounded.sm};
-  color: ${({ theme }) => theme.colors.main};
   outline: none;
   margin-top: 1.5rem;
   padding: 0.5rem 0.75rem;
+
+  color: ${({ theme }) => theme.colors.main};
   font-weight: 500;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+
   user-select: none;
 
   &:focus {
