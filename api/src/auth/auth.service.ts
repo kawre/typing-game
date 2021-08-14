@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { Model } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
 import { LoginDto } from './dto/login.dto';
@@ -12,16 +17,25 @@ export class AuthService {
 
   async register({ password, ...input }: RegisterDto) {
     const user = new this.userModel(input);
-
     user.password = await hash(password, 14);
 
-    return user.save();
+    try {
+      user.save();
+    } catch (err) {
+      console.log('kekf');
+      console.log(err);
+      throw new ConflictException(err);
+    }
+
+    return user;
   }
 
   async login({ password, username }: LoginDto) {
     const user = await this.userModel.findOne({ username });
+    if (!user) throw new UnauthorizedException('User not found');
 
-    console.log(user);
+    const isValid = await compare(password, user.password);
+    if (!isValid) throw new ForbiddenException('Invalid password');
 
     return user;
   }

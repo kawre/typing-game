@@ -9,7 +9,7 @@ import { User, UserDocument } from './schemas/user.schema';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  findAll() {
+  async findAll() {
     return this.userModel.find();
   }
 
