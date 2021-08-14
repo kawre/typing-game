@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Car from "../../../static/images/Car/Car";
+import Car from "../../../static/images/Car";
 import Text from "../../Text";
 // Types -------------------------------------------------------------------------
 

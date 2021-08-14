@@ -10,7 +10,7 @@ const quote =
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = () => {
   const charRef = useRef<HTMLSpanElement>(null);
-  const [prev, setPrev] = useState({ words: "", chars: "" });
+  const [prev, setPrev] = useState({ words: "", chars: "", errors: "" });
   const [next, setNext] = useState({ words: "", chars: "" });
   const [key, setKey] = useState("");
   const [crntWord, setCrntWord] = useState(0);
@@ -19,6 +19,8 @@ const Panel: React.FC<Props> = () => {
   const [errors, setErrors] = useState(0);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const crntInput = e.target.value;
+
     // space handler
     if (key === " " && input === words[crntWord]) {
       setCrntWord((i) => (i += 1));
@@ -26,22 +28,36 @@ const Panel: React.FC<Props> = () => {
       return;
     }
 
-    setInput(e.target.value);
-  };
+    let diff = 0;
+    for (let i = 0; i < crntInput.length; i++) {
+      const hash = {};
+      const hash2 = {};
+      hash[i] = crntInput[i];
+      hash2[i] = words[crntWord][i];
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+      if (hash[i] !== hash2[i + diff * 99]) diff += 1;
+      console.log(hash, hash2);
+    }
+    setErrors(diff);
+
+    setInput(crntInput);
+  };
 
   // current letter
   useEffect(() => {
+    const len = input.length;
+    const word = words[crntWord];
+
+    const errs = errors ? word.slice(input.length - errors, input.length) : "";
+
     setPrev({
-      chars: words[crntWord].slice(0, input.length),
+      errors: errs,
+      chars: word.slice(0, len - errors),
       words: words.slice(0, crntWord).join(" "),
     });
 
     setNext({
-      chars: words[crntWord].slice(input.length + 1),
+      chars: word.slice(len + 1),
       words: words.slice(crntWord + 1).join(" "),
     });
   }, [crntWord, input]);
@@ -53,11 +69,8 @@ const Panel: React.FC<Props> = () => {
         <Game>
           {prev.words && <Correct>{prev.words} </Correct>}
           {prev.chars && <CharsCorrect>{prev.chars}</CharsCorrect>}
-          {!errors ? (
-            <Char ref={charRef}>{words[crntWord][input.length]}</Char>
-          ) : (
-            <Incorrect>{errors}</Incorrect>
-          )}
+          {errors !== 0 && <Incorrect>{prev.errors}</Incorrect>}
+          <Char ref={charRef}>{words[crntWord][input.length]}</Char>
           {next.chars && <CharsComing>{next.chars}</CharsComing>}
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
@@ -67,7 +80,7 @@ const Panel: React.FC<Props> = () => {
         onKeyDown={(e) => setKey(e.key)}
         onChange={handleInput}
         value={input}
-        maxLength={words[crntWord].length + 6}
+        maxLength={words[crntWord].length + 1}
       />
     </Wrapper>
   );
@@ -123,6 +136,7 @@ const CharsComing = styled.span`
 `;
 
 const Incorrect = styled.span`
+  text-decoration: underline;
   background-color: ${({ theme }) => theme.colors.error};
 `;
 
