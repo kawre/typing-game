@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 import styled from "styled-components";
 import { space, SpaceProps, width, WidthProps } from "styled-system";
@@ -5,12 +6,17 @@ import { space, SpaceProps, width, WidthProps } from "styled-system";
 
 interface Props extends SpaceProps, WidthProps {
   color?: string;
+  left?: string;
 }
 
 // Component ---------------------------------------------------------------------
-const Car: React.FC<Props> = (props) => {
+const Car: React.FC<Props> = ({ left, ...props }) => {
   return (
-    <Wrapper {...props}>
+    <Wrapper
+      animate={{ left }}
+      transition={{ ease: "easeOut", duration: 0.15 }}
+      {...props}
+    >
       <svg
         id="Layer_1"
         data-name="Layer 1"
@@ -46,11 +52,12 @@ export default Car;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled.div<Props>`
+const Wrapper = styled(motion.div)<Props>`
   ${width}
   ${space}
 
-	display: flex;
+  position: absolute;
+  display: block;
 
   .cls-1 {
     fill: #666;

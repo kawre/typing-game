@@ -1,11 +1,14 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { useTyping } from "../../../contexts/GameContext";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
 
 const quote =
   "Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.";
+
+// const characters = quote.split(" ").join("").length;
 
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = () => {
@@ -17,6 +20,7 @@ const Panel: React.FC<Props> = () => {
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
+  const { setStats, setProgress, stats } = useTyping();
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -36,7 +40,6 @@ const Panel: React.FC<Props> = () => {
       hash2[i] = words[crntWord][i];
 
       if (hash[i] !== hash2[i + diff * 99]) diff += 1;
-      console.log(hash, hash2);
     }
     setErrors(diff);
 
@@ -62,6 +65,27 @@ const Panel: React.FC<Props> = () => {
     });
   }, [crntWord, input]);
 
+  // progress
+  useEffect(() => {
+    if (!crntWord) return;
+    setProgress((crntWord / words.length) * 100);
+  }, [crntWord, prev]);
+
+  // calculate wpm
+  useEffect(() => {
+    if (!Number.isInteger(stats.time)) return;
+
+    const minute = 60 / stats.time;
+    const correct = prev.words.split(" ").join("").length + prev.chars.length;
+
+    setStats({
+      ...stats,
+      wpm: correct * (minute / 5),
+    });
+
+    console.log(stats.wpm);
+  }, [stats.time]);
+
   return (
     <Wrapper>
       <Container>
@@ -80,7 +104,7 @@ const Panel: React.FC<Props> = () => {
         onKeyDown={(e) => setKey(e.key)}
         onChange={handleInput}
         value={input}
-        maxLength={words[crntWord].length + 1}
+        maxLength={words[crntWord].length + 6}
       />
     </Wrapper>
   );

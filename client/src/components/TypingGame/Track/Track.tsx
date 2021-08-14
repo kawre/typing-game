@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useTyping } from "../../../contexts/GameContext";
 import Car from "../../../static/images/Car";
 import Text from "../../Text";
 // Types -------------------------------------------------------------------------
@@ -8,13 +9,15 @@ interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Track: React.FC<Props> = () => {
+  const { progress, stats } = useTyping();
+
   return (
     <Wrapper>
       <Text mr={4}>kawre</Text>
       <ProgressBar>
-        <Car />
+        <Car left={`${progress}%`} />
       </ProgressBar>
-      <Text ml={4}>90 wpm</Text>
+      <Text ml={4}>{Math.round(stats.wpm)} wpm</Text>
     </Wrapper>
   );
 };
@@ -39,4 +42,8 @@ const Wrapper = styled.div`
 
 const ProgressBar = styled.div`
   width: 100%;
+  margin-right: 60px;
+  top: 0;
+  height: 30px;
+  position: relative;
 `;
