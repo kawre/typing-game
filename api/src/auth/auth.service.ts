@@ -14,37 +14,36 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register({ password, ...input }: RegisterDto) {
-    const exist = await this.userModel.find({
-      $or: [{ username: input.username }, { email: input.email }],
-    });
-    if (exist !== [])
-      throw new ConflictException('Username or Email already taken');
+  async register(input: RegisterDto) {
+    input.password = await hash(input.password, 14);
 
-    const user = new this.userModel(input);
-    user.password = await hash(password, 14);
+    console.log(input);
 
-    return user.save();
+    try {
+      return this.userModel.create(input);
+    } catch (err) {
+      // console.log(err);
+      return 'siema';
+      // throw new ConflictException('Username or Email already taken');
+    }
   }
 
   createToken(user: any) {
     return this.jwtService.sign(
-      {
-        username: user.username,
-        userId: user.id,
-      },
+      { userId: user.id },
       { expiresIn: '15s', secret: process.env.ACCESS_SECRET },
     );
   }
 
-  createRefreshToken(user: any) {
+  async createRefreshToken(user: any) {
     return this.jwtService.sign(
-      {
-        username: user.username,
-        userId: user.id,
-      },
+      { userId: user.id, tokenVersion: user.tokenVersion },
       { expiresIn: '7d', secret: process.env.REFRESH_SECRET },
     );
+  }
+
+  validateRefreshToken(tkn: string) {
+    return this.jwtService.verify(tkn, { secret: process.env.REFRESH_SECRET });
   }
 
   async validateUser({ password, username }: LoginDto) {

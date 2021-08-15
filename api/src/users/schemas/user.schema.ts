@@ -32,6 +32,10 @@ export class User {
   @Prop({ required: false })
   @IsUrl()
   avatar: string;
+
+  @Prop({ default: 0 })
+  @Exclude()
+  tokenVersion: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
