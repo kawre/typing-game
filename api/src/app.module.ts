@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     MongooseModule.forRoot(process.env.DATABASE_URL, {
       autoCreate: true,
+      useCreateIndex: true,
     }),
     UsersModule,
     RoomsModule,
