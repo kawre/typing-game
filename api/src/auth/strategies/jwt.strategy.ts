@@ -6,14 +6,13 @@ import { Injectable } from '@nestjs/common';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: process.env.ACCESS_SECRET,
     });
   }
 
   async validate(payload: any) {
-    console.log('siema');
     return { username: payload.username, userId: payload.id };
   }
 }

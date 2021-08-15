@@ -19,15 +19,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll(@Req() req: Request) {
-    console.log(req.headers);
+  users(@Req() req: Request) {
     return this.usersService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  user(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 
   @Patch(':id')

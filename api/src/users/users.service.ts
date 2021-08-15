@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hash } from 'bcrypt';
 import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
@@ -13,7 +12,11 @@ export class UsersService {
     return this.userModel.find();
   }
 
-  findOne(id: string) {
+  findOne(input: any) {
+    return this.userModel.findOne({ input });
+  }
+
+  findById(id: string) {
     return this.userModel.findById(id);
   }
 

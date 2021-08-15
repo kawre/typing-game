@@ -6,6 +6,7 @@ import {
   Put,
   Req,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -24,14 +25,17 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Put('login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const tkn = this.authService.createToken(req.user);
+    const tkn = this.authService.createRefreshToken(req.user);
 
-    req.headers['authorization'] = tkn;
-
-    console.log(req.headers);
+    res.cookie('jwt', tkn, { httpOnly: true });
 
     return {
-      access_token: tkn,
+      access_token: this.authService.createToken(req.user),
     };
+  }
+
+  @Get('refresh_token')
+  async refreshToken(@Req() req: Request) {
+    console.log(req.cookies.jwt);
   }
 }

@@ -2,19 +2,16 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare, hash } from 'bcrypt';
-import { Response } from 'express';
 import { Model } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
-import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
     @InjectModel(User.name) private userModel: Model<User>,
+    private jwtService: JwtService,
   ) {}
 
   async register({ password, ...input }: RegisterDto) {
@@ -31,10 +28,23 @@ export class AuthService {
   }
 
   createToken(user: any) {
-    return this.jwtService.sign({
-      username: user.username,
-      userId: user.id,
-    });
+    return this.jwtService.sign(
+      {
+        username: user.username,
+        userId: user.id,
+      },
+      { expiresIn: '15s', secret: process.env.ACCESS_SECRET },
+    );
+  }
+
+  createRefreshToken(user: any) {
+    return this.jwtService.sign(
+      {
+        username: user.username,
+        userId: user.id,
+      },
+      { expiresIn: '7d', secret: process.env.REFRESH_SECRET },
+    );
   }
 
   async validateUser({ password, username }: LoginDto) {

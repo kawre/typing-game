@@ -82,8 +82,6 @@ const Panel: React.FC<Props> = () => {
       ...stats,
       wpm: correct * (minute / 5),
     });
-
-    console.log(stats.wpm);
   }, [stats.time]);
 
   return (
