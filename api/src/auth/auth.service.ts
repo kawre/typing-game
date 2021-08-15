@@ -17,21 +17,20 @@ export class AuthService {
   async register(input: RegisterDto) {
     input.password = await hash(input.password, 14);
 
-    console.log(input);
-
+    let user;
     try {
-      return this.userModel.create(input);
+      user = await this.userModel.create(input);
     } catch (err) {
-      // console.log(err);
-      return 'siema';
-      // throw new ConflictException('Username or Email already taken');
+      const field = Object.keys(err.keyValue);
+      throw new ConflictException(`${field[0]} already taken`);
     }
+    return user;
   }
 
   createToken(user: any) {
     return this.jwtService.sign(
       { userId: user.id },
-      { expiresIn: '15s', secret: process.env.ACCESS_SECRET },
+      { expiresIn: '15m', secret: process.env.ACCESS_SECRET },
     );
   }
 

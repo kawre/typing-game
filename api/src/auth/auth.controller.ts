@@ -27,7 +27,7 @@ export class AuthController {
     const user = await this.authService.register(input);
     if (!user) return;
 
-    const tkn = this.authService.createRefreshToken(user);
+    const tkn = await this.authService.createRefreshToken(user);
 
     res.cookie('jwt', tkn, { httpOnly: true });
 
@@ -39,9 +39,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Put('login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const tkn = this.authService.createRefreshToken(req.user);
+    const tkn = await this.authService.createRefreshToken(req.user);
 
     res.cookie('jwt', tkn, { httpOnly: true });
+    console.log(tkn);
 
     return {
       accessToken: this.authService.createToken(req.user),
