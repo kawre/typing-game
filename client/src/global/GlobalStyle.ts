@@ -24,6 +24,7 @@ button {
 	cursor: pointer;
   width: fit-content;
   line-height: 150%;
+	user-select: none;
 }
 
 h1 {

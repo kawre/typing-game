@@ -22,6 +22,14 @@ export class RoomsService {
     return this.roomModel.find({});
   }
 
+  findFirst() {
+    return this.roomModel.findOne();
+  }
+
+  joinRoom(_id: string, userId: number) {
+    return this.roomModel.updateOne({ _id }, { $push: { users: userId } });
+  }
+
   update(id: number, updateRoomDto: UpdateRoomDto) {
     return `This action updates a #${id} room`;
   }

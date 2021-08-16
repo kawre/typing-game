@@ -3,57 +3,58 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import * as cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: { origin: 'http://localhost:8000', credentials: true },
 })
-export class RoomsGateway {
+export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly roomsService: RoomsService) {}
 
-  handleConnection(socket) {
-    const cookie = cookieParser.JSONCookie(socket.request.headers.cookie || '');
+  @WebSocketServer() server: Server;
+
+  async handleConnection(socket) {
+    const cookie = cookieParser.parse(socket.request.headers.cookie || '');
+    console.log(cookie);
   }
 
-  handleDisconnect() {
+  handleDisconnect(client: any) {
     console.log('disc');
   }
 
   @SubscribeMessage('createRoom')
   create(@MessageBody() createRoomDto: CreateRoomDto) {
     console.log(createRoomDto);
-    console.log('porvalo');
     return this.roomsService.create(createRoomDto);
   }
 
-  @SubscribeMessage('connection')
-  onConnection() {
-    return 'isOnline';
-    // return this.roomsService.findAll();
+  @SubscribeMessage('findRoom')
+  async findRoom(@MessageBody() userId: number) {
+    const room = await this.roomsService.findFirst();
+
+    try {
+      await this.roomsService.joinRoom(room.id, userId);
+    } catch {
+      return null;
+    }
+
+    return room.id;
   }
 
-  @SubscribeMessage('disconnect')
-  onDisconnect() {
-    return 'false';
-    // return this.roomsService.findAll();
+  @SubscribeMessage('joinRoom')
+  joinRoom(client: Socket, room: string) {
+    client.join(room);
   }
 
-  @SubscribeMessage('findOneRoom')
-  findOne(@MessageBody() id: number) {
-    return this.roomsService.findOne(id);
-  }
-
-  @SubscribeMessage('updateRoom')
-  update(@MessageBody() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(updateRoomDto.id, updateRoomDto);
-  }
-
-  @SubscribeMessage('removeRoom')
-  remove(@MessageBody() id: number) {
-    return this.roomsService.remove(id);
+  @SubscribeMessage('leaveRoom')
+  leaveRoom(client: Socket, room: string) {
+    client.leave(room);
   }
 }
