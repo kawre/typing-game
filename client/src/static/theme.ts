@@ -1,8 +1,8 @@
 export const theme = {
   rounded: {
     sm: "3px",
-    md: "6px",
-    lg: "9px",
+    md: "5px",
+    lg: "7px",
   },
   font: "'Fira Code', monospace",
   colors: {

@@ -20,6 +20,12 @@ input, button {
 	background: none;
 }
 
+button {
+	cursor: pointer;
+  width: fit-content;
+  line-height: 150%;
+}
+
 h1 {
 	font-size: 1.75rem;
 	font-weight: 600;

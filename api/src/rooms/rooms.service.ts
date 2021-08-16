@@ -20,8 +20,6 @@ export class RoomsService {
 
   findOne(id: number) {
     return this.roomModel.find({});
-
-    return `This action returns a #${id} room`;
   }
 
   update(id: number, updateRoomDto: UpdateRoomDto) {

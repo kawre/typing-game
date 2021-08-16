@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import {
   IsAlphanumeric,
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsUrl,
@@ -32,6 +33,10 @@ export class User {
   @Prop({ required: false })
   @IsUrl()
   avatar: string;
+
+  @Prop({ default: true })
+  @IsBoolean()
+  isOnline: boolean;
 
   @Prop({ default: 0 })
   @Exclude()
