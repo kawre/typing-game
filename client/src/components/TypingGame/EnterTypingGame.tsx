@@ -1,12 +1,12 @@
 import React, { useState } from "react";
+import { io } from "socket.io-client";
 import styled from "styled-components";
-import { socket } from "../../pages";
 import Button from "../Button";
-import { navigate } from "gatsby";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
 
+const socket = io();
 // Component ---------------------------------------------------------------------
 const EnterTypingGame: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const EnterTypingGame: React.FC<Props> = () => {
             setLoading(true);
             socket.emit("findRoom", async (id: any) => {
               if (!id) return setLoading(false);
-              navigate(`/game/${id}`);
+              // navigate(`/game/${id}`);
             });
           }}
         >

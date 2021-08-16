@@ -7,13 +7,11 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { RoomsService } from './rooms.service';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
 import * as cookieParser from 'cookie';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  cors: { origin: 'http://localhost:8000', credentials: true },
+  cors: { origin: 'http://localhost:3000', credentials: true },
 })
 export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly roomsService: RoomsService) {}

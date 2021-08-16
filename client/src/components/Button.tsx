@@ -2,10 +2,10 @@ import React, { DOMAttributes } from "react";
 import Loader from "react-loader-spinner";
 import styled, { css } from "styled-components";
 import {
-  backgroundColor,
-  BackgroundColorProps,
-  space,
   SpaceProps,
+  space,
+  BackgroundColorProps,
+  backgroundColor,
   variant,
 } from "styled-system";
 import { theme } from "../static/theme";
@@ -74,7 +74,6 @@ const Btn = styled.button<Props>`
 
   ${({ size }) => handleSize(size!)};
   ${space}
-  ${backgroundColor}
 `;
 
 const Wrapper = styled(Btn)<Props>(

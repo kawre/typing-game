@@ -34,8 +34,8 @@ const Panel: React.FC<Props> = () => {
 
     let diff = 0;
     for (let i = 0; i < crntInput.length; i++) {
-      const hash = {};
-      const hash2 = {};
+      const hash: any = {};
+      const hash2: any = {};
       hash[i] = crntInput[i];
       hash2[i] = words[crntWord][i];
 
