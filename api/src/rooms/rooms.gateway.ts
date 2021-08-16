@@ -29,15 +29,16 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('disc');
   }
 
-  @SubscribeMessage('createRoom')
-  create(@MessageBody() createRoomDto: CreateRoomDto) {
-    console.log(createRoomDto);
-    return this.roomsService.create(createRoomDto);
-  }
+  // @SubscribeMessage('createRoom')
+  // create(@MessageBody() createRoomDto: CreateRoomDto) {
+  //   console.log(createRoomDto);
+  //   return this.roomsService.create(createRoomDto);
+  // }
 
   @SubscribeMessage('findRoom')
   async findRoom(@MessageBody() userId: number) {
-    const room = await this.roomsService.findFirst();
+    let room = await this.roomsService.findFirst();
+    if (!room) room = await this.roomsService.create(userId);
 
     try {
       await this.roomsService.joinRoom(room.id, userId);
@@ -50,6 +51,7 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('joinRoom')
   joinRoom(client: Socket, room: string) {
+    console.log(client);
     client.join(room);
   }
 

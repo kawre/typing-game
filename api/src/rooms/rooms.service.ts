@@ -9,8 +9,8 @@ import { Room } from './schemas/room.schema';
 export class RoomsService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
-  create(createRoomDto: CreateRoomDto) {
-    const room = new this.roomModel(createRoomDto);
+  create(userId: number) {
+    const room = new this.roomModel({ users: [userId] });
     return room.save();
   }
 
