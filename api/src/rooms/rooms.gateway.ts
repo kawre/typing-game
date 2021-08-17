@@ -22,10 +22,12 @@ export class RoomsGateway implements OnGatewayDisconnect {
 
   @WebSocketServer() server: Server;
 
-  handleDisconnect(socket: Socket) {}
+  handleDisconnect(socket: Socket) {
+    console.log('porvalo');
+  }
 
   @SubscribeMessage('findRoom')
-  async findRoom(@MessageBody() userId: number, ctx) {
+  async findRoom(@MessageBody() userId: number) {
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create(userId);
 
@@ -39,13 +41,21 @@ export class RoomsGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(socket: Socket, room: string) {
-    socket.join(room);
-    this.server.in(room).emit('newUser', 39);
+  async joinRoom(socket: Socket, room: string) {
+    // await this.roomsService.remove(room);
+    try {
+      const roomData = await this.roomsService.joinRoom(room, 2);
+      socket.join(room);
+      this.server.in(room).emit('newUser', roomData);
+      return { ok: true };
+    } catch {
+      return { ok: false };
+    }
   }
 
-  @SubscribeMessage('leaveRoom')
-  leaveRoom(client: Socket, room: string) {
-    console.log(room);
-  }
+  // @SubscribeMessage('leaveRoom')
+  // leaveRoom(socket: Socket, room: string) {
+  //   console.log('disc:', room);
+  //   socket.disconnect();
+  // }
 }

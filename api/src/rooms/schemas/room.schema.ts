@@ -1,14 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ArrayMaxSize } from 'class-validator';
+import { ArrayMaxSize, IsBoolean } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type RoomDocument = Room & Document;
 
-@Schema()
+@Schema({ validateBeforeSave: true })
 export class Room {
   @Prop()
-  @ArrayMaxSize(5)
+  @ArrayMaxSize(4)
   users: number[];
+
+  @Prop()
+  isSearching: boolean;
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

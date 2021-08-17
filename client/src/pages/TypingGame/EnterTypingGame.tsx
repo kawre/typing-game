@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { io, Socket as ISocket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
+import { findRoom } from "../../api/rooms";
 import Button from "../../components/Button";
 // Types -------------------------------------------------------------------------
-
-type Socket = ISocket<DefaultEventsMap, DefaultEventsMap>;
 
 interface Props {}
 
 // Component ---------------------------------------------------------------------
 const EnterTypingGame: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
-  const [socket, setSocket] = useState({} as Socket);
   const history = useHistory();
-
-  useEffect(() => {
-    const s = io("http://localhost:5000");
-    setSocket(s);
-
-    return () => {
-      s.disconnect();
-    };
-  }, []);
 
   return (
     <Wrapper>
@@ -34,11 +21,9 @@ const EnterTypingGame: React.FC<Props> = () => {
           variant="primary"
           onClick={async () => {
             setLoading(true);
-            socket.emit("findRoom", async (id: any) => {
-              if (!id) return setLoading(false);
-              console.log(id);
-              history.replace(`/game/${id}`);
-            });
+            const { id } = await findRoom();
+            if (!id) return setLoading(false);
+            history.push(`/games/${id}`);
           }}
         >
           Enter a Typing Game

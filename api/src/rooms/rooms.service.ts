@@ -23,18 +23,22 @@ export class RoomsService {
   }
 
   findFirst() {
-    return this.roomModel.findOne();
+    return this.roomModel.findOne({ isSearching: true });
   }
 
-  joinRoom(_id: string, userId: number) {
-    return this.roomModel.updateOne({ _id }, { $push: { users: userId } });
+  async joinRoom(_id: string, userId: number) {
+    const { users, id } = await this.roomModel.findByIdAndUpdate(_id, {
+      $push: { users: userId },
+    });
+
+    return { users, id };
   }
 
   update(id: number, updateRoomDto: UpdateRoomDto) {
     return `This action updates a #${id} room`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} room`;
+  remove(id: string) {
+    return this.roomModel.findByIdAndDelete(id);
   }
 }

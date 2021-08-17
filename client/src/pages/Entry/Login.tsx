@@ -1,27 +1,20 @@
 import React from "react";
 import styled from "styled-components";
-import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
-interface Props {
-  users: number[];
-}
+interface Props {}
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = ({ users }) => {
+const Login: React.FC<Props> = () => {
   return (
     <Wrapper>
-      {users.map((u, i) => (
-        <Track key={u + i} />
-      ))}
+      <h1>kekf</h1>
     </Wrapper>
   );
 };
 
-export default Tracks;
+export default Login;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled.div`
-  padding: 1.5rem;
-`;
+const Wrapper = styled.div``;

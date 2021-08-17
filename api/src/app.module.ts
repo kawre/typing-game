@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
     MongooseModule.forRoot(process.env.DATABASE_URL, {
       autoCreate: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     }),
     UsersModule,
     RoomsModule,

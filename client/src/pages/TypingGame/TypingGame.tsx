@@ -9,30 +9,30 @@ import Tracks from "./Track/Tracks";
 
 interface Props {}
 
-const games = io("http://localhost:5000/games");
+const game = io("http://localhost:5000/games");
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const { id } = useParams<any>();
   const [users, setUsers] = useState([] as number[]);
+  const [room, setRoom] = useState({ users: [], id: "" });
 
   useEffect(() => {
-    games.emit("joinRoom", id);
+    game.emit("joinRoom", id);
 
-    games.on("newUser", (userId) => {
-      console.log(`user #${userId} joined`);
-      setUsers([...users, userId]);
+    game.on("newUser", (roomData) => {
+      setRoom(roomData);
     });
 
     return () => {
-      games.emit("leaveRoom", id);
-      // games.disconnect();
+      game.emit("leaveRoom", id);
+      // game.disconnect();
     };
   }, []);
 
   return (
     <Wrapper>
-      <Tracks users={users} />
+      <Tracks users={room.users} />
       <Panel />
     </Wrapper>
   );
