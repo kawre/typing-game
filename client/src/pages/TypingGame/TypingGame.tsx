@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
@@ -8,23 +9,30 @@ import Tracks from "./Track/Tracks";
 
 interface Props {}
 
+const games = io("http://localhost:5000/games");
+
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
-  const [socket, setSocket] =
-    useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
+  const { id } = useParams<any>();
+  const [users, setUsers] = useState([] as number[]);
 
   useEffect(() => {
-    const s = io("http://localhost:5000");
-    setSocket(s);
+    games.emit("joinRoom", id);
+
+    games.on("newUser", (userId) => {
+      console.log(`user #${userId} joined`);
+      setUsers([...users, userId]);
+    });
 
     return () => {
-      s.disconnect();
+      games.emit("leaveRoom", id);
+      // games.disconnect();
     };
   }, []);
 
   return (
     <Wrapper>
-      <Tracks />
+      <Tracks users={users} />
       <Panel />
     </Wrapper>
   );

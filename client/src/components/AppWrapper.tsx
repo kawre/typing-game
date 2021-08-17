@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "../global/GlobalStyle";
 import { theme } from "../static/theme";
@@ -13,10 +14,12 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Layout>
-        <Header />
-        {children}
-      </Layout>
+      <BrowserRouter>
+        <Layout>
+          <Header />
+          {children}
+        </Layout>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };

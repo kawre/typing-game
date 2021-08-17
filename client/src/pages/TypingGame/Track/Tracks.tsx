@@ -3,16 +3,16 @@ import styled from "styled-components";
 import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props {
+  users: number[];
+}
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = () => {
-  const trackz = [1, 2];
-
+const Tracks: React.FC<Props> = ({ users }) => {
   return (
     <Wrapper>
-      {trackz.map((t) => (
-        <Track key={t} />
+      {users.map((u) => (
+        <Track key={u} />
       ))}
     </Wrapper>
   );

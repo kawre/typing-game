@@ -1,15 +1,29 @@
-import React, { useState } from "react";
-import { io } from "socket.io-client";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { io, Socket as ISocket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
-import Button from "../Button";
+import Button from "../../components/Button";
 // Types -------------------------------------------------------------------------
+
+type Socket = ISocket<DefaultEventsMap, DefaultEventsMap>;
 
 interface Props {}
 
-const socket = io();
 // Component ---------------------------------------------------------------------
 const EnterTypingGame: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
+  const [socket, setSocket] = useState({} as Socket);
+  const history = useHistory();
+
+  useEffect(() => {
+    const s = io("http://localhost:5000");
+    setSocket(s);
+
+    return () => {
+      s.disconnect();
+    };
+  }, []);
 
   return (
     <Wrapper>
@@ -22,7 +36,8 @@ const EnterTypingGame: React.FC<Props> = () => {
             setLoading(true);
             socket.emit("findRoom", async (id: any) => {
               if (!id) return setLoading(false);
-              // navigate(`/game/${id}`);
+              console.log(id);
+              history.replace(`/game/${id}`);
             });
           }}
         >

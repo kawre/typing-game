@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useTyping } from "../../../contexts/GameContext";
 import Car from "../../../static/images/Car";
-import Text from "../../Text";
+import Text from "../../../components/Text";
 // Types -------------------------------------------------------------------------
 
 interface Props {}

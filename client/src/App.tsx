@@ -1,15 +1,19 @@
 import React from "react";
-import { io } from "socket.io-client";
-import EnterTypingGame from "./components/TypingGame/EnterTypingGame";
-import TypingGame from "./components/TypingGame/TypingGame";
-import { useTyping } from "./contexts/GameContext";
+import { Route, Switch } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import TypingGame from "./pages/TypingGame/TypingGame";
+// Types -------------------------------------------------------------------------
 
-export const socket = io("http://localhost:5000", { withCredentials: true });
+interface Props {}
 
-const App: React.FC = () => {
-  const { isPlaying } = useTyping();
-
-  return <>{isPlaying ? <TypingGame /> : <EnterTypingGame />}</>;
+// Component ---------------------------------------------------------------------
+const App: React.FC<Props> = () => {
+  return (
+    <Switch>
+      <Route exact path="/" component={Home} />
+      <Route exact path="/game/:id" component={TypingGame} />
+    </Switch>
+  );
 };
 
 export default App;

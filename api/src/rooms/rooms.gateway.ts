@@ -11,30 +11,21 @@ import * as cookieParser from 'cookie';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  cors: { origin: 'http://localhost:3000', credentials: true },
+  namespace: '/games',
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
 })
-export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class RoomsGateway implements OnGatewayDisconnect {
   constructor(private readonly roomsService: RoomsService) {}
 
   @WebSocketServer() server: Server;
 
-  async handleConnection(socket) {
-    const cookie = cookieParser.parse(socket.request.headers.cookie || '');
-    console.log(cookie);
-  }
-
-  handleDisconnect(client: any) {
-    console.log('disc');
-  }
-
-  // @SubscribeMessage('createRoom')
-  // create(@MessageBody() createRoomDto: CreateRoomDto) {
-  //   console.log(createRoomDto);
-  //   return this.roomsService.create(createRoomDto);
-  // }
+  handleDisconnect(socket: Socket) {}
 
   @SubscribeMessage('findRoom')
-  async findRoom(@MessageBody() userId: number) {
+  async findRoom(@MessageBody() userId: number, ctx) {
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create(userId);
 
@@ -48,13 +39,13 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(client: Socket, room: string) {
-    console.log(client);
-    client.join(room);
+  joinRoom(socket: Socket, room: string) {
+    socket.join(room);
+    this.server.in(room).emit('newUser', 39);
   }
 
   @SubscribeMessage('leaveRoom')
   leaveRoom(client: Socket, room: string) {
-    client.leave(room);
+    console.log(room);
   }
 }

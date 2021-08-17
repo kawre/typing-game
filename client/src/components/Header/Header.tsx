@@ -1,5 +1,6 @@
 import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../Avatar";
 import Heading from "../Heading";
@@ -13,7 +14,9 @@ const Header: React.FC<Props> = () => {
   return (
     <Wrapper>
       <Left>
-        <Heading>TypeRacer</Heading>
+        <Link to="/">
+          <Heading>TypeRacer</Heading>
+        </Link>
       </Left>
       <Right>
         <Shop>

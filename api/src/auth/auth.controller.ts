@@ -47,7 +47,6 @@ export class AuthController {
     const tkn = await this.authService.createRefreshToken(req.user);
 
     res.cookie('jwt', tkn, { httpOnly: true });
-    console.log(tkn);
 
     return {
       accessToken: this.authService.createToken(req.user),

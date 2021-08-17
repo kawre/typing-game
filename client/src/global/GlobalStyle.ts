@@ -20,6 +20,10 @@ input, button {
 	background: none;
 }
 
+a {
+	text-decoration: none;
+}
+
 button {
 	cursor: pointer;
   width: fit-content;
