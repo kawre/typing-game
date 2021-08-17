@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { Token } from "../utils/token";
+import { Token } from "../utils/Token";
 
 const instance = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -11,14 +11,21 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  (err: AxiosError<Error>) => {
     // Reject promise if usual error
-    if (error.response!.status !== 401) {
-      return Promise.reject(error);
+    if (err.response!.status !== 401) {
+      return Promise.reject(err);
+    }
+    console.log(err.config.url);
+
+    if (err.config.url == "/auth/token/refresh") {
+      Token.clear();
+
+      return new Promise((_, reject) => reject(err));
     }
 
     return Token.refresh().then((tkn) => {
-      const config = error.config;
+      const config = err.config;
       config.headers["Authorization"] = `Bearer ${tkn}`;
 
       return new Promise((resolve, reject) => {

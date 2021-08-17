@@ -30,7 +30,6 @@ export class RoomsService {
       $push: { users: userId },
     });
 
-    console.log(users);
     return { users, id };
   }
 

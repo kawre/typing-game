@@ -1,14 +1,12 @@
 import {
-  WebSocketGateway,
-  SubscribeMessage,
   MessageBody,
-  WebSocketServer,
-  OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { RoomsService } from './rooms.service';
-import * as cookieParser from 'cookie';
 import { Server, Socket } from 'socket.io';
+import { RoomsService } from './rooms.service';
 
 @WebSocketGateway({
   namespace: '/games',
@@ -26,6 +24,7 @@ export class RoomsGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('findRoom')
   async findRoom(@MessageBody() userId: string) {
+    console.log(userId);
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create(userId);
 

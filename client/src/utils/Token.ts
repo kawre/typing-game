@@ -1,6 +1,8 @@
 import instance from "../api/axios";
 
 export class Token {
+  private static readonly TOKEN_NAME = "token";
+
   public static refresh() {
     return new Promise((resolve, reject) => {
       instance
@@ -14,10 +16,14 @@ export class Token {
   }
 
   public static get() {
-    return localStorage.getItem("token");
+    return localStorage.getItem(this.TOKEN_NAME);
   }
 
   public static set(tkn: string) {
-    return localStorage.setItem("token", tkn);
+    return localStorage.setItem(this.TOKEN_NAME, tkn);
+  }
+
+  public static clear() {
+    return localStorage.removeItem(this.TOKEN_NAME);
   }
 }

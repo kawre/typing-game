@@ -10,6 +10,7 @@ export class RoomsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async findRoom(@Req() req) {
+    console.log(req.user.userId);
     return { id: await this.roomsGateway.findRoom(req.user.userId) };
   }
 }
