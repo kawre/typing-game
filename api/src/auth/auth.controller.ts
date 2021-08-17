@@ -71,6 +71,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     let tkn: any;
+    console.log(req.cookies.jwt);
     try {
       tkn = this.authService.validateRefreshToken(req.cookies.jwt);
     } catch (err) {

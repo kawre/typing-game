@@ -6,6 +6,7 @@ import { login } from "../../api/auth";
 import Button from "../../components/Button";
 import Input from "../../components/Form/Input";
 import Text from "../../components/Text";
+import { Token } from "../../utils/Token";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -30,7 +31,7 @@ const Login: React.FC<Props> = () => {
             password: res.message[0],
           });
 
-        localStorage.setItem("token", res.accessToken);
+        Token.set(res.accessToken);
       }}
     >
       {({ isSubmitting }) => (

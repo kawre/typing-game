@@ -7,6 +7,7 @@ import Text from "../../components/Text";
 import { Link } from "react-router-dom";
 import { register } from "../../api/auth";
 import { mapErrors } from "../../utils/mapErrors";
+import { Token } from "../../utils/Token";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -20,7 +21,7 @@ const Register: React.FC<Props> = () => {
         const res = await register(input);
         if (res.message) return setErrors(mapErrors(res.message));
 
-        localStorage.setItem("token", res.accessToken);
+        Token.set(res.accessToken);
       }}
     >
       {({ isSubmitting }) => (
