@@ -65,7 +65,7 @@ export class AuthController {
     return this.usersService.findById(tkn.userId);
   }
 
-  @Get('refresh-token')
+  @Get('token/refresh')
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
