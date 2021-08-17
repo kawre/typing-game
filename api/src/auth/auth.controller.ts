@@ -53,6 +53,18 @@ export class AuthController {
     };
   }
 
+  @Get('me')
+  async me(@Req() req: Request) {
+    let tkn: any;
+    try {
+      tkn = this.authService.validateRefreshToken(req.cookies.jwt);
+    } catch {
+      throw new UnauthorizedException();
+    }
+
+    return this.usersService.findById(tkn.userId);
+  }
+
   @Get('refresh-token')
   async refreshToken(
     @Req() req: Request,

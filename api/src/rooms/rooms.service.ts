@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './schemas/room.schema';
 
@@ -31,6 +30,7 @@ export class RoomsService {
       $push: { users: userId },
     });
 
+    console.log(users);
     return { users, id };
   }
 

@@ -9,10 +9,7 @@ export class RoomsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findRoom(@Req() req: Request) {
-    console.log(req.user);
-    const math = Math.floor(Math.random() * 100);
-
-    return { id: await this.roomsGateway.findRoom(math) };
+  async findRoom(@Req() req) {
+    return { id: await this.roomsGateway.findRoom(req.user.userId) };
   }
 }

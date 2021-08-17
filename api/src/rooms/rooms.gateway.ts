@@ -29,12 +29,6 @@ export class RoomsGateway implements OnGatewayDisconnect {
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create(userId);
 
-    try {
-      await this.roomsService.joinRoom(room.id, userId);
-    } catch {
-      return null;
-    }
-
     return room.id;
   }
 
@@ -43,7 +37,7 @@ export class RoomsGateway implements OnGatewayDisconnect {
     socket: Socket,
     { roomId, userId }: { roomId: string; userId: string },
   ) {
-    console.log(socket.request.headers.cookie);
+    // await this.roomsService.clearDB();
     try {
       const roomData = await this.roomsService.joinRoom(roomId, userId);
       socket.join(roomId);

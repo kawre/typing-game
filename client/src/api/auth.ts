@@ -11,3 +11,5 @@ export const register = (input: any) =>
     .post("/auth/register", input)
     .catch((error) => error.response)
     .then((res) => res.data);
+
+export const me = () => auth.get("/auth/me").then((res) => res.data);
