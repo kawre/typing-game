@@ -15,14 +15,16 @@ export class AuthService {
   ) {}
 
   async register(input: RegisterDto) {
-    input.password = await hash(input.password, 14);
+    const user = new this.userModel(input);
 
-    let user;
+    user.password = await hash(input.password, 14);
+
+    // let user;
     try {
-      user = await this.userModel.create(input);
+      await user.save();
     } catch (err) {
       const field = Object.keys(err.keyValue);
-      throw new ConflictException(`${field[0]} already taken`);
+      throw new ConflictException([`${field[0]} already taken`]);
     }
     return user;
   }

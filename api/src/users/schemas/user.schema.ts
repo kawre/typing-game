@@ -26,7 +26,6 @@ export class User {
   email: string;
 
   @Prop()
-  @MinLength(4)
   @Exclude()
   password: string;
 

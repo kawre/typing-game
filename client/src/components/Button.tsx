@@ -7,6 +7,8 @@ import {
   BackgroundColorProps,
   backgroundColor,
   variant,
+  WidthProps,
+  width,
 } from "styled-system";
 import { theme } from "../static/theme";
 // Types -------------------------------------------------------------------------
@@ -32,6 +34,7 @@ const handleSize = (size: string) => {
 interface Props
   extends SpaceProps,
     BackgroundColorProps,
+    WidthProps,
     DOMAttributes<HTMLButtonElement> {
   size?: "default" | "lg";
   variant?: "primary" | "secondary";
@@ -73,6 +76,7 @@ const Btn = styled.button<Props>`
   display: flex;
 
   ${({ size }) => handleSize(size!)};
+  ${width}
   ${space}
 `;
 

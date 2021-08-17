@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import FormWrapper from "./components/FormWrapper";
+import FormWrapper from "./components/Form/FormWrapper";
 import Login from "./pages/Entry/Login";
 import Register from "./pages/Entry/Register";
 import Home from "./pages/Home/Home";

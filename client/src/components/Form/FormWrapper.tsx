@@ -12,7 +12,9 @@ const FormWrapper: React.FC<Props> = ({ children }) => {
 
   return (
     <Wrapper>
-      <Heading>{pathname === "/login" ? "Login" : "Register"}</Heading>
+      <Heading pb="24px">
+        {pathname.includes("login") ? "Login" : "Register"}
+      </Heading>
       {children}
     </Wrapper>
   );
@@ -26,6 +28,11 @@ const Wrapper = styled.div`
   max-width: 500px;
   margin: auto;
   padding: 24px;
-  background: ${({ theme }) => theme.colors.main30};
+  background: ${({ theme }) => theme.colors.main15};
   border-radius: ${({ theme }) => theme.rounded.md};
+
+  & form {
+    display: flex;
+    flex-direction: column;
+  }
 `;

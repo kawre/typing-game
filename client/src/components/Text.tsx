@@ -18,7 +18,7 @@ export default Text;
 const Wrapper = styled.p<Props>`
   ${color}
   ${space} 
-  ${typography} /* white-space: nowrap; */
+  ${typography}
 `;
 
 Wrapper.defaultProps = {

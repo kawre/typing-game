@@ -18,10 +18,20 @@ body, input, button {
 input, button {
 	border: none;
 	background: none;
+
+	&:focus {
+		outline: none;
+	}
 }
 
 a {
 	text-decoration: none;
+  text-decoration-color: inherit;
+	color: inherit;
+
+	&:hover{
+		text-decoration: underline;
+	}
 }
 
 button {
