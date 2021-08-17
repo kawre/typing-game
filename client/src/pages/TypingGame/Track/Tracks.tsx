@@ -4,15 +4,15 @@ import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  users: number[];
+  users: string[];
 }
 
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = ({ users }) => {
   return (
     <Wrapper>
-      {users.map((u, i) => (
-        <Track key={u + i} />
+      {users.map((u) => (
+        <Track key={u} />
       ))}
     </Wrapper>
   );

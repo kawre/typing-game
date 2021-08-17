@@ -9,7 +9,7 @@ import { Room } from './schemas/room.schema';
 export class RoomsService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
-  create(userId: number) {
+  create(userId: string) {
     const room = new this.roomModel({ users: [userId] });
     return room.save();
   }
@@ -26,8 +26,8 @@ export class RoomsService {
     return this.roomModel.findOne({ isSearching: true });
   }
 
-  async joinRoom(_id: string, userId: number) {
-    const { users, id } = await this.roomModel.findByIdAndUpdate(_id, {
+  async joinRoom(roomId: string, userId: string) {
+    const { users, id } = await this.roomModel.findByIdAndUpdate(roomId, {
       $push: { users: userId },
     });
 
@@ -40,5 +40,9 @@ export class RoomsService {
 
   remove(id: string) {
     return this.roomModel.findByIdAndDelete(id);
+  }
+
+  clearDB() {
+    return this.roomModel.remove({});
   }
 }

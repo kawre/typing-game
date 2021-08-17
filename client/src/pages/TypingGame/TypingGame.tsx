@@ -14,11 +14,10 @@ const game = io("http://localhost:5000/games");
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const { id } = useParams<any>();
-  const [users, setUsers] = useState([] as number[]);
-  const [room, setRoom] = useState({ users: [], id: "" });
+  const [room, setRoom] = useState({ users: [] as string[], id: "" });
 
   useEffect(() => {
-    game.emit("joinRoom", id);
+    game.emit("joinRoom", { roomId: id, userId: 2 });
 
     game.on("newUser", (roomData) => {
       setRoom(roomData);

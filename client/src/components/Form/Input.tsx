@@ -1,7 +1,8 @@
 import React, { InputHTMLAttributes } from "react";
 import styled from "styled-components";
-import { useField } from "formik";
+import { useField, ErrorMessage } from "formik";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { useEffect } from "react";
 // Types -------------------------------------------------------------------------
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,7 +16,7 @@ const Input: React.FC<Props> = ({ label, ...props }) => {
 
   return (
     <Controller>
-      <Wrapper {...field} error={!!error} {...props} />
+      <Wrapper error={!!error} {...field} {...props} />
       <Error>
         {error && (
           <>
@@ -35,7 +36,7 @@ export default Input;
 const Controller = styled.div``;
 
 const Wrapper = styled.input<{ error: boolean }>`
-  padding: 10px 20px;
+  padding: 8px 16px;
   width: 100%;
   border-radius: ${({ theme }) => theme.rounded.sm};
   background-color: ${({ theme }) => theme.colors.main15};
@@ -53,7 +54,7 @@ const Error = styled.div`
   width: 100%;
   height: 24px;
   font-size: 0.75rem;
-  margin-left: 24px;
+  margin-left: 22px;
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.colors.error};
