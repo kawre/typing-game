@@ -27,7 +27,7 @@ export class RoomsGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('findRoom')
-  async findRoom(@MessageBody() userId: string) {
+  async findRoom() {
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create();
 
@@ -37,35 +37,52 @@ export class RoomsGateway implements OnGatewayConnection {
   @SubscribeMessage('joinRoom')
   async joinRoom(socket: Socket, { roomId, userId }) {
     try {
-      const users = await this.roomsService.joinRoom(roomId, userId);
-      socket.join(roomId);
+      const room = await this.roomsService.findById(roomId);
 
-      if (users.length === 1) {
+      // if user is the first one to join the room,
+      // start the countdown
+      if (room.users.length < 1) {
         let counter = 10;
         this.server.in(roomId).emit('countdown');
 
-        const interval = setInterval(() => {
-          this.server.in(roomId).emit('timer', counter--);
+        const interval = setInterval(async () => {
+          if (counter < 1) {
+            this.server.in(roomId).emit('startGame');
 
-          if (counter < 0) {
-            socket.emit('startGame');
+            setInterval(() => {
+              this.server.in(roomId).emit('collect');
+            }, 2000);
+
             clearInterval(interval);
           } else if (counter === 3) {
-            this.roomsService.update(roomId, { isSearching: false });
+            await this.roomsService.update(roomId, { isSearching: false });
           }
+
+          this.server.in(roomId).emit('timer', counter--);
         }, 1000);
       }
 
-      this.server.in(roomId).emit('newUser', users);
+      // if user is not in this room,
+      // append him
+      if (!room.users.find((u) => u === userId)) {
+        await room.updateOne({ $push: { users: userId } });
+        room.users.push(userId);
+      }
+
+      // if everything went fine, join the room
+      // and notify the users that new user has joined
+      const data = room.users.map((u) => ({ progress: 0, userId: u }));
+      socket.join(roomId);
+      this.server.in(roomId).emit('newUser', data);
       return { ok: true };
     } catch {
       return { ok: false };
     }
   }
 
-  @SubscribeMessage('progress')
-  leaveRoom(socket: Socket, progress: number) {
-    // console.log('progress:', progress);
-    // console.log(socket);
+  @SubscribeMessage('data')
+  startGame(socket: Socket, data) {
+    console.log(data);
+    return this.roomsService.udpateProgress(data[0], data[1]);
   }
 }

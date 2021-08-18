@@ -3,19 +3,22 @@ import styled from "styled-components";
 import { useTyping } from "../../../contexts/GameContext";
 import Car from "../../../static/images/Car";
 import Text from "../../../components/Text";
+import { IUser } from "./Tracks";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props {
+  data: IUser;
+}
 
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = () => {
-  const { progress, stats } = useTyping();
+const Track: React.FC<Props> = ({ data }) => {
+  const { stats } = useTyping();
 
   return (
     <Wrapper>
       <Text mr={4}>kawre</Text>
       <ProgressBar>
-        <Car left={`${progress}%`} />
+        <Car left={`${data.progress}%`} />
       </ProgressBar>
       <Text ml={4}>{Math.round(stats.wpm)} wpm</Text>
     </Wrapper>

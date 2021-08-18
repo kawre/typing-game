@@ -10,6 +10,9 @@ export class Room {
 
   @Prop()
   isSearching: boolean;
+
+  @Prop()
+  usersProgress: {}[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

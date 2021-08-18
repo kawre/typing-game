@@ -4,16 +4,22 @@ import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  users: string[];
+  // users: IUser[];
+  users: any[];
+}
+
+export interface IUser {
+  progress: number;
+  userId: string;
 }
 
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = ({ users }) => {
   return (
     <Wrapper>
-      {users.map((u) => (
-        <Track key={u} />
-      ))}
+      {users.map((data) => {
+        return <Track key={data.userId} data={data} />;
+      })}
     </Wrapper>
   );
 };

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
 import { getCommentRange } from "typescript";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
 import Panel from "./Panel/Panel";
-import Tracks from "./Track/Tracks";
+import Tracks, { IUser } from "./Track/Tracks";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -16,22 +16,25 @@ const TypingGame: React.FC<Props> = () => {
   const { id } = useParams<any>();
   const { progress } = useTyping();
   const { user } = useAuth();
-  const [users, setRoom] = useState([] as string[]);
-  const [usersStats, setUsersStats] = useState();
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
     const game = io("http://localhost:5000/games", { withCredentials: true });
 
     game.emit("joinRoom", { roomId: id, userId: user?._id });
-    game.on("newUser", (users) => setRoom(users));
-
-    game.on("startGame", (time) => {
-      console.log(time);
+    game.on("newUser", (users) => {
+      console.log(users);
+      setUsers(users);
     });
 
     game.on("timer", (time) => {
       console.log(time);
-      // game.emit("progress", { progress, userId: user?._id });
+    });
+
+    game.on("collect", (data) => {
+      game.emit("data", [id, { progress, userId: user?._id }]);
+
+      setUsers(data);
     });
 
     return () => {

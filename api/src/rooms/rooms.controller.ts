@@ -9,7 +9,7 @@ export class RoomsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findRoom(@Req() req) {
-    return { id: await this.roomsGateway.findRoom(req.user.userId) };
+  async findRoom() {
+    return { id: await this.roomsGateway.findRoom() };
   }
 }

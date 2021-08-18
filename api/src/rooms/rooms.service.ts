@@ -22,6 +22,10 @@ export class RoomsService {
     return this.roomModel.find({});
   }
 
+  findById(id: number) {
+    return this.roomModel.findById(id);
+  }
+
   findFirst() {
     return this.roomModel.findOne({ isSearching: true });
   }
@@ -47,5 +51,11 @@ export class RoomsService {
 
   clearDB() {
     return this.roomModel.remove({});
+  }
+
+  udpateProgress(data, roomId) {
+    return this.roomModel.findByIdAndUpdate(roomId, {
+      $push: { usersProgress: data },
+    });
   }
 }
