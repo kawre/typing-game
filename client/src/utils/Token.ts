@@ -19,6 +19,10 @@ export class Token {
     return localStorage.getItem(this.TOKEN_NAME);
   }
 
+  public static getWithBearer() {
+    return `Bearer ${this.get()}`;
+  }
+
   public static set(tkn: string) {
     return localStorage.setItem(this.TOKEN_NAME, tkn);
   }

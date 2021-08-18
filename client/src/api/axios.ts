@@ -4,10 +4,15 @@ import { Token } from "../utils/Token";
 const instance = axios.create({
   baseURL: "http://localhost:5000/api",
   withCredentials: true,
-  headers: {
-    Authorization: `Bearer ${Token.get()}`,
-  },
 });
+
+instance.interceptors.request.use(
+  (cfg) => {
+    cfg.headers.Authorization = Token.getWithBearer();
+    return cfg;
+  },
+  (err) => Promise.reject(err)
+);
 
 instance.interceptors.response.use(
   (response) => response,
@@ -16,11 +21,9 @@ instance.interceptors.response.use(
     if (err.response!.status !== 401) {
       return Promise.reject(err);
     }
-    console.log(err.config.url);
 
     if (err.config.url == "/auth/token/refresh") {
       Token.clear();
-
       return new Promise((_, reject) => reject(err));
     }
 
