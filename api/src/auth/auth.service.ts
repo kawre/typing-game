@@ -32,7 +32,7 @@ export class AuthService {
   createToken(user: any) {
     return this.jwtService.sign(
       { userId: user.id },
-      { expiresIn: '15s', secret: process.env.ACCESS_SECRET },
+      { expiresIn: '15m', secret: process.env.ACCESS_SECRET },
     );
   }
 

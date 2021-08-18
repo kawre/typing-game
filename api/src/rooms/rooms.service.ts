@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { RoomsGateway } from './rooms.gateway';
 import { Room } from './schemas/room.schema';
 
 @Injectable()
 export class RoomsService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
-  create(userId: string) {
-    const room = new this.roomModel({ users: [userId] });
+  create() {
+    const room = new this.roomModel();
     return room.save();
   }
 
@@ -26,15 +27,18 @@ export class RoomsService {
   }
 
   async joinRoom(roomId: string, userId: string) {
-    const { users, id } = await this.roomModel.findByIdAndUpdate(roomId, {
-      $push: { users: userId },
-    });
+    const room = await this.roomModel.findById(roomId);
 
-    return { users, id };
+    if (!room.users.find((u) => u === userId)) {
+      await room.updateOne({ $push: { users: userId } });
+      room.users.push(userId);
+    }
+
+    return room.users;
   }
 
-  update(id: number, updateRoomDto: UpdateRoomDto) {
-    return `This action updates a #${id} room`;
+  update(id: string, input: any) {
+    return this.roomModel.findByIdAndUpdate(id, input);
   }
 
   remove(id: string) {

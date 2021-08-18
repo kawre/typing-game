@@ -59,7 +59,7 @@ export class AuthController {
     try {
       tkn = this.authService.validateRefreshToken(req.cookies.jwt);
     } catch {
-      throw new UnauthorizedException();
+      return null;
     }
 
     return this.usersService.findById(tkn.userId);
@@ -71,7 +71,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     let tkn: any;
-    console.log(req.cookies.jwt);
     try {
       tkn = this.authService.validateRefreshToken(req.cookies.jwt);
     } catch (err) {

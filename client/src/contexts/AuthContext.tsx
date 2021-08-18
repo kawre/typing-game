@@ -6,7 +6,7 @@ import { User } from "../types/auth.types";
 // Types -------------------------------------------------------------------------
 
 interface Context {
-  user: User;
+  user: User | undefined;
 }
 
 const AuthContext = createContext<Context>(null!);
@@ -17,11 +17,10 @@ export const useAuth = () => {
 
 // Component ---------------------------------------------------------------------
 const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState({} as User);
+  const [user, setUser] = useState<Context["user"]>(undefined);
 
   const getMe = async () => {
     const res = await me();
-    console.log(res);
     setUser(res);
   };
 
@@ -33,8 +32,11 @@ const AuthProvider: React.FC = ({ children }) => {
     user,
   };
 
-  if (!user) return null;
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {user !== undefined && children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;
