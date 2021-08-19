@@ -53,9 +53,10 @@ export class RoomsService {
     return this.roomModel.remove({});
   }
 
-  udpateProgress(data, roomId) {
-    return this.roomModel.findByIdAndUpdate(roomId, {
-      $push: { usersProgress: data },
-    });
+  async udpateProgress(data, roomId) {
+    return this.roomModel.updateOne(
+      { _id: roomId },
+      { usersProgress: { $push: 2 } },
+    );
   }
 }

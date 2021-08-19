@@ -21,10 +21,7 @@ export class RoomsGateway implements OnGatewayConnection {
   constructor(private readonly roomsService: RoomsService) {}
   @WebSocketServer() server: Server;
 
-  handleConnection(socket: Socket, ...args: any[]) {
-    // console.log(args);
-    // throw new Error('Method not implemented.');
-  }
+  handleConnection(socket: Socket, ...args: any[]) {}
 
   @SubscribeMessage('findRoom')
   async findRoom() {
@@ -36,29 +33,26 @@ export class RoomsGateway implements OnGatewayConnection {
 
   @SubscribeMessage('joinRoom')
   async joinRoom(socket: Socket, { roomId, userId }) {
+    // await this.roomsService.clearDB();
     try {
       const room = await this.roomsService.findById(roomId);
 
       // if user is the first one to join the room,
       // start the countdown
       if (room.users.length < 1) {
-        let counter = 10;
-        this.server.in(roomId).emit('countdown');
+        let counter = -9;
 
         const interval = setInterval(async () => {
-          if (counter < 1) {
-            this.server.in(roomId).emit('startGame');
-
-            setInterval(() => {
-              this.server.in(roomId).emit('collect');
-            }, 2000);
+          if (counter >= -1) {
+            this.server.in(roomId).emit('gameStart');
+            this.startGame(socket, roomId);
 
             clearInterval(interval);
-          } else if (counter === 3) {
+          } else if (counter === -3) {
             await this.roomsService.update(roomId, { isSearching: false });
           }
 
-          this.server.in(roomId).emit('timer', counter--);
+          this.server.in(roomId).emit('timer', counter++);
         }, 1000);
       }
 
@@ -80,9 +74,22 @@ export class RoomsGateway implements OnGatewayConnection {
     }
   }
 
+  startGame(socket: Socket, roomId: string) {
+    let time = 0;
+    const interval = setInterval(() => {
+      this.server.in(roomId).emit('timer', time.toString());
+
+      if (time >= 120) {
+        clearInterval(interval);
+      }
+
+      time++;
+    }, 1000);
+  }
+
   @SubscribeMessage('data')
-  startGame(socket: Socket, data) {
+  data(socket: Socket, data) {
     console.log(data);
-    return this.roomsService.udpateProgress(data[0], data[1]);
+    // return this.roomsService.udpateProgress(data[0], data[1]);
   }
 }

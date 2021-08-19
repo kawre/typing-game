@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { useTyping } from "../../../contexts/GameContext";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props {
+  time: string;
+  disabled: boolean;
+}
 
 const quote =
   "Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.";
@@ -11,7 +14,7 @@ const quote =
 // const characters = quote.split(" ").join("").length;
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = () => {
+const Panel: React.FC<Props> = ({ time, disabled }) => {
   const charRef = useRef<HTMLSpanElement>(null);
   const [prev, setPrev] = useState({ words: "", chars: "", errors: "" });
   const [next, setNext] = useState({ words: "", chars: "" });
@@ -86,6 +89,7 @@ const Panel: React.FC<Props> = () => {
 
   return (
     <Wrapper>
+      <h1>{time}</h1>
       <Container>
         {/* <Caret charRef={charRef} /> */}
         <Game>
@@ -98,6 +102,7 @@ const Panel: React.FC<Props> = () => {
         </Game>
       </Container>
       <Input
+        disabled={disabled}
         autoFocus
         onKeyDown={(e) => setKey(e.key)}
         onChange={handleInput}

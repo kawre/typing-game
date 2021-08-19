@@ -17,24 +17,27 @@ const TypingGame: React.FC<Props> = () => {
   const { progress } = useTyping();
   const { user } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
+  const [time, setTime] = useState("");
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
     const game = io("http://localhost:5000/games", { withCredentials: true });
 
     game.emit("joinRoom", { roomId: id, userId: user?._id });
     game.on("newUser", (users) => {
-      console.log(users);
       setUsers(users);
     });
 
-    game.on("timer", (time) => {
-      console.log(time);
+    game.on("gameStart", () => {
+      setDisabled(false);
     });
 
-    game.on("collect", (data) => {
-      game.emit("data", [id, { progress, userId: user?._id }]);
+    game.on("gameEnd", () => {});
 
-      setUsers(data);
+    game.on("timer", (time) => {
+      game.emit("data", { progress, userId: user?._id });
+      setTime(time);
+      // setUsers(data);
     });
 
     return () => {
@@ -45,7 +48,7 @@ const TypingGame: React.FC<Props> = () => {
   return (
     <Wrapper>
       <Tracks users={users} />
-      <Panel />
+      <Panel time={time} disabled={disabled} />
     </Wrapper>
   );
 };
