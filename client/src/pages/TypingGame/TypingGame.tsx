@@ -22,8 +22,7 @@ const TypingGame: React.FC<Props> = () => {
   const { user } = useAuth();
   const [time, setTime] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const [hash, setHash] = useState<HashTable>({});
-  // let hash: HashTable = {};
+  const [hash, setHash] = useState(new Map<string, number>());
 
   useEffect(() => {
     if (!user) return;
@@ -37,18 +36,7 @@ const TypingGame: React.FC<Props> = () => {
 
     // on new user
     game.on("newUser", ({ userId }) => {
-      setHash(() => {
-        hash[userId] = 0;
-        return hash;
-      });
-    });
-
-    // live game data
-    game.on("data", ({ userId, progress }) => {
-      setHash(() => {
-        hash[userId] = progress;
-        return hash;
-      });
+      setHash(() => hash.set(userId, 0));
     });
 
     // game.on("timer", (time) => setTime(time));
@@ -63,12 +51,19 @@ const TypingGame: React.FC<Props> = () => {
   }, [progress]);
 
   useEffect(() => {
-    console.log("hash:", hash);
+    // live game data
+    game.on("data", ({ userId, progress }) =>
+      setHash(() => hash.set(userId, progress))
+    );
+  }, []);
+
+  useEffect(() => {
+    console.log(hash);
   }, [hash]);
 
   return (
     <Wrapper>
-      <Tracks data={hash} />
+      {/* <Tracks data={hash} /> */}
       <Panel time={time} disabled={disabled} />
     </Wrapper>
   );
