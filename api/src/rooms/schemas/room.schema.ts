@@ -11,8 +11,8 @@ export class Room {
   @Prop()
   isSearching: boolean;
 
-  @Prop({ default: {}, type: Map })
-  usersProgress: {};
+  @Prop({ default: [] })
+  usersProgress: {}[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

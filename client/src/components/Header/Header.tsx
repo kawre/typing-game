@@ -1,16 +1,20 @@
 import React from "react";
+import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../Avatar";
+import OutsideClickHandler from "react-outside-click-handler";
 import Heading from "../Heading";
 import Text from "../Text";
+import UserMenu from "./UserMenu";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <Wrapper>
       <Left>
@@ -27,7 +31,12 @@ const Header: React.FC<Props> = () => {
           </Balance>
         </Shop>
         <Divider />
-        <Avatar />
+        <Menu>
+          <OutsideClickHandler onOutsideClick={() => setMenuOpen(false)}>
+            <Avatar onClick={() => setMenuOpen(!menuOpen)} />
+            {menuOpen && <UserMenu />}
+          </OutsideClickHandler>
+        </Menu>
       </Right>
     </Wrapper>
   );
@@ -40,7 +49,13 @@ export default Header;
 const Wrapper = styled.div`
   padding: 32px 0;
   display: flex;
+  z-index: 999;
   justify-content: space-between;
+`;
+
+const Menu = styled.div`
+  position: relative;
+  z-index: 999;
 `;
 
 const Left = styled.div`

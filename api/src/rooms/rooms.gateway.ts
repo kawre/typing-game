@@ -92,4 +92,14 @@ export class RoomsGateway implements OnGatewayConnection {
     console.log(data);
     // return this.roomsService.udpateProgress(data[0], data[1]);
   }
+
+  @SubscribeMessage('progress')
+  progress(socket: Socket, data) {
+    return this.roomsService.udpateProgress(data[0], data[1]).then((res) => {
+      res.usersProgress.map((p) => {
+        console.log(p);
+      });
+      socket.emit('data', res.usersProgress);
+    });
+  }
 }

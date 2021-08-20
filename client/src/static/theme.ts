@@ -17,6 +17,11 @@ export const theme = {
     main15: "hsla(0, 0%, 70%, 15%)",
     main30: "hsla(0, 0%, 70%, 30%)",
   },
+  shadow: {
+    sm: "0 0 9px #0000001A",
+    md: "",
+    lg: "",
+  },
 };
 
 export type ThemeProps = typeof theme;

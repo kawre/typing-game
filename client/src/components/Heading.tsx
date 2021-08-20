@@ -18,6 +18,7 @@ export default Heading;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.h1<Props>`
+  user-select: none;
   ${color}
   ${space}
   ${typography}

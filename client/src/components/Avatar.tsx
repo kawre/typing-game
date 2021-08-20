@@ -1,10 +1,10 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import styled from "styled-components";
 import { size, SizeProps, space, SpaceProps } from "styled-system";
 // Types -------------------------------------------------------------------------
 
-interface Props extends SpaceProps, SizeProps {}
+interface Props extends SpaceProps, SizeProps, HTMLAttributes<HTMLDivElement> {}
 
 // Component ---------------------------------------------------------------------
 const Avatar: React.FC<Props> = (props) => {

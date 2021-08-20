@@ -74,6 +74,7 @@ const Btn = styled.button<Props>`
   white-space: nowrap;
   text-overflow: ellipsis;
   display: flex;
+  box-shadow: ${({ theme }) => theme.shadow.sm};
 
   ${({ size }) => handleSize(size!)};
   ${width}
