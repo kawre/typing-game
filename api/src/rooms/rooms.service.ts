@@ -22,7 +22,7 @@ export class RoomsService {
     return this.roomModel.find({});
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.roomModel.findById(id);
   }
 
@@ -55,9 +55,11 @@ export class RoomsService {
 
   async udpateProgress(roomId: string, data) {
     // await this.roomModel.deleteOne({$where: {}})
+    console.log('prog:', data);
 
     return this.roomModel.findByIdAndUpdate(roomId, {
-      $push: { usersProgress: { progress: data.progress } },
+      $where: `usersProgress.userId === ${data.userId}`,
+      $push: { 'usersProgress.progress': '2' },
     });
   }
 }

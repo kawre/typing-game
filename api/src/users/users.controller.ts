@@ -22,7 +22,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   user(@Param('id') id: string) {
     return this.usersService.findById(id);

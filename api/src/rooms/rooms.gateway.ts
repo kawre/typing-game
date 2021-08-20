@@ -1,8 +1,5 @@
 import {
-  MessageBody,
   OnGatewayConnection,
-  OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -17,11 +14,9 @@ import { RoomsService } from './rooms.service';
     credentials: true,
   },
 })
-export class RoomsGateway implements OnGatewayConnection {
+export class RoomsGateway {
   constructor(private readonly roomsService: RoomsService) {}
   @WebSocketServer() server: Server;
-
-  handleConnection(socket: Socket, ...args: any[]) {}
 
   @SubscribeMessage('findRoom')
   async findRoom() {
@@ -32,74 +27,28 @@ export class RoomsGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('joinRoom')
-  async joinRoom(socket: Socket, { roomId, userId }) {
+  async joinRoom(socket: Socket) {
+    const userId = socket.handshake.headers.user_id as string;
+    const roomId = socket.handshake.headers.room_id as string;
     // await this.roomsService.clearDB();
+
     try {
-      const room = await this.roomsService.findById(roomId);
-
-      // if user is the first one to join the room,
-      // start the countdown
-      if (room.users.length < 1) {
-        let counter = -9;
-
-        const interval = setInterval(async () => {
-          if (counter >= -1) {
-            this.server.in(roomId).emit('gameStart');
-            this.startGame(socket, roomId);
-
-            clearInterval(interval);
-          } else if (counter === -3) {
-            await this.roomsService.update(roomId, { isSearching: false });
-          }
-
-          this.server.in(roomId).emit('timer', counter++);
-        }, 1000);
-      }
-
-      // if user is not in this room,
-      // append him
-      if (!room.users.find((u) => u === userId)) {
-        await room.updateOne({ $push: { users: userId } });
-        room.users.push(userId);
-      }
-
-      // if everything went fine, join the room
-      // and notify the users that new user has joined
-      const data = room.users.map((u) => ({ progress: 0, userId: u }));
       socket.join(roomId);
-      this.server.in(roomId).emit('newUser', data);
+      // let hash: Record<string, number> = {};
+      // hash[userId] = 0;
+      this.server.in(roomId).emit('newUser', { userId, progress: 0 });
       return { ok: true };
     } catch {
       return { ok: false };
     }
   }
 
-  startGame(socket: Socket, roomId: string) {
-    let time = 0;
-    const interval = setInterval(() => {
-      this.server.in(roomId).emit('timer', time.toString());
-
-      if (time >= 120) {
-        clearInterval(interval);
-      }
-
-      time++;
-    }, 1000);
-  }
-
-  @SubscribeMessage('data')
-  data(socket: Socket, data) {
-    console.log(data);
-    // return this.roomsService.udpateProgress(data[0], data[1]);
-  }
-
   @SubscribeMessage('progress')
-  progress(socket: Socket, data) {
-    return this.roomsService.udpateProgress(data[0], data[1]).then((res) => {
-      res.usersProgress.map((p) => {
-        console.log(p);
-      });
-      socket.emit('data', res.usersProgress);
-    });
+  progress(socket: Socket, progress) {
+    const userId = socket.handshake.headers.user_id;
+
+    this.server
+      .in(socket.handshake.headers.room_id)
+      .emit('data', { userId, progress });
   }
 }

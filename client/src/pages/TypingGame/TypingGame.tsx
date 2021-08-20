@@ -11,54 +11,64 @@ import Tracks from "./Track/Tracks";
 
 interface Props {}
 
+type HashTable = Record<string, number>;
+
+let game: Socket<DefaultEventsMap, DefaultEventsMap>;
+
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const { id } = useParams<any>();
   const { progress } = useTyping();
   const { user } = useAuth();
-  const [users, setUsers] = useState<any[]>([]);
   const [time, setTime] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const [socket, setSocket] =
-    useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
+  const [hash, setHash] = useState<HashTable>({});
+  // let hash: HashTable = {};
 
   useEffect(() => {
-    const game = io("http://localhost:5000/games", { withCredentials: true });
-    setSocket(game);
-
-    game.emit("joinRoom", { roomId: id, userId: user?._id });
-    game.on("newUser", (users) => {
-      setUsers(users);
+    if (!user) return;
+    game = io("http://localhost:5000/games", {
+      withCredentials: true,
+      extraHeaders: { room_id: id, user_id: user._id },
     });
 
-    // game.on("gameStart", () => {
-    //   setDisabled(false);
-    // });
+    // join room
+    game.emit("joinRoom");
 
-    // game.on("gameEnd", () => {});
-
-    game.on("timer", (time) => {
-      // game.emit("data", { progress, userId: user?._id });
-      setTime(time);
+    // on new user
+    game.on("newUser", ({ userId }) => {
+      setHash(() => {
+        hash[userId] = 0;
+        return hash;
+      });
     });
 
-    game.on("data", (s) => {
-      console.log(s);
+    // live game data
+    game.on("data", ({ userId, progress }) => {
+      setHash(() => {
+        hash[userId] = progress;
+        return hash;
+      });
     });
+
+    // game.on("timer", (time) => setTime(time));
 
     return () => {
       game.disconnect();
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if (!socket) return;
-    socket.emit("progress", [id, { userId: user?._id, progress }]);
+    game.emit("progress", progress);
   }, [progress]);
+
+  useEffect(() => {
+    console.log("hash:", hash);
+  }, [hash]);
 
   return (
     <Wrapper>
-      <Tracks users={users} />
+      <Tracks data={hash} />
       <Panel time={time} disabled={disabled} />
     </Wrapper>
   );

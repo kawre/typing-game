@@ -29,19 +29,19 @@ const GameProvider: React.FC = ({ children }) => {
   const [time, setTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(
-      () => setTime(parseFloat((time + 0.01).toFixed(2))),
-      10
-    );
+  // useEffect(() => {
+  //   const interval = setInterval(
+  //     () => setTime(parseFloat((time + 0.01).toFixed(2))),
+  //     10
+  //   );
 
-    setStats({
-      ...stats,
-      time,
-    });
+  //   setStats({
+  //     ...stats,
+  //     time,
+  //   });
 
-    return () => clearInterval(interval);
-  }, [time]);
+  //   return () => clearInterval(interval);
+  // }, [time]);
 
   const value = {
     isPlaying,
