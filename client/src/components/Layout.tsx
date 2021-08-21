@@ -7,11 +7,7 @@ interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Layout: React.FC<Props> = ({ children }) => {
-  return (
-    <GameProvider>
-      <Wrapper>{children}</Wrapper>
-    </GameProvider>
-  );
+  return <Wrapper>{children}</Wrapper>;
 };
 
 export default Layout;

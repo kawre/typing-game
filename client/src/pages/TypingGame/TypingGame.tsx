@@ -16,18 +16,30 @@ export interface Player {
   progress: number;
 }
 
+export interface UserHash {
+  progress: number;
+  wpm: number;
+}
+
+export type HashTable = Record<string, UserHash>;
+
 let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams<any>();
-  const { progress, setQuote } = useTyping();
+
+  const { progress } = useTyping();
   const { user } = useAuth();
+
   const [time, setTime] = useState(0);
-  const [disabled, setDisabled] = useState(true);
-  const [hash, setHash] = useState({} as Record<string, number>);
+  const [inGame, setInGame] = useState(false);
+  const [hash, setHash] = useState({} as HashTable);
+  const [quote, setQuote] = useState("");
   const [, setRender] = useState(0);
+  const [wpm, setWpm] = useState(0);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     if (!user) return;
@@ -45,7 +57,7 @@ const TypingGame: React.FC<Props> = () => {
     game.on("newUser", ({ users, quote }) => {
       setHash((prev) => {
         (users as string[]).map((id) => {
-          prev[id] = 0;
+          prev[id] = { progress: 0, wpm: 0 };
         });
         return prev;
       });
@@ -54,9 +66,9 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     // live game data
-    game.on("data", ({ userId, progress }) => {
+    game.on("data", ({ userId, progress, wpm }) => {
       setHash((prev) => {
-        prev[userId] = progress;
+        prev[userId] = { progress, wpm };
         return prev;
       });
       setRender((i) => (i += 1));
@@ -67,7 +79,9 @@ const TypingGame: React.FC<Props> = () => {
       setTime(time);
     });
 
-    game.on("gameStart", () => setDisabled(false));
+    game.on("gameStart", () => {
+      setInGame(true);
+    });
 
     // current game time
     game.on("timer", (time) => {
@@ -81,13 +95,15 @@ const TypingGame: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!game) return;
-    game.emit("progress", progress);
-  }, [progress, game]);
+    game.emit("progress", { progress, wpm });
+  }, [progress, time]);
 
   return (
     <Wrapper>
-      <Tracks data={hash} time={time} />
-      <Panel time={time} disabled={disabled} />
+      <Tracks quote={quote} data={hash} time={time} />
+      {quote && (
+        <Panel time={time} disabled={!inGame} quote={quote} setWpm={setWpm} />
+      )}
     </Wrapper>
   );
 };

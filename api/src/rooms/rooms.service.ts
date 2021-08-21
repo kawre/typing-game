@@ -62,9 +62,6 @@ export class RoomsService {
   }
 
   async udpateProgress(roomId: string, data) {
-    // await this.roomModel.deleteOne({$where: {}})
-    console.log('prog:', data);
-
     return this.roomModel.findByIdAndUpdate(roomId, {
       $where: `usersProgress.userId === ${data.userId}`,
       $push: { 'usersProgress.progress': '2' },

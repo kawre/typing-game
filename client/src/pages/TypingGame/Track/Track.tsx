@@ -6,18 +6,20 @@ import Text from "../../../components/Text";
 import { getUser } from "../../../api/users";
 import { useState } from "react";
 import { User } from "../../../types/auth.types";
+import { UserHash } from "../TypingGame";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  progress: number;
+  data: UserHash;
   userId: string;
   time: number;
+  quote: string;
 }
 
 const fetchUser = async (id: string) => await getUser(id);
 
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = ({ progress, userId, time }) => {
+const Track: React.FC<Props> = ({ userId, time, data: { progress, wpm } }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const Track: React.FC<Props> = ({ progress, userId, time }) => {
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
-      <Text ml={4}>{Math.round(60 / time)} wpm</Text>
+      <Text ml={4}>{wpm} wpm</Text>
     </Wrapper>
   );
 };

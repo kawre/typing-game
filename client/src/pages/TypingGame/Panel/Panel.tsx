@@ -1,4 +1,3 @@
-import moment from "moment";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import Text from "../../../components/Text";
@@ -8,11 +7,13 @@ import { useTyping } from "../../../contexts/GameContext";
 interface Props {
   time: number;
   disabled: boolean;
+  quote: string;
+  setWpm: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ time, disabled }) => {
-  const { setStats, setProgress, stats, quote, isPlaying } = useTyping();
+const Panel: React.FC<Props> = ({ time, disabled, quote, setWpm }) => {
+  const { setProgress, progress } = useTyping();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
@@ -68,6 +69,7 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
     });
   }, [crntWord, input]);
 
+  // focus input on game start
   useEffect(() => {
     if (!disabled && inputRef?.current) inputRef.current.focus();
   }, [disabled]);
@@ -80,26 +82,20 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
 
   // calculate wpm
   useEffect(() => {
-    if (!Number.isInteger(stats.time)) return;
-
-    const minute = 60 / stats.time;
+    const minute = time / 60;
     const correct = prev.words.split(" ").join("").length + prev.chars.length;
 
-    setStats({
-      ...stats,
-      wpm: correct * (minute / 5),
-    });
-  }, [stats.time]);
+    setWpm(Math.round(correct / 5 / minute));
+  }, [time]);
 
   return (
     <Wrapper>
       <Stats>
         <Text textColor="main">
-          {new Date(time * 1000).toISOString().substr(15, 4)}
+          {new Date((300 - time) * 1000).toISOString().substr(15, 4)}
         </Text>
       </Stats>
       <Container>
-        {/* <Caret charRef={charRef} /> */}
         <Game>
           {prev.words && <Correct>{prev.words} </Correct>}
           {prev.chars && <CharsCorrect>{prev.chars}</CharsCorrect>}
@@ -151,7 +147,8 @@ const Char = styled.span`
 const Container = styled.div``;
 
 const Stats = styled.div`
-  margin-bottom: 5px;
+  margin-bottom: 12px;
+
   p {
     font-weight: 500;
   }

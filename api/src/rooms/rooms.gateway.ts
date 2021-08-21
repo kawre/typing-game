@@ -46,14 +46,14 @@ export class RoomsGateway {
   }
 
   countdown(roomId: string) {
-    let s = 5;
+    let s = 3;
 
     const interval = setInterval(() => {
       this.server.in(roomId).emit('countdown', s);
 
       if (s <= 0) {
         clearInterval(interval);
-        this.server.in(roomId).emit('gameStart');
+        this.server.in(roomId).emit('gameStart', 300);
         this.timer(roomId);
       }
 
@@ -62,23 +62,23 @@ export class RoomsGateway {
   }
 
   timer(roomId: string) {
-    let s = 1;
+    let s = 0;
     const interval = setInterval(() => {
-      this.server.in(roomId).emit('timer', s);
+      s++;
 
       if (s >= 300) {
         clearInterval(interval);
         this.server.in(roomId).emit('endGame');
       }
 
-      s++;
+      this.server.in(roomId).emit('timer', s);
     }, 1000);
   }
 
   @SubscribeMessage('progress')
-  progress(socket: Socket, progress: number) {
+  progress(socket: Socket, { progress, wpm }) {
     const { user, room } = socket.handshake.headers;
 
-    this.server.in(room).emit('data', { userId: user, progress });
+    this.server.in(room).emit('data', { userId: user, progress, wpm });
   }
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import FormWrapper from "./components/Form/FormWrapper";
+import GameProvider from "./contexts/GameContext";
 import Login from "./pages/Entry/Login";
 import Register from "./pages/Entry/Register";
 import Home from "./pages/Home/Home";
@@ -14,7 +15,15 @@ const App: React.FC<Props> = () => {
   return (
     <Switch>
       <Route exact path="/" component={Home} />
-      <Route exact path="/games/:id" component={TypingGame} />
+      <Route
+        exact
+        path="/games/:id"
+        component={() => (
+          <GameProvider>
+            <TypingGame />
+          </GameProvider>
+        )}
+      />
       <FormWrapper>
         <Route exact path="/login" component={Login} />
         <Route exact path="/register" component={Register} />

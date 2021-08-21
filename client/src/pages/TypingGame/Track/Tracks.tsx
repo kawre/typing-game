@@ -1,20 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import { Player } from "../TypingGame";
+import { HashTable } from "../TypingGame";
 import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  data: Record<string, number>;
+  data: HashTable;
   time: number;
+  quote: string;
 }
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = ({ data, time }) => {
+const Tracks: React.FC<Props> = ({ data, time, quote }) => {
   return (
     <Wrapper>
       {Object.keys(data).map((id) => (
-        <Track key={id} time={time} progress={data[id]} userId={id} />
+        <Track key={id} time={time} data={data[id]} userId={id} quote={quote} />
       ))}
     </Wrapper>
   );
