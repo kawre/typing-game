@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
@@ -11,35 +11,55 @@ import Tracks from "./Track/Tracks";
 
 interface Props {}
 
-type HashTable = Record<string, number>;
+export interface Player {
+  userId: string;
+  progress: number;
+}
 
 let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
+  const history = useHistory();
   const { id } = useParams<any>();
   const { progress } = useTyping();
   const { user } = useAuth();
   const [time, setTime] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const [hash, setHash] = useState(new Map<string, number>());
+  const [hash, setHash] = useState({} as Record<string, number>);
+  const [, setRender] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     game = io("http://localhost:5000/games", {
       withCredentials: true,
-      extraHeaders: { room_id: id, user_id: user._id },
+      extraHeaders: { room: id, user: user._id },
     });
 
     // join room
-    game.emit("joinRoom");
-
-    // on new user
-    game.on("newUser", ({ userId }) => {
-      setHash(() => hash.set(userId, 0));
+    game.emit("joinRoom", ({ ok }: { ok: boolean }) => {
+      if (!ok) history.push("/");
     });
 
-    // game.on("timer", (time) => setTime(time));
+    // on new user
+    game.on("newUser", (users: string[]) => {
+      setHash((prev) => {
+        users.map((id) => {
+          prev[id] = 0;
+        });
+        return prev;
+      });
+      setRender((i) => (i += 1));
+    });
+
+    // live game data
+    game.on("data", ({ userId, progress }) => {
+      setHash((prev) => {
+        prev[userId] = progress;
+        return prev;
+      });
+      setRender((i) => (i += 1));
+    });
 
     return () => {
       game.disconnect();
@@ -50,20 +70,9 @@ const TypingGame: React.FC<Props> = () => {
     game.emit("progress", progress);
   }, [progress]);
 
-  useEffect(() => {
-    // live game data
-    game.on("data", ({ userId, progress }) =>
-      setHash(() => hash.set(userId, progress))
-    );
-  }, []);
-
-  useEffect(() => {
-    console.log(hash);
-  }, [hash]);
-
   return (
     <Wrapper>
-      {/* <Tracks data={hash} /> */}
+      <Tracks data={hash} />
       <Panel time={time} disabled={disabled} />
     </Wrapper>
   );

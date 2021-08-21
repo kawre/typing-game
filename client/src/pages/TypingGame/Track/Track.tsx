@@ -17,8 +17,7 @@ const fetchUser = async (id: string) => await getUser(id);
 
 // Component ---------------------------------------------------------------------
 const Track: React.FC<Props> = ({ progress, userId }) => {
-  const [user, setUser] = useState({} as User);
-  const { stats } = useTyping();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     if (!userId) return;
@@ -28,11 +27,11 @@ const Track: React.FC<Props> = ({ progress, userId }) => {
   if (!user) return null;
   return (
     <Wrapper>
-      <Text mr={4}>{user?.username}</Text>
+      <Text mr={4}>{user.username}</Text>
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
-      <Text ml={4}>{Math.round(stats.wpm)} wpm</Text>
+      {/* <Text ml={4}>{Math.round(stats.wpm)} wpm</Text> */}
     </Wrapper>
   );
 };

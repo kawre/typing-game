@@ -28,15 +28,12 @@ export class RoomsGateway {
 
   @SubscribeMessage('joinRoom')
   async joinRoom(socket: Socket) {
-    const userId = socket.handshake.headers.user_id as string;
-    const roomId = socket.handshake.headers.room_id as string;
-    // await this.roomsService.clearDB();
+    const { user, room }: any = socket.handshake.headers;
 
     try {
-      socket.join(roomId);
-      // let hash: Record<string, number> = {};
-      // hash[userId] = 0;
-      this.server.in(roomId).emit('newUser', { userId, progress: 0 });
+      socket.join(room);
+      const users = await this.roomsService.joinRoom(room, user);
+      this.server.in(room).emit('newUser', users);
       return { ok: true };
     } catch {
       return { ok: false };
@@ -44,11 +41,9 @@ export class RoomsGateway {
   }
 
   @SubscribeMessage('progress')
-  progress(socket: Socket, progress) {
-    const userId = socket.handshake.headers.user_id;
+  progress(socket: Socket, progress: number) {
+    const { user, room } = socket.handshake.headers;
 
-    this.server
-      .in(socket.handshake.headers.room_id)
-      .emit('data', { userId, progress });
+    this.server.in(room).emit('data', { userId: user, progress });
   }
 }

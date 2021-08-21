@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UpdateRoomDto } from './dto/update-room.dto';
-import { RoomsGateway } from './rooms.gateway';
 import { Room } from './schemas/room.schema';
 
 @Injectable()

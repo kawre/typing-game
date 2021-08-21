@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Player } from "../TypingGame";
 import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
@@ -7,18 +8,13 @@ interface Props {
   data: Record<string, number>;
 }
 
-export interface IUser {
-  progress: number;
-  userId: string;
-}
-
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = ({ data }) => {
   return (
     <Wrapper>
-      {Object.keys(data).map((id) => {
-        return <Track key={id} progress={data[id]} userId={id} />;
-      })}
+      {Object.keys(data).map((id) => (
+        <Track key={id} progress={data[id]} userId={id} />
+      ))}
     </Wrapper>
   );
 };
