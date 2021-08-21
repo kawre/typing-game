@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import Text from "../../../components/Text";
@@ -11,7 +12,7 @@ interface Props {
 
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = ({ time, disabled }) => {
-  const { setStats, setProgress, stats, quote } = useTyping();
+  const { setStats, setProgress, stats, quote, isPlaying } = useTyping();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
@@ -92,7 +93,11 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
 
   return (
     <Wrapper>
-      <Text textColor="main">{time}</Text>
+      <Stats>
+        <Text textColor="main">
+          {new Date(time * 1000).toISOString().substr(15, 4)}
+        </Text>
+      </Stats>
       <Container>
         {/* <Caret charRef={charRef} /> */}
         <Game>
@@ -145,6 +150,13 @@ const Char = styled.span`
 
 const Container = styled.div``;
 
+const Stats = styled.div`
+  margin-bottom: 5px;
+  p {
+    font-weight: 500;
+  }
+`;
+
 const Game = styled.div`
   font-size: 1.25rem;
   color: ${({ theme }) => theme.colors.main};
@@ -179,6 +191,20 @@ const Coming = styled.span``;
 const Input = styled.input<{ errors: number }>`
   appearance: none;
   border: 0.125rem solid transparent;
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.main15};
+  border-radius: ${({ theme }) => theme.rounded.sm};
+  outline: none;
+  padding: 0 0.75rem;
+  color: ${({ theme }) => theme.colors.main};
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 2.5rem;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.main30};
+    background-color: ${({ theme }) => theme.colors.background};
+  }
 
   ${({ errors, theme }) =>
     errors !== 0 &&
@@ -186,24 +212,6 @@ const Input = styled.input<{ errors: number }>`
       border-color: ${theme.colors.error} !important;
       color: ${theme.colors.error} !important;
     `};
-
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.main15};
-  border-radius: ${({ theme }) => theme.rounded.sm};
-  outline: none;
-  padding: 0 0.75rem;
-
-  color: ${({ theme }) => theme.colors.main};
-  font-weight: 500;
-  font-size: 1.25rem;
-  line-height: 2.5rem;
-
-  user-select: none;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.main30};
-    background-color: ${({ theme }) => theme.colors.background};
-  }
 `;
 
 const InputWrapper = styled.div`

@@ -50,7 +50,7 @@ const TypingGame: React.FC<Props> = () => {
         return prev;
       });
       setQuote(quote);
-      // setRender((i) => (i += 1));
+      setRender((i) => (i += 1));
     });
 
     // live game data
