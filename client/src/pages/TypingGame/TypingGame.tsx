@@ -22,10 +22,10 @@ let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams<any>();
-  const { progress } = useTyping();
+  const { progress, setQuote } = useTyping();
   const { user } = useAuth();
-  const [time, setTime] = useState("");
-  const [disabled, setDisabled] = useState(false);
+  const [time, setTime] = useState(0);
+  const [disabled, setDisabled] = useState(true);
   const [hash, setHash] = useState({} as Record<string, number>);
   const [, setRender] = useState(0);
 
@@ -42,14 +42,15 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     // on new user
-    game.on("newUser", (users: string[]) => {
+    game.on("newUser", ({ users, quote }) => {
       setHash((prev) => {
-        users.map((id) => {
+        (users as string[]).map((id) => {
           prev[id] = 0;
         });
         return prev;
       });
-      setRender((i) => (i += 1));
+      setQuote(quote);
+      // setRender((i) => (i += 1));
     });
 
     // live game data
@@ -61,18 +62,31 @@ const TypingGame: React.FC<Props> = () => {
       setRender((i) => (i += 1));
     });
 
+    // countdown
+    game.on("countdown", (time) => {
+      setTime(time);
+    });
+
+    game.on("gameStart", () => setDisabled(false));
+
+    // current game time
+    game.on("timer", (time) => {
+      setTime(time);
+    });
+
     return () => {
       game.disconnect();
     };
   }, [user]);
 
   useEffect(() => {
+    if (!game) return;
     game.emit("progress", progress);
-  }, [progress]);
+  }, [progress, game]);
 
   return (
     <Wrapper>
-      <Tracks data={hash} />
+      <Tracks data={hash} time={time} />
       <Panel time={time} disabled={disabled} />
     </Wrapper>
   );

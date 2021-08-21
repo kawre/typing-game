@@ -6,14 +6,15 @@ import Track from "./Track";
 
 interface Props {
   data: Record<string, number>;
+  time: number;
 }
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = ({ data }) => {
+const Tracks: React.FC<Props> = ({ data, time }) => {
   return (
     <Wrapper>
       {Object.keys(data).map((id) => (
-        <Track key={id} progress={data[id]} userId={id} />
+        <Track key={id} time={time} progress={data[id]} userId={id} />
       ))}
     </Wrapper>
   );

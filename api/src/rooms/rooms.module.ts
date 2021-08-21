@@ -4,10 +4,14 @@ import { RoomsGateway } from './rooms.gateway';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Room, RoomSchema } from './schemas/room.schema';
 import { RoomsController } from './rooms.controller';
+import { Quote, QuoteSchema } from './schemas/quote.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Room.name, schema: RoomSchema }]),
+    MongooseModule.forFeature([
+      { name: Room.name, schema: RoomSchema },
+      { name: Quote.name, schema: QuoteSchema },
+    ]),
   ],
   providers: [RoomsGateway, RoomsService],
   controllers: [RoomsController],

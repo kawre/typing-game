@@ -1,21 +1,21 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import Text from "../../../components/Text";
 import { useTyping } from "../../../contexts/GameContext";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  time: string;
+  time: number;
   disabled: boolean;
 }
 
-const quote =
-  "Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.";
-
-// const characters = quote.split(" ").join("").length;
-
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = ({ time, disabled }) => {
+  const { setStats, setProgress, stats, quote } = useTyping();
+
+  const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
+
   const [prev, setPrev] = useState({ words: "", chars: "", errors: "" });
   const [next, setNext] = useState({ words: "", chars: "" });
   const [key, setKey] = useState("");
@@ -23,7 +23,6 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
-  const { setStats, setProgress, stats } = useTyping();
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -68,6 +67,10 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
     });
   }, [crntWord, input]);
 
+  useEffect(() => {
+    if (!disabled && inputRef?.current) inputRef.current.focus();
+  }, [disabled]);
+
   // progress
   useEffect(() => {
     if (!crntWord) return;
@@ -89,7 +92,7 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
 
   return (
     <Wrapper>
-      <h1>{time}</h1>
+      <Text textColor="main">{time}</Text>
       <Container>
         {/* <Caret charRef={charRef} /> */}
         <Game>
@@ -101,14 +104,18 @@ const Panel: React.FC<Props> = ({ time, disabled }) => {
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
       </Container>
-      <Input
-        disabled={disabled}
-        autoFocus
-        onKeyDown={(e) => setKey(e.key)}
-        onChange={handleInput}
-        value={input}
-        maxLength={words[crntWord].length + 6}
-      />
+      <InputWrapper>
+        <Input
+          ref={inputRef}
+          errors={errors}
+          disabled={disabled}
+          onKeyDown={(e) => setKey(e.key)}
+          onChange={handleInput}
+          value={input}
+          maxLength={words[crntWord].length + 6}
+        />
+        {errors === 0 && <CurrentWord>{words[crntWord]}</CurrentWord>}
+      </InputWrapper>
     </Wrapper>
   );
 };
@@ -169,19 +176,27 @@ const Incorrect = styled.span`
 
 const Coming = styled.span``;
 
-const Input = styled.input`
+const Input = styled.input<{ errors: number }>`
   appearance: none;
   border: 0.125rem solid transparent;
+
+  ${({ errors, theme }) =>
+    errors !== 0 &&
+    css`
+      border-color: ${theme.colors.error} !important;
+      color: ${theme.colors.error} !important;
+    `};
+
   width: 100%;
   background-color: ${({ theme }) => theme.colors.main15};
   border-radius: ${({ theme }) => theme.rounded.sm};
   outline: none;
-  margin-top: 1.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0 0.75rem;
 
   color: ${({ theme }) => theme.colors.main};
   font-weight: 500;
   font-size: 1.25rem;
+  line-height: 2.5rem;
 
   user-select: none;
 
@@ -189,4 +204,24 @@ const Input = styled.input`
     border-color: ${({ theme }) => theme.colors.main30};
     background-color: ${({ theme }) => theme.colors.background};
   }
+`;
+
+const InputWrapper = styled.div`
+  margin-top: 1.5rem;
+  position: relative;
+  user-select: none;
+`;
+
+const CurrentWord = styled.div`
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 2.5rem;
+  position: absolute;
+  border: 2px solid transparent;
+  padding-left: 0.75rem;
+  top: 0;
+  left: 0;
+  opacity: 0.2;
+  color: ${({ theme }) => theme.colors.main};
+  pointer-events: none;
 `;

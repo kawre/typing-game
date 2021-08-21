@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type RoomDocument = Room & Document;
 
-@Schema({ validateBeforeSave: true })
+@Schema()
 export class Room {
   @Prop()
   users: string[];
@@ -11,8 +11,8 @@ export class Room {
   @Prop()
   isSearching: boolean;
 
-  @Prop({ default: [] })
-  usersProgress: {}[];
+  @Prop()
+  quote: string;
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

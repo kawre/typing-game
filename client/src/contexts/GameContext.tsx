@@ -14,6 +14,8 @@ interface Context {
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   progress: number;
   isPlaying: boolean;
+  quote: string;
+  setQuote: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const GameContext = createContext<Context>(null!);
@@ -28,6 +30,7 @@ const GameProvider: React.FC = ({ children }) => {
   const [progress, setProgress] = useState(0);
   const [time, setTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [quote, setQuote] = useState("");
 
   // useEffect(() => {
   //   const interval = setInterval(
@@ -49,6 +52,8 @@ const GameProvider: React.FC = ({ children }) => {
     setStats,
     setProgress,
     progress,
+    quote,
+    setQuote,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

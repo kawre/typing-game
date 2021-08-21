@@ -20,6 +20,7 @@ export class RoomsGateway {
 
   @SubscribeMessage('findRoom')
   async findRoom() {
+    await this.roomsService.clearDB();
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create();
 
@@ -32,12 +33,46 @@ export class RoomsGateway {
 
     try {
       socket.join(room);
-      const users = await this.roomsService.joinRoom(room, user);
-      this.server.in(room).emit('newUser', users);
+
+      const roomData = await this.roomsService.joinRoom(room, user, () =>
+        this.countdown(room),
+      );
+
+      this.server.in(room).emit('newUser', roomData);
       return { ok: true };
     } catch {
       return { ok: false };
     }
+  }
+
+  countdown(roomId: string) {
+    let s = 5;
+
+    const interval = setInterval(() => {
+      this.server.in(roomId).emit('countdown', s);
+
+      if (s <= 0) {
+        clearInterval(interval);
+        this.server.in(roomId).emit('gameStart');
+        this.timer(roomId);
+      }
+
+      s--;
+    }, 1000);
+  }
+
+  timer(roomId: string) {
+    let s = 1;
+    const interval = setInterval(() => {
+      this.server.in(roomId).emit('timer', s);
+
+      if (s >= 300) {
+        clearInterval(interval);
+        this.server.in(roomId).emit('endGame');
+      }
+
+      s++;
+    }, 1000);
   }
 
   @SubscribeMessage('progress')

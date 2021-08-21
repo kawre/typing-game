@@ -11,12 +11,13 @@ import { User } from "../../../types/auth.types";
 interface Props {
   progress: number;
   userId: string;
+  time: number;
 }
 
 const fetchUser = async (id: string) => await getUser(id);
 
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = ({ progress, userId }) => {
+const Track: React.FC<Props> = ({ progress, userId, time }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const Track: React.FC<Props> = ({ progress, userId }) => {
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
-      {/* <Text ml={4}>{Math.round(stats.wpm)} wpm</Text> */}
+      <Text ml={4}>{Math.round(60 / time)} wpm</Text>
     </Wrapper>
   );
 };
