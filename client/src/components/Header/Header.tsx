@@ -81,7 +81,7 @@ const Shop = styled.div`
 `;
 
 const Balance = styled.div`
-  background-color: ${({ theme }) => theme.colors.main15};
+  background-color: ${({ theme }) => theme.colors.main}0d;
   padding: 8px 16px;
   margin-left: 12px;
   display: flex;

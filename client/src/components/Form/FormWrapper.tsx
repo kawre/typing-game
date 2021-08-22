@@ -28,7 +28,7 @@ const Wrapper = styled.div`
   max-width: 500px;
   margin: auto;
   padding: 24px;
-  background: ${({ theme }) => theme.colors.main15};
+  background: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.md};
 
   & form {

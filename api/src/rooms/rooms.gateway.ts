@@ -87,11 +87,16 @@ export class RoomsGateway {
   }
 
   @SubscribeMessage('result')
-  result(socket: Socket, { wpm }) {
+  async result(socket: Socket, { wpm }) {
     const { user, room } = socket.handshake.headers;
 
-    console.log(wpm);
+    try {
+      await this.roomsService.submitResult(room, { wpm, userId: user });
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
 
-    // this.server.in(room).emit('data', { userId: user, progress: 100, wpm });
+    this.server.in(room).emit('data', { userId: user, progress: 100, wpm });
   }
 }

@@ -29,7 +29,8 @@ let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
 
-  const { progress, inGame, setInGame, results, game } = useTyping();
+  const { progress, inGame, setInGame, setResults, results, game } =
+    useTyping();
   const { user } = useAuth();
 
   const [time, setTime] = useState(0);
@@ -75,6 +76,10 @@ const TypingGame: React.FC<Props> = () => {
       setInGame(true);
     });
 
+    game.on("gameEnd", () => {
+      setResults(true);
+    });
+
     // current game time
     game.on("timer", (time) => {
       setTime(time);
@@ -87,7 +92,7 @@ const TypingGame: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!inGame) return;
-    game.emit("progress", { progress, wpm });
+    game.emit("progress", { progress, wpm: Math.round(wpm) });
   }, [time]);
 
   return (

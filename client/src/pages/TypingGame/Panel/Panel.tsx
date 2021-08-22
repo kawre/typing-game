@@ -100,9 +100,9 @@ const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
     if (!inGame) return;
     const minute = time / 60;
     const correct = prev.words.split(" ").join("").length + prev.chars.length;
-    const wpm = Math.round(correct / 5 / minute);
+    const wpm = correct / 5 / minute;
 
-    if (!Number.isInteger(wpm)) setWpm(0);
+    if (!Number.isInteger(Math.round(wpm))) setWpm(0);
     else setWpm(wpm);
   }, [input, time, inGame]);
 
@@ -149,7 +149,7 @@ export default Panel;
 
 const Wrapper = styled.div`
   padding: 1.5rem;
-  background-color: ${({ theme }) => theme.colors.main15};
+  background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
 
@@ -211,7 +211,7 @@ const Input = styled.input<{ errors: number }>`
   appearance: none;
   border: 0.125rem solid transparent;
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.main15};
+  background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.sm};
   outline: none;
   padding: 0 0.75rem;
@@ -221,7 +221,7 @@ const Input = styled.input<{ errors: number }>`
   line-height: 2.5rem;
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.main30};
+    border-color: ${({ theme }) => theme.colors.main}1a;
     background-color: ${({ theme }) => theme.colors.background};
   }
 
@@ -260,17 +260,17 @@ const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
     css`
       opacity: 1;
       border-color: transparent;
-      animation: flash 600ms ease infinite;
+      animation: flash 1000ms ease infinite;
 
       @keyframes flash {
         0% {
-          border-color: ${theme.colors.correct}00;
+          border-color: ${theme.colors.main}00;
         }
         50% {
-          border-color: ${theme.colors.correct}80;
+          border-color: ${theme.colors.main}99;
         }
         100% {
-          border-color: ${theme.colors.correct}00;
+          border-color: ${theme.colors.main}00;
         }
       }
     `}

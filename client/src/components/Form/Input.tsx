@@ -39,7 +39,7 @@ const Wrapper = styled.input<{ error: boolean }>`
   padding: 8px 16px;
   width: 100%;
   border-radius: ${({ theme }) => theme.rounded.sm};
-  background-color: ${({ theme }) => theme.colors.main15};
+  background-color: ${({ theme }) => theme.colors.main}0d;
   font-size: 1rem;
   transition: 200ms ease-in-out;
 

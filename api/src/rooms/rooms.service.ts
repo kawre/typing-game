@@ -67,4 +67,10 @@ export class RoomsService {
       $push: { 'usersProgress.progress': '2' },
     });
   }
+
+  async submitResult(roomId, { wpm, userId }) {
+    return this.roomModel.findByIdAndUpdate(roomId, {
+      $push: { results: { wpm, userId } },
+    });
+  }
 }
