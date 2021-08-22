@@ -7,6 +7,7 @@ import { getUser } from "../../../api/users";
 import { useState } from "react";
 import { User } from "../../../types/auth.types";
 import { UserHash } from "../TypingGame";
+import { ordinalSuffix } from "../../../utils/ordinalSuffix";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
 const fetchUser = async (id: string) => await getUser(id);
 
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = ({ userId, data: { progress, wpm } }) => {
+const Track: React.FC<Props> = ({ userId, data: { progress, wpm, place } }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -34,7 +35,10 @@ const Track: React.FC<Props> = ({ userId, data: { progress, wpm } }) => {
         <Car left={progress + "%"} />
       </ProgressBar>
       <Wpm>
-        <span>{wpm}</span>wpm
+        {place && <Place>{ordinalSuffix(place)} Place</Place>}
+        <div>
+          <span>{wpm}</span>wpm
+        </div>
       </Wpm>
     </Wrapper>
   );
@@ -67,17 +71,22 @@ const ProgressBar = styled.div`
   position: relative;
 `;
 
-const Wpm = styled.p`
+const Wpm = styled.div`
   text-align: left;
   flex-shrink: 0;
-  margin-left: 12px;
+  margin-left: 24px;
   word-spacing: 0;
   max-height: 60px;
   width: 80px;
 
   span {
-    margin-right: 0.5ch;
+    margin-right: 0.25ch;
   }
+`;
+
+const Place = styled.p`
+  font-size: 12px;
+  font-weight: 600;
 `;
 
 const Username = styled.p`
@@ -85,7 +94,7 @@ const Username = styled.p`
   overflow: hidden;
   overflow-wrap: break-word;
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: 24px;
   width: 80px;
   max-height: 60px;
 `;

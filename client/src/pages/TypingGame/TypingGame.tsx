@@ -18,12 +18,11 @@ export interface Player {
 
 export interface UserHash {
   progress: number;
+  place?: number;
   wpm: number;
 }
 
 export type HashTable = Record<string, UserHash>;
-
-let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
@@ -59,9 +58,9 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     // live game data
-    game.on("data", ({ userId, progress, wpm }) => {
+    game.on("data", ({ userId, progress, wpm, place }) => {
       setHash((prev) => {
-        prev[userId] = { progress, wpm };
+        prev[userId] = { progress, wpm, place: place && place };
         return prev;
       });
       setRender((i) => (i += 1));

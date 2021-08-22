@@ -91,9 +91,8 @@ const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
 
   // progress
   useEffect(() => {
-    if (!crntWord) return;
-    setProgress((crntWord / words.length) * 100);
-  }, [crntWord, prev]);
+    setProgress((prev.words.length / (quote.length - 1)) * 100);
+  }, [input]);
 
   // calculate wpm
   useEffect(() => {
@@ -275,7 +274,3 @@ const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
       }
     `}
 `;
-
-const inputAnimation = {
-  borderColor: `${theme.colors.correct}00`,
-};

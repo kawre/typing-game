@@ -69,10 +69,11 @@ export class RoomsService {
   }
 
   async submitResult(roomId, { wpm, userId }) {
-    return this.roomModel.findById(roomId).then((room) =>
-      room.updateOne({
-        $push: { results: { wpm, userId, place: room.results.length + 1 } },
-      }),
-    );
+    const room = await this.roomModel.findById(roomId);
+
+    const result = { wpm, userId, place: room.results.length + 1 };
+    await room.updateOne({ $push: { results: result } });
+
+    return result;
   }
 }
