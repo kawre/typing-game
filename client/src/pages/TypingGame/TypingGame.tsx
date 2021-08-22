@@ -49,7 +49,8 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     // join room
-    game.emit("joinRoom", ({ ok }: { ok: boolean }) => {
+    game.emit("joinRoom", (ok: boolean) => {
+      console.log(ok);
       if (!ok) history.push("/");
     });
 
@@ -76,7 +77,7 @@ const TypingGame: React.FC<Props> = () => {
 
     // countdown
     game.on("countdown", (time) => {
-      setTime(time);
+      setCountdown(time);
     });
 
     game.on("gameStart", () => {
@@ -102,7 +103,13 @@ const TypingGame: React.FC<Props> = () => {
     <Wrapper>
       <Tracks quote={quote} data={hash} time={time} />
       {quote && (
-        <Panel time={time} disabled={!inGame} quote={quote} setWpm={setWpm} />
+        <Panel
+          time={time}
+          disabled={!inGame}
+          quote={quote}
+          setWpm={setWpm}
+          countdown={countdown}
+        />
       )}
     </Wrapper>
   );

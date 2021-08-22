@@ -34,30 +34,35 @@ export class RoomsGateway {
     try {
       socket.join(room);
 
-      const roomData = await this.roomsService.joinRoom(room, user, () =>
-        this.countdown(room),
+      const { isSearching, users, quote } = await this.roomsService.joinRoom(
+        room,
+        user,
+        () => this.countdown(room),
       );
 
-      this.server.in(room).emit('newUser', roomData);
-      return { ok: true };
+      if (!isSearching) return false;
+
+      this.server.in(room).emit('newUser', { users, quote });
+      return true;
     } catch {
-      return { ok: false };
+      return false;
     }
   }
 
-  countdown(roomId: string) {
-    let s = 3;
+  async countdown(roomId: string) {
+    let s = 5;
 
-    const interval = setInterval(() => {
-      this.server.in(roomId).emit('countdown', s);
+    const interval = setInterval(async () => {
+      s--;
 
       if (s <= 0) {
         clearInterval(interval);
         this.server.in(roomId).emit('gameStart', 300);
         this.timer(roomId);
+        await this.roomsService.update(roomId, { isSearching: false });
       }
 
-      s--;
+      this.server.in(roomId).emit('countdown', s);
     }, 1000);
   }
 

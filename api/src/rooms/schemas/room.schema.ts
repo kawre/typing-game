@@ -8,7 +8,7 @@ export class Room {
   @Prop()
   users: string[];
 
-  @Prop()
+  @Prop({ default: true })
   isSearching: boolean;
 
   @Prop()

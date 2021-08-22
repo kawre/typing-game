@@ -30,11 +30,11 @@ const Track: React.FC<Props> = ({ userId, time, data: { progress, wpm } }) => {
   if (!user) return null;
   return (
     <Wrapper>
-      <Text mr={4}>{user.username}</Text>
+      <Username>{user.username}</Username>
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
-      <Text ml={4}>{wpm} wpm</Text>
+      <Wpm>{wpm} wpm</Wpm>
     </Wrapper>
   );
 };
@@ -44,11 +44,12 @@ export default Track;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 1rem 1.5rem;
   border-bottom: 0.1875rem dashed ${({ theme }) => theme.colors.text};
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 60px;
+  position: relative;
 
   p {
     flex-grow: 0;
@@ -63,4 +64,22 @@ const ProgressBar = styled.div`
   top: 0;
   height: 30px;
   position: relative;
+`;
+
+const Wpm = styled.p`
+  text-align: left;
+  flex-shrink: 0;
+  margin-left: 12px;
+  max-height: 60px;
+  width: 80px;
+`;
+
+const Username = styled.p`
+  text-align: right;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  flex-shrink: 0;
+  margin-right: 12px;
+  width: 80px;
+  max-height: 60px;
 `;

@@ -1,7 +1,10 @@
+import { motion } from "framer-motion";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import Text from "../../../components/Text";
 import { useTyping } from "../../../contexts/GameContext";
+import { theme } from "../../../static/theme";
+import { formatS } from "../../../utils/formatS";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -9,10 +12,17 @@ interface Props {
   disabled: boolean;
   quote: string;
   setWpm: React.Dispatch<React.SetStateAction<number>>;
+  countdown: number;
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ time, disabled, quote, setWpm }) => {
+const Panel: React.FC<Props> = ({
+  time,
+  disabled,
+  quote,
+  setWpm,
+  countdown,
+}) => {
   const { setProgress, progress } = useTyping();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,7 +102,7 @@ const Panel: React.FC<Props> = ({ time, disabled, quote, setWpm }) => {
     <Wrapper>
       <Stats>
         <Text textColor="main">
-          {new Date((300 - time) * 1000).toISOString().substr(15, 4)}
+          {disabled ? formatS(countdown) : formatS(300 - time)}
         </Text>
       </Stats>
       <Container>
@@ -115,7 +125,11 @@ const Panel: React.FC<Props> = ({ time, disabled, quote, setWpm }) => {
           value={input}
           maxLength={words[crntWord].length + 6}
         />
-        {errors === 0 && <CurrentWord>{words[crntWord]}</CurrentWord>}
+        {errors === 0 && (
+          <CurrentWord inGame={!disabled}>
+            {disabled ? "Type here when the race begins" : words[crntWord]}
+          </CurrentWord>
+        )}
       </InputWrapper>
     </Wrapper>
   );
@@ -217,16 +231,43 @@ const InputWrapper = styled.div`
   user-select: none;
 `;
 
-const CurrentWord = styled.div`
+const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
   font-weight: 500;
   font-size: 1.25rem;
   line-height: 2.5rem;
   position: absolute;
   border: 2px solid transparent;
   padding-left: 0.75rem;
+  width: 100%;
   top: 0;
   left: 0;
   opacity: 0.2;
   color: ${({ theme }) => theme.colors.main};
   pointer-events: none;
+  animation: none;
+  border-radius: ${({ theme }) => theme.rounded.sm};
+
+  ${({ inGame, theme }) =>
+    !inGame &&
+    css`
+      opacity: 1;
+      border-color: transparent;
+      animation: flash 600ms ease infinite;
+
+      @keyframes flash {
+        0% {
+          border-color: ${theme.colors.correct}00;
+        }
+        50% {
+          border-color: ${theme.colors.correct}80;
+        }
+        100% {
+          border-color: ${theme.colors.correct}00;
+        }
+      }
+    `}
 `;
+
+const inputAnimation = {
+  borderColor: `${theme.colors.correct}00`,
+};
