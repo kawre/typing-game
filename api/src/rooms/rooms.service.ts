@@ -69,8 +69,10 @@ export class RoomsService {
   }
 
   async submitResult(roomId, { wpm, userId }) {
-    return this.roomModel.findByIdAndUpdate(roomId, {
-      $push: { results: { wpm, userId } },
-    });
+    return this.roomModel.findById(roomId).then((room) =>
+      room.updateOne({
+        $push: { results: { wpm, userId, place: room.results.length + 1 } },
+      }),
+    );
   }
 }

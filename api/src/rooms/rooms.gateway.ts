@@ -91,12 +91,18 @@ export class RoomsGateway {
     const { user, room } = socket.handshake.headers;
 
     try {
-      await this.roomsService.submitResult(room, { wpm, userId: user });
+      const res = await this.roomsService.submitResult(room, {
+        wpm,
+        userId: user,
+      });
+      console.log(res);
     } catch (err) {
       console.log(err);
       throw new Error(err);
     }
 
-    this.server.in(room).emit('data', { userId: user, progress: 100, wpm });
+    this.server
+      .in(room)
+      .emit('data', { userId: user, progress: 100, wpm: Math.round(wpm) });
   }
 }
