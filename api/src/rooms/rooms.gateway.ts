@@ -1,5 +1,4 @@
 import {
-  OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -50,7 +49,7 @@ export class RoomsGateway {
   }
 
   async countdown(roomId: string) {
-    let s = 5;
+    let s = 6;
 
     const interval = setInterval(async () => {
       s--;
@@ -85,5 +84,14 @@ export class RoomsGateway {
     const { user, room } = socket.handshake.headers;
 
     this.server.in(room).emit('data', { userId: user, progress, wpm });
+  }
+
+  @SubscribeMessage('result')
+  result(socket: Socket, { wpm }) {
+    const { user, room } = socket.handshake.headers;
+
+    console.log(wpm);
+
+    // this.server.in(room).emit('data', { userId: user, progress: 100, wpm });
   }
 }

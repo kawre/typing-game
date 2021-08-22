@@ -12,14 +12,13 @@ import { UserHash } from "../TypingGame";
 interface Props {
   data: UserHash;
   userId: string;
-  time: number;
   quote: string;
 }
 
 const fetchUser = async (id: string) => await getUser(id);
 
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = ({ userId, time, data: { progress, wpm } }) => {
+const Track: React.FC<Props> = ({ userId, data: { progress, wpm } }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -34,7 +33,9 @@ const Track: React.FC<Props> = ({ userId, time, data: { progress, wpm } }) => {
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
-      <Wpm>{wpm} wpm</Wpm>
+      <Wpm>
+        <span>{wpm}</span>wpm
+      </Wpm>
     </Wrapper>
   );
 };
@@ -70,8 +71,13 @@ const Wpm = styled.p`
   text-align: left;
   flex-shrink: 0;
   margin-left: 12px;
+  word-spacing: 0;
   max-height: 60px;
   width: 80px;
+
+  span {
+    margin-right: 0.5ch;
+  }
 `;
 
 const Username = styled.p`

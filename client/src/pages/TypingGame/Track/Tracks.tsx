@@ -6,16 +6,15 @@ import Track from "./Track";
 
 interface Props {
   data: HashTable;
-  time: number;
   quote: string;
 }
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = ({ data, time, quote }) => {
+const Tracks: React.FC<Props> = ({ data, quote }) => {
   return (
     <Wrapper>
       {Object.keys(data).map((id) => (
-        <Track key={id} time={time} data={data[id]} userId={id} quote={quote} />
+        <Track key={id} data={data[id]} userId={id} quote={quote} />
       ))}
     </Wrapper>
   );

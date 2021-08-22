@@ -28,30 +28,21 @@ let game: Socket<DefaultEventsMap, DefaultEventsMap>;
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
-  const { id } = useParams<any>();
 
-  const { progress } = useTyping();
+  const { progress, inGame, setInGame, results, game } = useTyping();
   const { user } = useAuth();
 
   const [time, setTime] = useState(0);
-  const [inGame, setInGame] = useState(false);
   const [hash, setHash] = useState({} as HashTable);
   const [quote, setQuote] = useState("");
   const [, setRender] = useState(0);
   const [wpm, setWpm] = useState(0);
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(6);
 
   useEffect(() => {
-    if (!user) return;
-    game = io("http://localhost:5000/games", {
-      withCredentials: true,
-      extraHeaders: { room: id, user: user._id },
-    });
-
     // join room
     game.emit("joinRoom", (ok: boolean) => {
-      console.log(ok);
-      if (!ok) history.push("/");
+      if (!ok) return history.push("/");
     });
 
     // on new user
@@ -95,21 +86,25 @@ const TypingGame: React.FC<Props> = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!game) return;
+    if (!inGame) return;
     game.emit("progress", { progress, wpm });
-  }, [progress, time]);
+  }, [time]);
 
   return (
     <Wrapper>
-      <Tracks quote={quote} data={hash} time={time} />
-      {quote && (
-        <Panel
-          time={time}
-          disabled={!inGame}
-          quote={quote}
-          setWpm={setWpm}
-          countdown={countdown}
-        />
+      <Tracks quote={quote} data={hash} />
+      {!results ? (
+        quote && (
+          <Panel
+            time={time}
+            quote={quote}
+            wpm={wpm}
+            setWpm={setWpm}
+            countdown={countdown}
+          />
+        )
+      ) : (
+        <h1>res</h1>
       )}
     </Wrapper>
   );

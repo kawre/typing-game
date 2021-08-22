@@ -13,6 +13,9 @@ export class Room {
 
   @Prop()
   quote: string;
+
+  @Prop()
+  results: object[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

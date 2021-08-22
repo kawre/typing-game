@@ -9,21 +9,15 @@ import { formatS } from "../../../utils/formatS";
 
 interface Props {
   time: number;
-  disabled: boolean;
   quote: string;
   setWpm: React.Dispatch<React.SetStateAction<number>>;
+  wpm: number;
   countdown: number;
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({
-  time,
-  disabled,
-  quote,
-  setWpm,
-  countdown,
-}) => {
-  const { setProgress, progress } = useTyping();
+const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
+  const { setProgress, setResults, inGame, game } = useTyping();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
@@ -38,6 +32,17 @@ const Panel: React.FC<Props> = ({
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
+
+    if (
+      crntWord === words.length - 1 &&
+      crntInput.length === words[crntWord].length
+    ) {
+      if (words[crntWord].slice(-1) === crntInput.slice(-1)) {
+        setProgress(100);
+        setResults(true);
+        return game.emit("result", { wpm });
+      }
+    }
 
     // space handler
     if (key === " " && input === words[crntWord]) {
@@ -81,8 +86,8 @@ const Panel: React.FC<Props> = ({
 
   // focus input on game start
   useEffect(() => {
-    if (!disabled && inputRef?.current) inputRef.current.focus();
-  }, [disabled]);
+    if (inGame && inputRef?.current) inputRef.current.focus();
+  }, [inGame]);
 
   // progress
   useEffect(() => {
@@ -92,17 +97,20 @@ const Panel: React.FC<Props> = ({
 
   // calculate wpm
   useEffect(() => {
+    if (!inGame) return;
     const minute = time / 60;
     const correct = prev.words.split(" ").join("").length + prev.chars.length;
+    const wpm = Math.round(correct / 5 / minute);
 
-    setWpm(Math.round(correct / 5 / minute));
-  }, [time]);
+    if (!Number.isInteger(wpm)) setWpm(0);
+    else setWpm(wpm);
+  }, [input, time, inGame]);
 
   return (
     <Wrapper>
       <Stats>
         <Text textColor="main">
-          {disabled ? formatS(countdown) : formatS(300 - time)}
+          {inGame ? formatS(300 - time) : formatS(countdown)}
         </Text>
       </Stats>
       <Container>
@@ -119,15 +127,15 @@ const Panel: React.FC<Props> = ({
         <Input
           ref={inputRef}
           errors={errors}
-          disabled={disabled}
+          disabled={!inGame}
           onKeyDown={(e) => setKey(e.key)}
           onChange={handleInput}
           value={input}
           maxLength={words[crntWord].length + 6}
         />
         {errors === 0 && (
-          <CurrentWord inGame={!disabled}>
-            {disabled ? "Type here when the race begins" : words[crntWord]}
+          <CurrentWord inGame={inGame}>
+            {inGame ? words[crntWord] : "Type here when the race begins"}
           </CurrentWord>
         )}
       </InputWrapper>
@@ -220,8 +228,8 @@ const Input = styled.input<{ errors: number }>`
   ${({ errors, theme }) =>
     errors !== 0 &&
     css`
-      border-color: ${theme.colors.error} !important;
       color: ${theme.colors.error} !important;
+      border-color: inherit !important;
     `};
 `;
 
@@ -236,7 +244,7 @@ const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
   font-size: 1.25rem;
   line-height: 2.5rem;
   position: absolute;
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
   padding-left: 0.75rem;
   width: 100%;
   top: 0;
