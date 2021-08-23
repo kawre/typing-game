@@ -67,25 +67,24 @@ export class AuthController {
 
   @Get('token/refresh')
   async refreshToken(
-    @Req() req: Request,
+    @Req() { cookies }: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    let tkn: any;
     try {
-      tkn = this.authService.validateRefreshToken(req.cookies.jwt);
+      const tkn = this.authService.validateRefreshToken(cookies.jwt);
+
+      const user = await this.usersService.findById(tkn.userId);
+      if (!user) throw new GoneException();
+
+      res.cookie('jwt', await this.authService.createRefreshToken(user), {
+        httpOnly: true,
+      });
+
+      return {
+        accessToken: this.authService.createToken(user),
+      };
     } catch (err) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Refresh Token Expired');
     }
-
-    const user = await this.usersService.findById(tkn.userId);
-    if (!user) throw new GoneException();
-
-    res.cookie('jwt', await this.authService.createRefreshToken(user), {
-      httpOnly: true,
-    });
-
-    return {
-      accessToken: this.authService.createToken(user),
-    };
   }
 }

@@ -47,6 +47,7 @@ const GameProvider: React.FC = ({ children }) => {
       withCredentials: true,
       extraHeaders: { room: id, user: user._id },
     });
+
     setGame(game);
 
     return () => {

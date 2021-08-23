@@ -104,15 +104,8 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     else setWpm(wpm);
   }, [input, time, inGame]);
 
-  console.log(countdown <= 3);
-
   return (
     <Wrapper>
-      {/* <Stats>
-        <Text textColor="main">
-          {inGame ? formatS(300 - time) : formatS(countdown)}
-        </Text>
-      </Stats> */}
       <Container>
         <Game>
           {prev.words && <Correct>{prev.words} </Correct>}
@@ -123,24 +116,20 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
       </Container>
-      <InputWrapper>
-        <Input
-          ref={inputRef}
-          errors={errors}
-          disabled={!inGame}
-          onKeyDown={(e) => setKey(e.key)}
-          onChange={handleInput}
-          value={inGame ? input : countdown}
-          maxLength={words[crntWord].length + 6}
-          animate={String(countdown)}
-          variants={variants}
-          transition={{
-            duration: 0.25,
-            ease: "easeIn",
-          }}
-        />
-        {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}
-      </InputWrapper>
+      {inGame ? (
+        <InputWrapper error={errors !== 0}>
+          <Input
+            ref={inputRef}
+            onKeyDown={(e) => setKey(e.key)}
+            onChange={handleInput}
+            value={input}
+            maxLength={words[crntWord].length + 6}
+          />
+          {errors === 0 && <CurrentWord>{words[crntWord]}</CurrentWord>}
+        </InputWrapper>
+      ) : (
+        <h1>elo</h1>
+      )}
     </Wrapper>
   );
 };
@@ -169,14 +158,6 @@ const Char = styled.span`
 `;
 
 const Container = styled.div``;
-
-const Stats = styled.div`
-  margin-bottom: 12px;
-
-  p {
-    font-weight: 500;
-  }
-`;
 
 const Game = styled.div`
   font-size: 1.25rem;
@@ -209,64 +190,59 @@ const Incorrect = styled.span`
 
 const Coming = styled.span``;
 
-const Input = styled(motion.input)<{ errors: number }>`
-  appearance: none;
-  border: 0.125rem solid transparent;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.main}0d;
-  border-radius: ${({ theme }) => theme.rounded.sm};
-  outline: none;
-  padding: 0 0.75rem;
-  color: ${({ theme }) => theme.colors.main};
-  font-weight: 500;
-  font-size: 1.25rem;
-  line-height: 2.5rem;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.main}1a;
-    background-color: ${({ theme }) => theme.colors.background};
-  }
-
-  ${({ errors, theme }) =>
-    errors !== 0 &&
-    css`
-      color: ${theme.colors.error} !important;
-      border-color: inherit !important;
-    `};
-`;
-
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ error: boolean }>`
   margin-top: 1.5rem;
   position: relative;
   user-select: none;
+  overflow: hidden;
+  border: 0.125rem solid ${({ theme }) => theme.colors.main}1a;
+  border-radius: ${({ theme }) => theme.rounded.sm};
+  background-color: ${({ theme }) => theme.colors.main}0d;
+  color: ${({ theme }) => theme.colors.main};
+  padding-left: 0.75rem;
+
+  ${({ theme, error }) =>
+    error &&
+    css`
+      color: ${theme.colors.error};
+      border-color: inherit;
+    `}
 `;
 
-const CurrentWord = styled(motion.div)`
+const Input = styled.input`
+  appearance: none;
+  width: 100%;
+  outline: none;
+  color: inherit;
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 2.5rem;
+`;
+
+const CurrentWord = styled.div`
   font-weight: 500;
   font-size: 1.25rem;
   line-height: 2.5rem;
   position: absolute;
-  border: 0.125rem solid transparent;
-  padding-left: 0.75rem;
   width: 100%;
   top: 0;
   left: 0;
-  opacity: 0.2;
-  color: ${({ theme }) => theme.colors.main};
+  opacity: 1;
   pointer-events: none;
   z-index: -1;
+  padding-left: 0.75rem;
   animation: none;
-  border-radius: ${({ theme }) => theme.rounded.sm};
 `;
 
 const variants = {
-  1: {
-    backgroundColor: "rgb(0, 255, 0)",
-  },
+  // 1: {
+  //   backgroundColor: "rgb(0, 255, 0)",
+  // },
   2: {
-    backgroundColor: "rgb(255, 255, 0)",
+    backgroundColor:
+      "linear-gradient(to left, #333, #333 50%, #eee 75%, #333 75%)",
   },
-  3: {
-    backgroundColor: "rgb(255,0,0)",
-  },
+  // 3: {
+  //   backgroundColor: "rgb(255,0,0)",
+  // },
 };
