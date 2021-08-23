@@ -28,10 +28,17 @@ export type HashTable = Record<string, UserHash>;
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
 
-  const { progress, inGame, setInGame, setResults, results, game } =
-    useTyping();
+  const {
+    progress,
+    inGame,
+    setInGame,
+    setResults,
+    results,
+    game,
+    setTime,
+    time,
+  } = useTyping();
 
-  const [time, setTime] = useState(0);
   const [hash, setHash] = useState({} as HashTable);
   const [quote, setQuote] = useState("");
   const [, setRender] = useState(0);
@@ -95,7 +102,6 @@ const TypingGame: React.FC<Props> = () => {
       {!results ? (
         quote && (
           <Panel
-            time={time}
             quote={quote}
             wpm={wpm}
             setWpm={setWpm}

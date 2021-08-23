@@ -20,6 +20,8 @@ interface Context {
   inGame: boolean;
   setInGame: React.Dispatch<React.SetStateAction<boolean>>;
   game: Socket<DefaultEventsMap, DefaultEventsMap>;
+  setTime: React.Dispatch<React.SetStateAction<number>>;
+  time: number;
 }
 
 const GameContext = createContext<Context>(null!);
@@ -34,6 +36,7 @@ const GameProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
 
   const [progress, setProgress] = useState(0);
+  const [time, setTime] = useState(0);
   const [results, setResults] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [game, setGame] = useState<Context["game"]>();
@@ -63,6 +66,8 @@ const GameProvider: React.FC = ({ children }) => {
     results,
     setResults,
     game: game!,
+    setTime,
+    time,
   };
 
   return (

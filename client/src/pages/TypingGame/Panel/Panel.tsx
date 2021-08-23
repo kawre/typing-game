@@ -8,7 +8,6 @@ import { formatS } from "../../../utils/formatS";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  time: number;
   quote: string;
   setWpm: React.Dispatch<React.SetStateAction<number>>;
   wpm: number;
@@ -16,8 +15,8 @@ interface Props {
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
-  const { setProgress, setResults, inGame, game } = useTyping();
+const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
+  const { setProgress, setResults, inGame, game, time } = useTyping();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
