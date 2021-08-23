@@ -105,13 +105,15 @@ const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
     else setWpm(wpm);
   }, [input, time, inGame]);
 
+  console.log(countdown <= 3);
+
   return (
     <Wrapper>
-      <Stats>
+      {/* <Stats>
         <Text textColor="main">
           {inGame ? formatS(300 - time) : formatS(countdown)}
         </Text>
-      </Stats>
+      </Stats> */}
       <Container>
         <Game>
           {prev.words && <Correct>{prev.words} </Correct>}
@@ -129,14 +131,16 @@ const Panel: React.FC<Props> = ({ time, quote, setWpm, countdown, wpm }) => {
           disabled={!inGame}
           onKeyDown={(e) => setKey(e.key)}
           onChange={handleInput}
-          value={input}
+          value={inGame ? input : countdown}
           maxLength={words[crntWord].length + 6}
+          animate={String(countdown)}
+          variants={variants}
+          transition={{
+            duration: 0.25,
+            ease: "easeIn",
+          }}
         />
-        {errors === 0 && (
-          <CurrentWord inGame={inGame}>
-            {inGame ? words[crntWord] : "Type here when the race begins"}
-          </CurrentWord>
-        )}
+        {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}
       </InputWrapper>
     </Wrapper>
   );
@@ -206,7 +210,7 @@ const Incorrect = styled.span`
 
 const Coming = styled.span``;
 
-const Input = styled.input<{ errors: number }>`
+const Input = styled(motion.input)<{ errors: number }>`
   appearance: none;
   border: 0.125rem solid transparent;
   width: 100%;
@@ -238,7 +242,7 @@ const InputWrapper = styled.div`
   user-select: none;
 `;
 
-const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
+const CurrentWord = styled(motion.div)`
   font-weight: 500;
   font-size: 1.25rem;
   line-height: 2.5rem;
@@ -251,26 +255,19 @@ const CurrentWord = styled(motion.div)<{ inGame: boolean }>`
   opacity: 0.2;
   color: ${({ theme }) => theme.colors.main};
   pointer-events: none;
+  z-index: -1;
   animation: none;
   border-radius: ${({ theme }) => theme.rounded.sm};
-
-  ${({ inGame, theme }) =>
-    !inGame &&
-    css`
-      opacity: 1;
-      border-color: transparent;
-      animation: flash 1000ms ease infinite;
-
-      @keyframes flash {
-        0% {
-          border-color: ${theme.colors.main}00;
-        }
-        50% {
-          border-color: ${theme.colors.main}99;
-        }
-        100% {
-          border-color: ${theme.colors.main}00;
-        }
-      }
-    `}
 `;
+
+const variants = {
+  1: {
+    backgroundColor: "rgb(0, 255, 0)",
+  },
+  2: {
+    backgroundColor: "rgb(255, 255, 0)",
+  },
+  3: {
+    backgroundColor: "rgb(255,0,0)",
+  },
+};

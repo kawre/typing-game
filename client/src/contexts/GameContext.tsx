@@ -39,13 +39,16 @@ const GameProvider: React.FC = ({ children }) => {
   const [game, setGame] = useState<Context["game"]>();
 
   useEffect(() => {
-    if (user)
-      setGame(
-        io("http://localhost:5000/games", {
-          withCredentials: true,
-          extraHeaders: { room: id, user: user._id },
-        })
-      );
+    if (!user) return;
+    const game = io("http://localhost:5000/games", {
+      withCredentials: true,
+      extraHeaders: { room: id, user: user._id },
+    });
+    setGame(game);
+
+    return () => {
+      game.disconnect();
+    };
   }, [user]);
 
   useEffect(() => {

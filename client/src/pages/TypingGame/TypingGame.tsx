@@ -30,7 +30,6 @@ const TypingGame: React.FC<Props> = () => {
 
   const { progress, inGame, setInGame, setResults, results, game } =
     useTyping();
-  const { user } = useAuth();
 
   const [time, setTime] = useState(0);
   const [hash, setHash] = useState({} as HashTable);
@@ -83,11 +82,7 @@ const TypingGame: React.FC<Props> = () => {
     game.on("timer", (time) => {
       setTime(time);
     });
-
-    return () => {
-      game.disconnect();
-    };
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (!inGame) return;

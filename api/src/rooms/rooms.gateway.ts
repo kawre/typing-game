@@ -1,4 +1,5 @@
 import {
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -13,13 +14,17 @@ import { RoomsService } from './rooms.service';
     credentials: true,
   },
 })
-export class RoomsGateway {
+export class RoomsGateway implements OnGatewayDisconnect {
   constructor(private readonly roomsService: RoomsService) {}
   @WebSocketServer() server: Server;
 
+  handleDisconnect(socket: Socket) {
+    const { user } = socket.handshake.headers;
+    console.log(user);
+  }
+
   @SubscribeMessage('findRoom')
   async findRoom() {
-    await this.roomsService.clearDB();
     let room = await this.roomsService.findFirst();
     if (!room) room = await this.roomsService.create();
 
@@ -72,7 +77,7 @@ export class RoomsGateway {
 
       if (s >= 300) {
         clearInterval(interval);
-        this.server.in(roomId).emit('endGame');
+        this.server.in(roomId).emit('gameEnd');
       }
 
       this.server.in(roomId).emit('timer', s);

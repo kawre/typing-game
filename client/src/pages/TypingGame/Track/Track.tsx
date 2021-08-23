@@ -80,7 +80,8 @@ const Wpm = styled.div`
   width: 80px;
 
   span {
-    margin-right: 0.25ch;
+    margin-right: 0.33ch;
+    font-weight: 600;
   }
 `;
 
