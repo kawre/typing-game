@@ -98,7 +98,7 @@ const TypingGame: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Tracks quote={quote} data={hash} />
+      <Tracks cntdwn={countdown} data={hash} />
       {!results ? (
         quote && (
           <Panel

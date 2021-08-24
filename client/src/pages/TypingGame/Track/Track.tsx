@@ -1,19 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useTyping } from "../../../contexts/GameContext";
-import Car from "../../../static/images/Car";
-import Text from "../../../components/Text";
 import { getUser } from "../../../api/users";
-import { useState } from "react";
+import Car from "../../../static/images/Car";
 import { User } from "../../../types/auth.types";
-import { UserHash } from "../TypingGame";
 import { ordinalSuffix } from "../../../utils/ordinalSuffix";
+import { UserHash } from "../TypingGame";
 // Types -------------------------------------------------------------------------
 
 interface Props {
   data: UserHash;
   userId: string;
-  quote: string;
 }
 
 const fetchUser = async (id: string) => await getUser(id);

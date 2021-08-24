@@ -116,20 +116,17 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
           {next.words && <Coming> {next.words}</Coming>}
         </Game>
       </Container>
-      {inGame ? (
-        <InputWrapper error={errors !== 0}>
-          <Input
-            ref={inputRef}
-            onKeyDown={(e) => setKey(e.key)}
-            onChange={handleInput}
-            value={input}
-            maxLength={words[crntWord].length + 6}
-          />
-          {errors === 0 && <CurrentWord>{words[crntWord]}</CurrentWord>}
-        </InputWrapper>
-      ) : (
-        <h1>elo</h1>
-      )}
+      <InputWrapper error={errors !== 0}>
+        <Input
+          ref={inputRef}
+          disabled={!inGame}
+          onKeyDown={(e) => setKey(e.key)}
+          onChange={handleInput}
+          value={inGame ? input : countdown}
+          maxLength={words[crntWord].length + 6}
+        />
+        {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}
+      </InputWrapper>
     </Wrapper>
   );
 };
@@ -195,11 +192,9 @@ const InputWrapper = styled.div<{ error: boolean }>`
   position: relative;
   user-select: none;
   overflow: hidden;
-  border: 0.125rem solid ${({ theme }) => theme.colors.main}1a;
+  border: 0.125rem solid ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.sm};
-  background-color: ${({ theme }) => theme.colors.main}0d;
   color: ${({ theme }) => theme.colors.main};
-  padding-left: 0.75rem;
 
   ${({ theme, error }) =>
     error &&
@@ -210,6 +205,7 @@ const InputWrapper = styled.div<{ error: boolean }>`
 `;
 
 const Input = styled.input`
+  background-color: ${({ theme }) => theme.colors.main}0d;
   appearance: none;
   width: 100%;
   outline: none;
@@ -217,6 +213,12 @@ const Input = styled.input`
   font-weight: 500;
   font-size: 1.25rem;
   line-height: 2.5rem;
+  padding-left: 0.75rem;
+  z-index: 2;
+
+  &:focus {
+    background: ${({ theme }) => theme.colors.background};
+  }
 `;
 
 const CurrentWord = styled.div`
@@ -227,22 +229,10 @@ const CurrentWord = styled.div`
   width: 100%;
   top: 0;
   left: 0;
-  opacity: 1;
+  opacity: 0.25;
+  color: inherit;
   pointer-events: none;
-  z-index: -1;
   padding-left: 0.75rem;
   animation: none;
+  z-index: 1;
 `;
-
-const variants = {
-  // 1: {
-  //   backgroundColor: "rgb(0, 255, 0)",
-  // },
-  2: {
-    backgroundColor:
-      "linear-gradient(to left, #333, #333 50%, #eee 75%, #333 75%)",
-  },
-  // 3: {
-  //   backgroundColor: "rgb(255,0,0)",
-  // },
-};
