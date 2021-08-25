@@ -103,6 +103,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     if (!Number.isInteger(Math.round(wpm))) setWpm(0);
     else setWpm(wpm);
   }, [input, time, inGame]);
+  console.log("provalo");
 
   return (
     <Wrapper>
