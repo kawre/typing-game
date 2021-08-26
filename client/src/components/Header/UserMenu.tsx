@@ -6,8 +6,6 @@ import styled from "styled-components";
 
 interface Props {}
 
-const items = ["login", "register"];
-
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = () => {
   return (
