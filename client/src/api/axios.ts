@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { Token } from "../utils/Token";
+import { Token } from "../utils/Objects/Token";
 
 const instance = axios.create({
   baseURL: "http://localhost:5000/api",

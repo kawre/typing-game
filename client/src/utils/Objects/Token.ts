@@ -1,4 +1,4 @@
-import instance from "../api/axios";
+import instance from "../../api/axios";
 
 export class Token {
   private static readonly TOKEN_NAME = "token";

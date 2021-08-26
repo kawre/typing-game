@@ -19,8 +19,7 @@ const Track: React.FC<Props> = ({ userId, data: { progress, wpm, place } }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    if (!userId) return;
-    fetchUser(userId).then((res) => setUser(res));
+    if (userId) fetchUser(userId).then((res) => setUser(res));
   }, [userId]);
 
   if (!user) return null;

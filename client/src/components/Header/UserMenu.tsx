@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -10,7 +11,16 @@ const items = ["login", "register"];
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = () => {
   return (
-    <Wrapper>
+    <Wrapper
+      initial={{ scale: 0 }}
+      animate={{
+        scale: 1,
+        transition: {
+          duration: 0.25,
+          ease: "backInOut",
+        },
+      }}
+    >
       <Link to="/login">
         <Item>User</Item>
       </Link>
@@ -29,7 +39,7 @@ export default UserMenu;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   position: absolute;
   margin-top: 10px;
   right: 0;

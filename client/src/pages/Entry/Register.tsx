@@ -7,7 +7,7 @@ import Text from "../../components/Text";
 import { Link } from "react-router-dom";
 import { register } from "../../api/auth";
 import { mapErrors } from "../../utils/mapErrors";
-import { Token } from "../../utils/Token";
+import { Token } from "../../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Props {}

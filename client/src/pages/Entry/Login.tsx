@@ -6,7 +6,7 @@ import { login } from "../../api/auth";
 import Button from "../../components/Button";
 import Input from "../../components/Form/Input";
 import Text from "../../components/Text";
-import { Token } from "../../utils/Token";
+import { Token } from "../../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
