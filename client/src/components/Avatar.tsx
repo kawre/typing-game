@@ -1,16 +1,19 @@
 import React, { HTMLAttributes } from "react";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegUserCircle, FaUserCircle } from "react-icons/fa";
 import styled from "styled-components";
 import { size, SizeProps, space, SpaceProps } from "styled-system";
+import { useAuth } from "../contexts/AuthContext";
 // Types -------------------------------------------------------------------------
 
 interface Props extends SpaceProps, SizeProps, HTMLAttributes<HTMLDivElement> {}
 
 // Component ---------------------------------------------------------------------
 const Avatar: React.FC<Props> = (props) => {
+  const { user } = useAuth();
+
   return (
     <Wrapper {...props}>
-      <FaRegUserCircle />
+      {user ? <FaUserCircle /> : <FaRegUserCircle />}
     </Wrapper>
   );
 };

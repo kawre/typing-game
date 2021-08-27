@@ -1,6 +1,6 @@
-import React from "react";
+import React, { createElement } from "react";
 import { useState } from "react";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaCog, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../Avatar";
@@ -8,13 +8,19 @@ import OutsideClickHandler from "react-outside-click-handler";
 import Heading from "../Heading";
 import Text from "../Text";
 import UserMenu from "./UserMenu";
+import Icon from "../Icon";
+import Modal from "../Modal";
 // Types -------------------------------------------------------------------------
+
+export type Event = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [event, setEvent] = useState({} as Event);
+
   return (
     <Wrapper>
       <Left>
@@ -32,10 +38,18 @@ const Header: React.FC<Props> = () => {
         </Shop>
         <Divider />
         <Menu>
-          <OutsideClickHandler onOutsideClick={() => setMenuOpen(false)}>
-            <Avatar onClick={() => setMenuOpen(!menuOpen)} />
-            {menuOpen && <UserMenu />}
-          </OutsideClickHandler>
+          <Icon as={FaCog} size={22} />
+          <>
+            <Avatar
+              onClick={(e) => {
+                setEvent(e);
+                setMenuOpen(true);
+              }}
+            />
+            <Modal open={menuOpen} setOpen={setMenuOpen} e={event}>
+              <UserMenu />
+            </Modal>
+          </>
         </Menu>
       </Right>
     </Wrapper>
@@ -55,6 +69,13 @@ const Wrapper = styled.div`
 
 const Menu = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+
+  div:not(:first-child) {
+    margin-left: 12px;
+  }
+
   z-index: 999;
 `;
 

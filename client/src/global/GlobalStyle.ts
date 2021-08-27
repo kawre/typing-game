@@ -15,6 +15,13 @@ body, input, button {
 	font-family: ${({ theme }) => theme.font};
 }
 
+#portal {
+	position: absolute;
+	inset: 0;
+	z-index: 999;
+	pointer-events: none;
+}
+
 input, button {
 	border: none;
 	background: none;
