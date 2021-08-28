@@ -14,6 +14,7 @@ interface Props {
 // Component ---------------------------------------------------------------------
 const Modal: React.FC<Props> = ({ children, open, setOpen, e }) => {
   if (!open) return null;
+  console.log("porvalo");
 
   return createPortal(
     <AnimatePresence>
