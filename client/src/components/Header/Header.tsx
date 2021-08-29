@@ -10,16 +10,20 @@ import Text from "../Text";
 import UserMenu from "./UserMenu";
 import Icon from "../Icon";
 import Modal from "../Modal";
+import { useRef } from "react";
 // Types -------------------------------------------------------------------------
 
-export type Event = React.MouseEvent<HTMLDivElement, MouseEvent>;
+export type Pos = React.MouseEvent<
+  HTMLDivElement,
+  MouseEvent
+>["currentTarget"]["getBoundingClientRect"];
 
 interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [event, setEvent] = useState({} as Event);
+  const [pos, setPos] = useState({} as Pos);
 
   return (
     <Wrapper>
@@ -42,11 +46,11 @@ const Header: React.FC<Props> = () => {
           <>
             <Avatar
               onClick={(e) => {
-                setEvent(e);
+                setPos(e.currentTarget.getBoundingClientRect());
                 setMenuOpen(true);
               }}
             />
-            <Modal open={menuOpen} setOpen={setMenuOpen} e={event}>
+            <Modal open={menuOpen} setOpen={setMenuOpen} pos={pos}>
               <UserMenu />
             </Modal>
           </>

@@ -8,13 +8,12 @@ import styled from "styled-components";
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  e: React.MouseEvent<HTMLDivElement, MouseEvent>;
+  pos?: DOMRect;
 }
 
 // Component ---------------------------------------------------------------------
-const Modal: React.FC<Props> = ({ children, open, setOpen, e }) => {
+const Modal: React.FC<Props> = ({ children, open, setOpen, pos }) => {
   if (!open) return null;
-  console.log("porvalo");
 
   return createPortal(
     <AnimatePresence>
@@ -22,6 +21,7 @@ const Modal: React.FC<Props> = ({ children, open, setOpen, e }) => {
         <Wrapper>
           <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
             <Content
+              style={{ top: pos?.top, left: pos?.left }}
               initial={{ scale: 0 }}
               animate={{
                 scale: 1,
