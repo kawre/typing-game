@@ -8,11 +8,10 @@ import styled from "styled-components";
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  pos?: DOMRect;
 }
 
 // Component ---------------------------------------------------------------------
-const Modal: React.FC<Props> = ({ children, open, setOpen, pos }) => {
+const Modal: React.FC<Props> = ({ children, open, setOpen }) => {
   if (!open) return null;
 
   return createPortal(
@@ -21,7 +20,6 @@ const Modal: React.FC<Props> = ({ children, open, setOpen, pos }) => {
         <Wrapper>
           <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
             <Content
-              style={{ top: pos?.top, left: pos?.left }}
               initial={{ scale: 0 }}
               animate={{
                 scale: 1,

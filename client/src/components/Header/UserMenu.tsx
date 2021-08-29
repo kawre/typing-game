@@ -10,12 +10,14 @@ import Modal from "../Modal";
 import Text from "../Text";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 // Component ---------------------------------------------------------------------
-const UserMenu: React.FC<Props> = () => {
+const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
   const { user } = useAuth();
-  const [open, setOpen] = useState(false);
 
   return (
     <Wrapper>
