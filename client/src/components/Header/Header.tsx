@@ -10,12 +10,14 @@ import Text from "../Text";
 import UserMenu from "./UserMenu";
 import Icon from "../Icon";
 import Modal from "../Modal";
+import { useAuth } from "../../contexts/AuthContext";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
+  const { user } = useAuth();
   return (
     <Wrapper>
       <Left>
@@ -36,6 +38,11 @@ const Header: React.FC<Props> = () => {
           <Link to="/settings">
             <Icon as={FaCog} size={22} />
           </Link>
+          {user && (
+            <UserStats>
+              <Text fontSize={14}>{user.username}</Text>
+            </UserStats>
+          )}
           <Avatar ml={3} />
         </Menu>
       </Right>
@@ -110,4 +117,10 @@ export const Divider = styled.div`
   opacity: 0.5;
   background-color: ${({ theme }) => theme.colors.text};
   margin: 0 24px;
+`;
+
+const UserStats = styled.div`
+  p {
+    color: ${({ theme }) => theme.colors.main};
+  }
 `;

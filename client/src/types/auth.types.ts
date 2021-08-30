@@ -6,3 +6,5 @@ export interface User {
   username: string;
   email: string;
 }
+
+export type UserRes = User | undefined | null;

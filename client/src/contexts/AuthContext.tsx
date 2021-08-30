@@ -1,14 +1,12 @@
-import { useState } from "react";
-import { useEffect } from "react";
 import { createContext, useContext } from "react";
-import { useHistory } from "react-router-dom";
-import { logout, me } from "../api/auth";
-import { User } from "../types/auth.types";
-import { Token } from "../utils/Objects/Token";
+import { useQuery } from "react-query";
+import { me } from "../api/auth";
+import { useMe } from "../hooks/hooks";
+import { UserRes } from "../types/auth.types";
 // Types -------------------------------------------------------------------------
 
 interface Context {
-  user: User | undefined;
+  user: UserRes;
 }
 
 const AuthContext = createContext<Context>(null!);
@@ -19,16 +17,7 @@ export const useAuth = () => {
 
 // Component ---------------------------------------------------------------------
 const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<Context["user"]>(undefined);
-
-  const getMe = async () => {
-    const res = await me();
-    setUser(res);
-  };
-
-  useEffect(() => {
-    getMe();
-  }, []);
+  const { data: user } = useMe();
 
   const value = { user };
 

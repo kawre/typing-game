@@ -1,8 +1,10 @@
+import { Form, Formik } from "formik";
 import React from "react";
-import styled from "styled-components";
-import { Formik, Form } from "formik";
+import { useMutation } from "react-query";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 import { login } from "../../api/auth";
+import { client } from "../../components/AppWrapper";
 import Button from "../../components/Button";
 import Input from "../../components/Form/Input";
 import Text from "../../components/Text";
@@ -13,11 +15,15 @@ interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Login: React.FC<Props> = () => {
+  const { mutateAsync } = useMutation("me", login);
+
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
       onSubmit={async (input: any, { setErrors }) => {
-        const res = await login(input);
+        const res = await mutateAsync(input, {
+          onSuccess: () => client.invalidateQueries(),
+        });
 
         const hash: Record<string, string> = {};
         Object.keys(input).forEach((m) => {

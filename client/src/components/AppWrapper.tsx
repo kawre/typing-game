@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import AuthProvider from "../contexts/AuthContext";
@@ -14,6 +15,8 @@ import Layout from "./Layout";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
+
+export const client = new QueryClient();
 
 // Component ---------------------------------------------------------------------
 const AppWrapper: React.FC<Props> = ({ children }) => {
@@ -37,19 +40,21 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
   }, [localStorage.getItem("theme")]);
 
   return (
-    <AuthProvider>
-      <GlobalProvider>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <BrowserRouter>
-            <Layout>
-              <Header />
-              {children}
-            </Layout>
-          </BrowserRouter>
-        </ThemeProvider>
-      </GlobalProvider>
-    </AuthProvider>
+    <QueryClientProvider client={client}>
+      <AuthProvider>
+        <GlobalProvider>
+          <ThemeProvider theme={theme}>
+            <GlobalStyle />
+            <BrowserRouter>
+              <Layout>
+                <Header />
+                {children}
+              </Layout>
+            </BrowserRouter>
+          </ThemeProvider>
+        </GlobalProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 

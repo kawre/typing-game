@@ -2,12 +2,13 @@ import { motion } from "framer-motion";
 import React from "react";
 import { FaSignInAlt, FaSignOutAlt, FaUser, FaUserPlus } from "react-icons/fa";
 import OutsideClickHandler from "react-outside-click-handler";
+import { useMutation } from "react-query";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { logout } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthContext";
+import { client } from "../AppWrapper";
 import Icon from "../Icon";
-import Text from "../Text";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -17,6 +18,9 @@ interface Props {
 
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
+  const { mutateAsync } = useMutation("me", logout, {
+    onSuccess: () => client.invalidateQueries(),
+  });
   const { user } = useAuth();
   const history = useHistory();
 
@@ -42,7 +46,12 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
                   <Icon as={FaUser} ml={2} size={16} />
                 </Item>
               </Link>
-              <Item onClick={() => logout().then(() => history.push("/"))}>
+              <Item
+                onClick={async () => {
+                  const ok = await mutateAsync();
+                  if (ok) history.push("/");
+                }}
+              >
                 Log Out
                 <Icon as={FaSignOutAlt} ml={2} size={18} />
               </Item>
