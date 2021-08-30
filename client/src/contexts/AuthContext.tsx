@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { createContext, useContext } from "react";
-import { me } from "../api/auth";
+import { useHistory } from "react-router-dom";
+import { logout, me } from "../api/auth";
 import { User } from "../types/auth.types";
+import { Token } from "../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Context {

@@ -9,6 +9,7 @@ import {
   Get,
   UnauthorizedException,
   GoneException,
+  Patch,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { UsersService } from '../users/users.service';
@@ -51,6 +52,16 @@ export class AuthController {
     return {
       accessToken: this.authService.createToken(req.user),
     };
+  }
+
+  @Patch('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    try {
+      res.clearCookie('jwt');
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   @Get('me')

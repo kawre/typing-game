@@ -24,10 +24,17 @@ const App: React.FC<Props> = () => {
           </GameProvider>
         )}
       />
-      <FormWrapper>
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-      </FormWrapper>
+      <Route
+        exact
+        path={["/login", "/register"]}
+        component={() => (
+          <FormWrapper>
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+          </FormWrapper>
+        )}
+      />
+      <Route component={() => <h1>porvalo</h1>} />
     </Switch>
   );
 };

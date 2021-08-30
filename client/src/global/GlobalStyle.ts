@@ -33,12 +33,7 @@ input, button {
 
 a {
 	text-decoration: none;
-  text-decoration-color: inherit;
-	color: inherit;
-
-	&:hover{
-		text-decoration: underline;
-	}
+	color: inherit; 
 }
 
 button {

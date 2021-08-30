@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import React from "react";
-import { useState } from "react";
-import { FaSignOutAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaSignInAlt, FaSignOutAlt, FaUser, FaUserPlus } from "react-icons/fa";
+import OutsideClickHandler from "react-outside-click-handler";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { logout } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthContext";
 import Icon from "../Icon";
-import Modal from "../Modal";
 import Text from "../Text";
 // Types -------------------------------------------------------------------------
 
@@ -18,24 +18,53 @@ interface Props {
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
   const { user } = useAuth();
+  const history = useHistory();
 
+  if (!open) return null;
   return (
     <Wrapper>
-      {user ? (
-        <Item onClick={() => setOpen(!open)}>
-          <Text>Log Out</Text>
-          <Icon as={FaSignOutAlt} size={18} />
-        </Item>
-      ) : (
-        <>
-          <Link to="/login">
-            <Item>Log In</Item>
-          </Link>
-          <Link to="/register">
-            <Item>Sign Up</Item>
-          </Link>
-        </>
-      )}
+      <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
+        <Menu
+          initial={{ scale: 0 }}
+          animate={{
+            scale: 1,
+            transition: {
+              duration: 0.2,
+              ease: "backOut",
+            },
+          }}
+        >
+          {user ? (
+            <>
+              <Link to={`/user/${user._id}`}>
+                <Item>
+                  Profile
+                  <Icon as={FaUser} ml={2} size={16} />
+                </Item>
+              </Link>
+              <Item onClick={() => logout().then(() => history.push("/"))}>
+                Log Out
+                <Icon as={FaSignOutAlt} ml={2} size={18} />
+              </Item>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <Item>
+                  Log In
+                  <Icon as={FaSignInAlt} ml={2} size={18} />
+                </Item>
+              </Link>
+              <Link to="/register">
+                <Item>
+                  Sign Up
+                  <Icon as={FaUserPlus} ml={2} size={18} />
+                </Item>
+              </Link>
+            </>
+          )}
+        </Menu>
+      </OutsideClickHandler>
     </Wrapper>
   );
 };
@@ -44,12 +73,21 @@ export default UserMenu;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled(motion.div)`
+const Wrapper = styled.div`
+  position: absolute;
+  top: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
+const Menu = styled(motion.div)`
   background-color: ${({ theme }) => theme.colors.main};
   box-shadow: ${({ theme }) => theme.shadow.sm};
   border-radius: ${({ theme }) => theme.rounded.md};
   color: ${({ theme }) => theme.colors.background};
   max-width: 600px;
+  position: relative;
+  padding: 0.5rem 0;
 
   &::after {
     content: "";
@@ -71,15 +109,12 @@ const Item = styled.div`
   text-align: center;
   justify-content: center;
   min-width: 200px;
-  padding: 24px 0;
+  padding: 16px 0;
   position: relative;
   cursor: pointer;
-
-  p {
-    font-size: 14px;
-    font-weight: 500;
-    color: inherit;
-  }
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
 
   svg {
     color: inherit;

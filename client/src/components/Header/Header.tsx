@@ -16,8 +16,6 @@ interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <Wrapper>
       <Left>
@@ -35,11 +33,10 @@ const Header: React.FC<Props> = () => {
         </Shop>
         <Divider />
         <Menu>
-          <Icon as={FaCog} size={22} />
-          <>
-            <Avatar onClick={(e) => setMenuOpen(true)} />
-            <UserMenu open={menuOpen} />
-          </>
+          <Link to="/settings">
+            <Icon as={FaCog} size={22} />
+          </Link>
+          <Avatar ml={3} />
         </Menu>
       </Right>
     </Wrapper>
@@ -62,9 +59,9 @@ const Menu = styled.div`
   display: flex;
   align-items: center;
 
-  div:not(:first-child) {
+  /* div:not(:first-child) {
     margin-left: 12px;
-  }
+  } */
 
   z-index: 999;
 `;
