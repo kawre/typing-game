@@ -38,12 +38,14 @@ const Header: React.FC<Props> = () => {
           <Link to="/settings">
             <Icon as={FaCog} size={22} />
           </Link>
-          {user && (
+          {user ? (
             <UserStats>
               <Text fontSize={14}>{user.username}</Text>
+              <Avatar ml={3} />
             </UserStats>
+          ) : (
+            <Avatar ml={3} />
           )}
-          <Avatar ml={3} />
         </Menu>
       </Right>
     </Wrapper>
@@ -120,6 +122,14 @@ export const Divider = styled.div`
 `;
 
 const UserStats = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-left: 12px;
+  background-color: ${({ theme }) => theme.colors.main}0d;
+  border-radius: ${({ theme }) => theme.rounded.md};
+
   p {
     color: ${({ theme }) => theme.colors.main};
   }
