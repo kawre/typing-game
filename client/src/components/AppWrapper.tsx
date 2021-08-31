@@ -26,7 +26,7 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
       md: "5px",
       lg: "7px",
     },
-    font: "'Fira Code', monospace",
+    font: `"Fira Code", "Roboto Mono"`,
     colors: themes[Theme.get() || "paper"],
     shadow: {
       sm: "0 0 9px #0000001A",
@@ -37,8 +37,10 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
   });
 
   useEffect(() => {
-    console.log("porvalo");
-  }, [localStorage]);
+    window.addEventListener("storage", () => {
+      console.log("elo");
+    });
+  }, []);
 
   return (
     <QueryClientProvider client={client}>

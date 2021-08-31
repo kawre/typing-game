@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import { Document } from 'mongoose';
 
@@ -25,6 +25,15 @@ export class User {
   @Prop({ default: 0 })
   @Exclude()
   tokenVersion: number;
+
+  @Prop(
+    raw({
+      fontSize: { type: Number, default: 1.25 },
+      fontFamily: { type: String, default: 'Fira Code' },
+      theme: { type: String, default: 'light' },
+    }),
+  )
+  config: Record<string, any>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

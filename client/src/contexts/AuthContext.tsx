@@ -19,7 +19,7 @@ export const useAuth = () => {
 const AuthProvider: React.FC = ({ children }) => {
   const { data: user } = useMe();
 
-  const value = { user };
+  const value = { user: user! };
 
   return (
     <AuthContext.Provider value={value}>

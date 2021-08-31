@@ -1,4 +1,5 @@
 import { useHistory } from "react-router-dom";
+import { UserRes } from "../types/auth.types";
 import { Token } from "../utils/Objects/Token";
 import auth from "./axios";
 
@@ -25,4 +26,5 @@ export const logout = () =>
       return data;
     });
 
-export const me = () => auth.get("/auth/me").then((res) => res.data);
+export const me = (): Promise<UserRes> =>
+  auth.get("/auth/me").then((res) => res.data);

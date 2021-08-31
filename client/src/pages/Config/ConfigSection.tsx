@@ -1,23 +1,39 @@
 import React from "react";
-import styled from "styled-components";
-import Heading from "../../components/Heading";
+import styled, { css } from "styled-components";
+import { useAuth } from "../../contexts/AuthContext";
+import { Config } from "../../utils/Objects/Config";
+import { toCamelCase } from "../../utils/toCamelCase";
 // Types -------------------------------------------------------------------------
 
 interface Props {
   btns: string[];
+  name: string;
+  text?: string;
 }
 
 // Component ---------------------------------------------------------------------
-const ConfigSection: React.FC<Props> = ({ btns, children }) => {
+const ConfigSection: React.FC<Props> = ({ btns, text, name }) => {
+  const { user } = useAuth();
+
   return (
     <Wrapper>
-      <h1>font size</h1>
+      <h1>{name}</h1>
       <Bottom>
-        <Text>Change the font size of the test words.</Text>
+        {text && <Text>{text}</Text>}
         <Buttons>
-          {btns.map((btn) => {
+          {btns.map((btn, i) => {
             let active = true;
-            return <Button active={active}>{btn}</Button>;
+            return (
+              <Button
+                key={i}
+                active={!active}
+                onClick={() =>
+                  Config.set(user?._id!, { [toCamelCase(name)]: btn })
+                }
+              >
+                {btn}
+              </Button>
+            );
           })}
         </Buttons>
       </Bottom>
@@ -50,19 +66,34 @@ const Buttons = styled.div`
   width: 100%;
   display: grid;
   grid-auto-flow: column;
-  grid-gap: 0.5rem;
+  grid-auto-columns: 1fr;
+  gap: 0.5rem;
 `;
 
 const Button = styled.div<{ active: boolean }>`
-  width: 100%;
-  height: 100%;
   line-height: 1rem;
   transition: 250ms;
   cursor: pointer;
   text-align: center;
   padding: 0.4rem;
   user-select: none;
-  border-radius: ${({ theme }) => theme.rounded.sm};
-  background-color: ${({ theme, active }) =>
-    !active ? theme.colors.main : theme.colors.main}1a;
+  border-radius: 0.25rem;
+  align-content: center;
+  height: min-content;
+
+  ${({ active, theme }) =>
+    active
+      ? css`
+          color: ${theme.colors.background};
+          background-color: ${theme.colors.main};
+        `
+      : css`
+          color: ${theme.colors.main};
+          background-color: ${theme.colors.main}1a;
+        `}
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.background};
+    background-color: ${({ theme }) => theme.colors.main};
+  }
 `;

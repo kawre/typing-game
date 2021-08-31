@@ -5,6 +5,13 @@ export interface User {
   password: string;
   username: string;
   email: string;
+  config: Config;
 }
 
-export type UserRes = User | undefined | null;
+export interface Config {
+  fontSize: number;
+  fontFamily: string;
+  theme: string;
+}
+
+export type UserRes = User | null;
