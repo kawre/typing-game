@@ -1,5 +1,5 @@
 import React from "react";
-import { FaCog, FaShoppingCart } from "react-icons/fa";
+import { FaCog, FaMoon, FaShoppingCart, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
@@ -35,6 +35,12 @@ const Header: React.FC<Props> = () => {
           <Link to="/settings">
             <Icon as={FaCog} size={22} />
           </Link>
+          {/* <Icon
+            as={!Config.get("darkMode") ? FaMoon : FaSun}
+            onClick={() =>
+              Config.set({ darkMode: !Config.get("darkMode") }, user?._id)
+            }
+          /> */}
           {user ? (
             <UserStats>
               <Text fontSize={14}>{user.username}</Text>

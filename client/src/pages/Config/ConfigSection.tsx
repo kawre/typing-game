@@ -1,8 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
-import { Config } from "../../utils/Objects/Config";
-import { toCamelCase } from "../../utils/toCamelCase";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -27,9 +25,9 @@ const ConfigSection: React.FC<Props> = ({ btns, text, name }) => {
               <Button
                 key={i}
                 active={!active}
-                onClick={() =>
-                  Config.set(user?._id!, { [toCamelCase(name)]: btn })
-                }
+                // onClick={() =>
+                // Config.set({ [toCamelCase(name)]: btn }, user?._id)
+                // }
               >
                 {btn}
               </Button>

@@ -5,13 +5,13 @@ export interface User {
   password: string;
   username: string;
   email: string;
-  config: Config;
+  config: IConfig;
 }
 
-export interface Config {
+export interface IConfig {
   fontSize: number;
   fontFamily: string;
-  theme: string;
+  darkMode: boolean;
 }
 
 export type UserRes = User | null;

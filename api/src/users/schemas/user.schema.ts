@@ -30,7 +30,7 @@ export class User {
     raw({
       fontSize: { type: Number, default: 1.25 },
       fontFamily: { type: String, default: 'Fira Code' },
-      theme: { type: String, default: 'light' },
+      darkMode: { type: Boolean, default: false },
     }),
   )
   config: Record<string, any>;

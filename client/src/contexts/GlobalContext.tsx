@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
+import { useAuth } from "./AuthContext";
 // Types -------------------------------------------------------------------------
 
 interface Context {
@@ -15,9 +16,29 @@ export const useGlobal = () => {
 
 // Component ---------------------------------------------------------------------
 const GlobalProvider: React.FC = ({ children }) => {
+  const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [config, setConfig] = useState(
+    localStorage.getItem("config") || {
+      darkMode: true,
+      fontFamily: "Fira Code",
 
-  const value = { isPlaying, setIsPlaying };
+      fontSize: 1.25,
+    }
+  );
+
+  useEffect(() => {
+    console.log("elo");
+  }, [config]);
+
+  useEffect(() => {
+    if (user) setConfig(user.config);
+  }, [user]);
+
+  const value = {
+    isPlaying,
+    setIsPlaying,
+  };
 
   return (
     <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>

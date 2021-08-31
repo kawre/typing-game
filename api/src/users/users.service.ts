@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateQuery<UserDocument>) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
   }
 
   remove(id: number) {

@@ -1,10 +1,11 @@
 import React from "react";
+import { DOMAttributes } from "react";
 import { IconType } from "react-icons";
 import styled from "styled-components";
 import { size, SizeProps, space, SpaceProps } from "styled-system";
 // Types -------------------------------------------------------------------------
 
-interface Props extends SizeProps, SpaceProps {}
+interface Props extends SizeProps, SpaceProps, DOMAttributes<HTMLDivElement> {}
 
 // Component ---------------------------------------------------------------------
 const Icon: React.FC<Props & { as: IconType }> = ({ as, ...props }) => {
