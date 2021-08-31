@@ -4,7 +4,7 @@ import { space, SpaceProps, typography, TypographyProps } from "styled-system";
 import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-type Props = SpaceProps & TypographyProps & ColorProps;
+type Props = SpaceProps & TypographyProps & ColorProps & { as?: any };
 
 // Component ---------------------------------------------------------------------
 const Text: React.FC<Props> = ({ children, ...props }) => {
@@ -22,7 +22,7 @@ const Wrapper = styled.p<Props>`
 `;
 
 Wrapper.defaultProps = {
-  textColor: "text",
+  textColor: "main",
   fontSize: "1rem",
   fontWeight: 400,
 };

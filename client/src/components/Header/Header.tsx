@@ -1,16 +1,12 @@
-import React, { createElement } from "react";
-import { useState } from "react";
+import React from "react";
 import { FaCog, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import Avatar from "../Avatar";
-import OutsideClickHandler from "react-outside-click-handler";
-import Heading from "../Heading";
-import Text from "../Text";
-import UserMenu from "./UserMenu";
-import Icon from "../Icon";
-import Modal from "../Modal";
 import { useAuth } from "../../contexts/AuthContext";
+import Avatar from "../Avatar";
+import Heading from "../Heading";
+import Icon from "../Icon";
+import Text from "../Text";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -18,6 +14,7 @@ interface Props {}
 // Component ---------------------------------------------------------------------
 const Header: React.FC<Props> = () => {
   const { user } = useAuth();
+
   return (
     <Wrapper>
       <Left>

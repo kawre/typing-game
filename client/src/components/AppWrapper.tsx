@@ -33,11 +33,12 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
       md: "",
       lg: "",
     },
+    // config,
   });
 
   useEffect(() => {
     console.log("porvalo");
-  }, [localStorage.getItem("theme")]);
+  }, [localStorage]);
 
   return (
     <QueryClientProvider client={client}>

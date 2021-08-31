@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import FormWrapper from "./components/Form/FormWrapper";
 import GameProvider from "./contexts/GameContext";
+import Settings from "./pages/Config/Settings";
 import Login from "./pages/Entry/Login";
 import Register from "./pages/Entry/Register";
 import Home from "./pages/Home/Home";
@@ -24,6 +25,7 @@ const App: React.FC<Props> = () => {
           </GameProvider>
         )}
       />
+      <Route exact path="/settings" component={Settings} />
       <Route
         exact
         path={["/login", "/register"]}
