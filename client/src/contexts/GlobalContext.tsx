@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { defaultConfig } from "../static/defaultConfig";
 import { useAuth } from "./AuthContext";
 // Types -------------------------------------------------------------------------
 
@@ -18,22 +18,17 @@ export const useGlobal = () => {
 const GlobalProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [config, setConfig] = useState(
-    localStorage.getItem("config") || {
-      darkMode: true,
-      fontFamily: "Fira Code",
-
-      fontSize: 1.25,
-    }
+  const [config, setConfig] = useState<Object>(
+    JSON.parse(localStorage.getItem("config")!) || defaultConfig
   );
 
   useEffect(() => {
-    console.log("elo");
+    localStorage.setItem("config", JSON.stringify(config));
   }, [config]);
 
-  useEffect(() => {
-    if (user) setConfig(user.config);
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) setConfig(user.config);
+  // }, [user]);
 
   const value = {
     isPlaying,
