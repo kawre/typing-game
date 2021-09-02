@@ -44,6 +44,10 @@ export default ConfigSection;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
+  &:nth-child() {
+    margin-bottom: 24px;
+  }
+
   h1 {
     font-size: 1rem;
     font-weight: 500;

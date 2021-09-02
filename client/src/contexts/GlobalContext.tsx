@@ -26,9 +26,9 @@ const GlobalProvider: React.FC = ({ children }) => {
     localStorage.setItem("config", JSON.stringify(config));
   }, [config]);
 
-  // useEffect(() => {
-  //   if (user) setConfig(user.config);
-  // }, [user]);
+  useEffect(() => {
+    if (user) setConfig(user.config);
+  }, [user]);
 
   const value = {
     isPlaying,

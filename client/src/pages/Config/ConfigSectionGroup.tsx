@@ -11,18 +11,28 @@ interface Props {
 
 // Component ---------------------------------------------------------------------
 const ConfigSectionGroup: React.FC<Props> = ({ h, children }) => {
-  const contRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
 
   return (
     <Wrapper>
       <HWrapper onClick={() => setOpen(!open)}>
         <Heading>{h}</Heading>
-        <Chevron initial={{ rotate: 0 }} animate={{ rotate: open ? 0 : -90 }}>
+        <Chevron
+          initial={{ rotate: 0 }}
+          animate={{
+            rotate: open ? 0 : -90,
+            transition: { ease: "linear", duration: 0.3 },
+          }}
+        >
           <FaChevronDown />
         </Chevron>
       </HWrapper>
-      <Content ref={contRef} animate={{ height: open ? undefined : 0 }}>
+      <Content
+        animate={{
+          height: open ? undefined : 0,
+          transition: { ease: "linear", duration: 0.3 },
+        }}
+      >
         {children}
       </Content>
     </Wrapper>

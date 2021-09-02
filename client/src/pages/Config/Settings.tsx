@@ -12,11 +12,16 @@ const Settings: React.FC<Props> = () => {
     <Wrapper>
       <ConfigSectionGroup h="appearance">
         <ConfigSection
-          btns={["1", "1.25", "1.5", "2", "3", "4"]}
           name="font size"
           text="Change the font size of the test words."
+          btns={["1", "1.25", "1.5", "2", "3", "4"]}
         />
         <ConfigSection btns={fontFamilies} name="font family" />
+        <ConfigSection
+          name="theme"
+          text="Change the appearance of the site"
+          btns={["light", "dark"]}
+        />
       </ConfigSectionGroup>
     </Wrapper>
   );
@@ -30,4 +35,9 @@ const Wrapper = styled.div``;
 
 const Section = styled.div``;
 
-const fontFamilies = ["Fira Code"];
+const fontFamilies = [
+  "Fira Code",
+  "Source Code Pro",
+  "Roboto Mono",
+  "IBM Plex Sans",
+];
