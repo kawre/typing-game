@@ -14,13 +14,22 @@ interface Props {
   countdown: number;
 }
 
+interface Err {
+  startAt: number;
+  length: number;
+  is: boolean;
+}
+
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
+  // ctx
   const { setProgress, setResults, inGame, game, time } = useTyping();
 
+  // ref
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
 
+  // state
   const [prev, setPrev] = useState({ words: "", chars: "", errors: "" });
   const [next, setNext] = useState({ words: "", chars: "" });
   const [key, setKey] = useState("");
@@ -28,6 +37,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
+  const [err, setErr] = useState<Err | null>(null);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -50,17 +60,6 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
       return;
     }
 
-    let diff = 0;
-    for (let i = 0; i < crntInput.length; i++) {
-      const hash: any = {};
-      const hash2: any = {};
-      hash[i] = crntInput[i];
-      hash2[i] = words[crntWord][i];
-
-      if (hash[i] !== hash2[i + diff * 99]) diff += 1;
-    }
-    setErrors(diff);
-
     setInput(crntInput);
   };
 
@@ -69,7 +68,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     const len = input.length;
     const word = words[crntWord];
 
-    const errs = errors ? word.slice(input.length - errors, input.length) : "";
+    const errs = errors ? word.slice(len - errors, len) : "";
 
     setPrev({
       errors: errs,
@@ -79,9 +78,25 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
 
     setNext({
       chars: word.slice(len + 1),
-      words: words.slice(crntWord + 1).join(" "),
+      words: " " + words.slice(crntWord + 1).join(" "),
     });
   }, [crntWord, input]);
+
+  useEffect(() => {
+    const len = input.length - 1;
+    const word = words[crntWord];
+    const prevChars = prev.chars.length;
+
+    // if (word[len] === input[len]) {
+
+    // } else if (word[len] !== input[len] && !err?.is) {
+    //   setErr({ ...err, startAt: prevChars, is: true });
+    // } else if (err.is) {
+    //   setErr({ ...err, length: len + 1 - prevChars });
+    // } else {
+    //   setErr(null);
+    // }
+  }, [prev]);
 
   // focus input on game start
   useEffect(() => {
@@ -113,7 +128,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
           {errors !== 0 && <Incorrect>{prev.errors}</Incorrect>}
           <Char ref={charRef}>{words[crntWord][input.length]}</Char>
           {next.chars && <CharsComing>{next.chars}</CharsComing>}
-          {next.words && <Coming> {next.words}</Coming>}
+          {next.words && <Coming>{next.words}</Coming>}
         </Game>
       </Container>
       <InputWrapper error={errors !== 0}>

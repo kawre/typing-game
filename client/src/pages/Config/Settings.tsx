@@ -33,8 +33,6 @@ export default Settings;
 
 const Wrapper = styled.div``;
 
-const Section = styled.div``;
-
 const fontFamilies = [
   "Fira Code",
   "Source Code Pro",
