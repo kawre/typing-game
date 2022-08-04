@@ -3,6 +3,8 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { findRoom } from "../../api/rooms";
 import Button from "../../components/Button";
+import { useTyping } from "../../contexts/GameContext";
+import { useSockets } from "../../contexts/socket.context";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -11,6 +13,7 @@ interface Props {}
 const EnterTypingGame: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const { socket } = useSockets();
 
   return (
     <Wrapper>
@@ -21,9 +24,10 @@ const EnterTypingGame: React.FC<Props> = () => {
           variant="primary"
           onClick={async () => {
             setLoading(true);
-            const { id } = await findRoom();
-            if (!id) return setLoading(false);
-            history.push(`/games/${id}`);
+            socket.emit("room:find", "2");
+            socket.on("room:found", (xd) => {
+              history.push(`/games/${xd}`);
+            });
           }}
         >
           Enter a Typing Game

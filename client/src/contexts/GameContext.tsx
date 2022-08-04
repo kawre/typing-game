@@ -19,7 +19,7 @@ interface Context {
   results: boolean;
   inGame: boolean;
   setInGame: React.Dispatch<React.SetStateAction<boolean>>;
-  game: Socket<DefaultEventsMap, DefaultEventsMap>;
+  game: Socket;
   setTime: React.Dispatch<React.SetStateAction<number>>;
   time: number;
 }
@@ -42,18 +42,14 @@ const GameProvider: React.FC = ({ children }) => {
   const [game, setGame] = useState<Context["game"]>();
 
   useEffect(() => {
-    if (!user) return;
-    const game = io("http://localhost:5000/games", {
-      withCredentials: true,
-      extraHeaders: { room: id, user: user._id },
-    });
+    const newSocket = io("http://localhost:5000");
 
-    setGame(game);
+    setGame(newSocket);
 
     return () => {
-      game.disconnect();
+      newSocket.close();
     };
-  }, [user]);
+  }, [setGame]);
 
   useEffect(() => {
     if (results) setInGame(false);
@@ -71,11 +67,7 @@ const GameProvider: React.FC = ({ children }) => {
     time,
   };
 
-  return (
-    <GameContext.Provider value={value}>
-      {game && children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };
 
 export default GameProvider;

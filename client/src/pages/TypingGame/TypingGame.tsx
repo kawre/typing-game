@@ -5,6 +5,7 @@ import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
+import { useSockets } from "../../contexts/socket.context";
 import Panel from "./Panel/Panel";
 import Tracks from "./Track/Tracks";
 // Types -------------------------------------------------------------------------
@@ -27,6 +28,8 @@ export type HashTable = Record<string, UserHash>;
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const history = useHistory();
+  const roomId = (useParams() as any).roomId;
+  console.log(roomId);
 
   const {
     progress,
@@ -44,10 +47,11 @@ const TypingGame: React.FC<Props> = () => {
   const [, setRender] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [countdown, setCountdown] = useState(6);
+  const { socket } = useSockets();
 
   useEffect(() => {
     // join room
-    game.emit("joinRoom", (ok: boolean) => {
+    socket.emit("room:join", (ok: boolean) => {
       if (!ok) return history.push("/");
     });
 

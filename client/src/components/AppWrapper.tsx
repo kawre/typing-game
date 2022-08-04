@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import AuthProvider from "../contexts/AuthContext";
 import GlobalProvider from "../contexts/GlobalContext";
+import SocketsProvider from "../contexts/socket.context";
 import GlobalStyle from "../global/GlobalStyle";
 import { themes } from "../static/themes";
 import Header from "./Header/Header";
@@ -41,15 +42,17 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
     <QueryClientProvider client={client}>
       <AuthProvider>
         <GlobalProvider>
-          <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <BrowserRouter>
-              <Layout>
-                <Header />
-                {children}
-              </Layout>
-            </BrowserRouter>
-          </ThemeProvider>
+          <SocketsProvider>
+            <ThemeProvider theme={theme}>
+              <GlobalStyle />
+              <BrowserRouter>
+                <Layout>
+                  <Header />
+                  {children}
+                </Layout>
+              </BrowserRouter>
+            </ThemeProvider>
+          </SocketsProvider>
         </GlobalProvider>
       </AuthProvider>
     </QueryClientProvider>

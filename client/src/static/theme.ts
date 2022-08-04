@@ -8,7 +8,7 @@ export const theme = {
     lg: "7px",
   },
   font: "'Fira Code', monospace",
-  colors: themes[Theme.get() || "paper"],
+  colors: themes["dark"],
   shadow: {
     sm: "0 0 9px #0000001A",
     md: "",
