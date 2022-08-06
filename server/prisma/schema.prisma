@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
-  email    String  @unique
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  email    String    @unique
   password String
-  avatar   String
-  isOnline Boolean @default(false)
+  avatar   String    @default("https://gravatar.com/avatar/placeholder?s=200")
+  isOnline Boolean   @default(false)
   config   Config?
+  results  Results[]
 }
 
 model Config {
@@ -34,10 +35,21 @@ model Quote {
 }
 
 model Match {
-  id        String   @id
-  quote     Quote    @relation(fields: [quoteId], references: [id])
-  quoteId   Int      @default(1)
-  usersId   Int[]    @default([])
+  id        String    @id
+  quote     Quote     @relation(fields: [quoteId], references: [id])
+  quoteId   Int       @default(1)
+  usersId   Int[]     @default([])
+  createdAt DateTime  @default(now())
+  state     Results[]
+}
+
+model Results {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  wpm       Int
+  place     Int      @default(0)
+  match     Match    @relation(fields: [matchId], references: [id])
+  matchId   String
   createdAt DateTime @default(now())
-  // users   User[] @relation(fields: [usersId], references: [id])
 }

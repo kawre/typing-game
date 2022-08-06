@@ -8,11 +8,13 @@ export const findUserById = async (id: number) => {
 };
 
 export const findUser = async (elo: any) => {
-  const user = await prisma.user.findFirst({ where: elo });
+  const user = await prisma.user.findFirstOrThrow({ where: elo });
   return user;
 };
 
-export const createUser = async (xd: any) => {
-  const user = await prisma.user.create({ data: xd });
-  return user;
+export const changeUserStatus = async (userId: any, status: boolean) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { isOnline: status },
+  });
 };

@@ -9,7 +9,7 @@ const port = 5000;
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+export const io = new Server(server, { cors: { origin: "*" } });
 
 // middleware
 app.use(express.json());
