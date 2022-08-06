@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
+import { User } from "../../types/auth.types";
 import Panel from "./Panel/Panel";
 import Tracks from "./Track/Tracks";
 // Types -------------------------------------------------------------------------
@@ -17,92 +16,88 @@ export interface Player {
   progress: number;
 }
 
-export interface UserHash {
+export interface UserState {
   progress: number;
-  place?: number;
+  userId: number;
   wpm: number;
+  matchId: string;
 }
-
-export type HashTable = Record<string, UserHash>;
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
-  const history = useHistory();
-  const roomId = (useParams() as any).roomId;
-  console.log(roomId);
+  const roomId = (useParams() as any).id;
 
-  const {
-    progress,
-    inGame,
-    setInGame,
-    setResults,
-    results,
-    game,
-    setTime,
-    time,
-  } = useTyping();
+  const { progress, inGame, setInGame, setResults, results, setTime, time } =
+    useTyping();
 
-  const [hash, setHash] = useState({} as HashTable);
+  const { user: elo } = useAuth();
+  const user = elo as User;
+
+  const [state, setState] = useState([{} as UserState]);
   const [quote, setQuote] = useState("");
-  const [, setRender] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [countdown, setCountdown] = useState(6);
   const { socket } = useSockets();
 
   useEffect(() => {
     // join room
-    socket.emit("room:join", (ok: boolean) => {
-      if (!ok) return history.push("/");
+    socket.emit("room:join", roomId);
+
+    // init room state
+    socket.on("room:state", (data) => {
+      setState(data);
     });
 
-    // on new user
-    game.on("newUser", ({ users, quote }) => {
-      setHash((prev) => {
-        (users as string[]).map((id) => {
-          prev[id] = { progress: 0, wpm: 0 };
-        });
-        return prev;
-      });
-      setQuote(quote);
-      setRender((i) => (i += 1));
-    });
-
-    // live game data
-    game.on("data", ({ userId, progress, wpm, place }) => {
-      setHash((prev) => {
-        prev[userId] = { progress, wpm, place: place && place };
-        return prev;
-      });
-      setRender((i) => (i += 1));
+    socket.on("room:quote", (text: string) => {
+      setQuote(text);
     });
 
     // countdown
-    game.on("countdown", (time) => {
+    socket.on("countdown", (time) => {
       setCountdown(time);
     });
 
-    game.on("gameStart", () => {
+    socket.on("room:start", () => {
       setInGame(true);
     });
 
-    game.on("gameEnd", () => {
+    socket.on("room:end", () => {
       setResults(true);
     });
 
     // current game time
-    game.on("timer", (time) => {
+    socket.on("room:time", (time) => {
       setTime(time);
     });
+
+    return () => {
+      socket.emit("room:leave", roomId);
+    };
   }, []);
 
   useEffect(() => {
     if (!inGame) return;
-    game.emit("progress", { progress, wpm: Math.round(wpm) });
+    socket.emit("room:user:state", {
+      matchId: roomId,
+      data: {
+        progress,
+        wpm: Math.round(wpm),
+      },
+    });
   }, [time]);
+
+  useEffect(() => {
+    if (progress === 100) {
+      socket.emit("room:finish", {
+        roomId,
+        data: { progress, wpm: wpm.toFixed(2) },
+      });
+    }
+  }, [progress]);
 
   return (
     <Wrapper>
-      <Tracks cntdwn={countdown} data={hash} />
+      <Tracks cntdwn={countdown} data={state} />
       {!results ? (
         quote && (
           <Panel

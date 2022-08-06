@@ -3,6 +3,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import Text from "../../../components/Text";
 import { useTyping } from "../../../contexts/GameContext";
+import { useSockets } from "../../../contexts/socket.context";
 import { theme } from "../../../static/theme";
 import { formatS } from "../../../utils/formatS";
 // Types -------------------------------------------------------------------------
@@ -23,7 +24,8 @@ interface Err {
 // Component ---------------------------------------------------------------------
 const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   // ctx
-  const { setProgress, setResults, inGame, game, time } = useTyping();
+  const { setProgress, setResults, inGame, time } = useTyping();
+  const { socket } = useSockets();
 
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +51,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
       if (words[crntWord].slice(-1) === crntInput.slice(-1)) {
         setProgress(100);
         setResults(true);
-        return game.emit("result", { wpm });
+        return socket.emit("result", { wpm });
       }
     }
 
@@ -87,15 +89,14 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     const word = words[crntWord];
     const prevChars = prev.chars.length;
 
-    // if (word[len] === input[len]) {
-
-    // } else if (word[len] !== input[len] && !err?.is) {
-    //   setErr({ ...err, startAt: prevChars, is: true });
-    // } else if (err.is) {
-    //   setErr({ ...err, length: len + 1 - prevChars });
-    // } else {
-    //   setErr(null);
-    // }
+    if (word[len] === input[len]) {
+    } else if (word[len] !== input[len] && !err?.is) {
+      setErr({ ...err!, startAt: prevChars, is: true });
+    } else if (err?.is) {
+      setErr({ ...err, length: len + 1 - prevChars });
+    } else {
+      setErr(null);
+    }
   }, [prev]);
 
   // focus input on game start
@@ -137,7 +138,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
           disabled={!inGame}
           onKeyDown={(e) => setKey(e.key)}
           onChange={handleInput}
-          value={inGame ? input : countdown}
+          value={inGame ? input : 6 - time}
           maxLength={words[crntWord].length + 6}
         />
         {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}

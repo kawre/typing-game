@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { me } from "../api/auth";
 import { useMe } from "../hooks/hooks";
 import { UserRes } from "../types/auth.types";
+import { Token } from "../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Context {

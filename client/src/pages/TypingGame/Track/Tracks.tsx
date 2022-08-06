@@ -3,26 +3,26 @@ import styled from "styled-components";
 import Text from "../../../components/Text";
 import { useTyping } from "../../../contexts/GameContext";
 import { formatS } from "../../../utils/formatS";
-import { HashTable } from "../TypingGame";
+import { UserState } from "../TypingGame";
 import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  data: HashTable;
+  data: UserState[];
   cntdwn: number;
 }
 
 // Component ---------------------------------------------------------------------
-const Tracks: React.FC<Props> = ({ data, cntdwn }) => {
+const Tracks: React.FC<Props> = ({ data }) => {
   const { time, inGame } = useTyping();
 
   return (
     <Wrapper>
       <Stats>
-        <Text>{formatS(inGame ? 300 - time : cntdwn)}</Text>
+        <Text>{inGame ? formatS(306 - time) : 6 - time}</Text>
       </Stats>
-      {Object.keys(data).map((id) => (
-        <Track key={id} data={data[id]} userId={id} />
+      {data.map((user) => (
+        <Track key={user.userId} user={user} />
       ))}
     </Wrapper>
   );

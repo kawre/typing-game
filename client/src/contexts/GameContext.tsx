@@ -19,7 +19,6 @@ interface Context {
   results: boolean;
   inGame: boolean;
   setInGame: React.Dispatch<React.SetStateAction<boolean>>;
-  game: Socket;
   setTime: React.Dispatch<React.SetStateAction<number>>;
   time: number;
 }
@@ -39,17 +38,6 @@ const GameProvider: React.FC = ({ children }) => {
   const [time, setTime] = useState(0);
   const [results, setResults] = useState(false);
   const [inGame, setInGame] = useState(false);
-  const [game, setGame] = useState<Context["game"]>();
-
-  useEffect(() => {
-    const newSocket = io("http://localhost:5000");
-
-    setGame(newSocket);
-
-    return () => {
-      newSocket.close();
-    };
-  }, [setGame]);
 
   useEffect(() => {
     if (results) setInGame(false);
@@ -62,7 +50,6 @@ const GameProvider: React.FC = ({ children }) => {
     progress,
     results,
     setResults,
-    game: game!,
     setTime,
     time,
   };

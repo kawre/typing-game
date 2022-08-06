@@ -1,36 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { getUser } from "../../../api/users";
 import Car from "../../../static/images/Car";
-import { User } from "../../../types/auth.types";
-import { ordinalSuffix } from "../../../utils/ordinalSuffix";
-import { UserHash } from "../TypingGame";
+import { UserState } from "../TypingGame";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  data: UserHash;
-  userId: string;
+  user: UserState;
 }
 
-const fetchUser = async (id: string) => await getUser(id);
-
 // Component ---------------------------------------------------------------------
-const Track: React.FC<Props> = ({ userId, data: { progress, wpm, place } }) => {
-  const [user, setUser] = useState<User>();
+const Track: React.FC<Props> = ({ user }) => {
+  const { progress, matchId, userId, wpm } = user;
 
-  useEffect(() => {
-    if (userId) fetchUser(userId).then((res) => setUser(res));
-  }, [userId]);
-
-  if (!user) return null;
   return (
     <Wrapper>
-      <Username>{user.username}</Username>
+      <Username>kawre</Username>
       <ProgressBar>
         <Car left={progress + "%"} />
       </ProgressBar>
       <Wpm>
-        {place && <Place>{ordinalSuffix(place)} Place</Place>}
+        {/* {place && <Place>{ordinalSuffix(place)} Place</Place>} */}
         <div>
           <span>{wpm}</span>wpm
         </div>

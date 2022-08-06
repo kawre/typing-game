@@ -18,17 +18,17 @@ export const useGlobal = () => {
 const GlobalProvider: React.FC = ({ children }) => {
   const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [config, setConfig] = useState<Object>(
-    JSON.parse(localStorage.getItem("config")!) || defaultConfig
-  );
+  // const [config, setConfig] = useState<Object>(
+  //   JSON.parse(localStorage.getItem("config")!) || defaultConfig
+  // );
 
-  useEffect(() => {
-    localStorage.setItem("config", JSON.stringify(config));
-  }, [config]);
+  // useEffect(() => {
+  //   localStorage.setItem("config", JSON.stringify(config));
+  // }, [config]);
 
-  useEffect(() => {
-    if (user) setConfig(user.config);
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) setConfig(user.config);
+  // }, [user]);
 
   const value = {
     isPlaying,

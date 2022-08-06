@@ -40,7 +40,7 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
         >
           {user ? (
             <>
-              <Link to={`/user/${user._id}`}>
+              <Link to={`/user/${user.id}`}>
                 <Item>
                   Profile
                   <Icon as={FaUser} ml={2} size={16} />

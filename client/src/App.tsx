@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import FormWrapper from "./components/Form/FormWrapper";
+import PrivateRoute from "./components/PrivateRoute";
 import GameProvider from "./contexts/GameContext";
 import Settings from "./pages/Config/Settings";
 import Login from "./pages/Entry/Login";
@@ -21,7 +22,9 @@ const App: React.FC<Props> = () => {
         path="/games/:id"
         component={() => (
           <GameProvider>
-            <TypingGame />
+            <PrivateRoute>
+              <TypingGame />
+            </PrivateRoute>
           </GameProvider>
         )}
       />

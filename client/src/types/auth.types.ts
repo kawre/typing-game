@@ -1,7 +1,7 @@
 export interface User {
-  tokenVersion: number;
+  // tokenVersion: number;
   isOnline: boolean;
-  _id: string;
+  id: string;
   password: string;
   username: string;
   email: string;
