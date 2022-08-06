@@ -18,20 +18,19 @@ export interface Player {
 
 export interface UserState {
   progress: number;
-  userId: number;
+  user: User;
   wpm: number;
   matchId: string;
+  place?: number;
 }
 
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const roomId = (useParams() as any).id;
+  const history = useHistory();
 
   const { progress, inGame, setInGame, setResults, results, setTime, time } =
     useTyping();
-
-  const { user: elo } = useAuth();
-  const user = elo as User;
 
   const [state, setState] = useState([{} as UserState]);
   const [quote, setQuote] = useState("");
@@ -70,6 +69,12 @@ const TypingGame: React.FC<Props> = () => {
       setTime(time);
     });
 
+    socket.on("error", (err) => {
+      if (err === "404" || err === "503") {
+        history.push("/");
+      }
+    });
+
     return () => {
       socket.emit("room:leave", roomId);
     };
@@ -84,16 +89,7 @@ const TypingGame: React.FC<Props> = () => {
         wpm: Math.round(wpm),
       },
     });
-  }, [time]);
-
-  useEffect(() => {
-    if (progress === 100) {
-      socket.emit("room:finish", {
-        roomId,
-        data: { progress, wpm: wpm.toFixed(2) },
-      });
-    }
-  }, [progress]);
+  }, [time, progress]);
 
   return (
     <Wrapper>

@@ -1,4 +1,4 @@
-import { PrismaClient, Results } from "@prisma/client";
+import { PrismaClient, Results, User } from "@prisma/client";
 import { match } from "assert";
 import { Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
@@ -17,7 +17,7 @@ interface Match {
 }
 
 interface State {
-  userId: number;
+  user: User;
   wpm: number;
   progress: number;
   matchId: string;
@@ -28,6 +28,7 @@ export const matches = [] as Match[];
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
+    console.log(params.args.data);
     const quotesCount = await prisma.quote.count();
     const skip = Math.floor(Math.random() * quotesCount);
     const quote = await prisma.quote.findMany({ take: 1, skip });
@@ -65,9 +66,9 @@ export const createRoom = async (id: number, socket: Socket) => {
       io.to(match.id).emit("room:start", "start");
     }
 
-    if (s === 36) {
-      saveMatch(idx - 1);
+    if (s === 360) {
       io.to(match.id).emit("room:end", "end");
+      matches.splice(idx - 1, 1);
       clearInterval(interval);
     }
 
@@ -88,15 +89,13 @@ export const findMatch = async (id: number, socket: Socket) => {
   }
 };
 
-export const saveMatch = async (idx: number) => {
-  const match = matches[idx];
-  matches.splice(idx, 1);
-
-  await prisma.results.createMany({
-    data: match.state.map((state) => ({
-      matchId: match.matchId,
-      userId: state.userId,
-      wpm: state.wpm,
-    })),
+export const saveResults = async (data: any) => {
+  return prisma.results.create({
+    data: {
+      wpm: data.wpm,
+      userId: data.user.id,
+      place: data.place,
+      matchId: data.matchId,
+    },
   });
 };

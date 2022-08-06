@@ -3,9 +3,14 @@ import { DOMAttributes } from "react";
 import { IconType } from "react-icons";
 import styled from "styled-components";
 import { size, SizeProps, space, SpaceProps } from "styled-system";
+import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-interface Props extends SizeProps, SpaceProps, DOMAttributes<HTMLDivElement> {}
+interface Props
+  extends SizeProps,
+    SpaceProps,
+    ColorProps,
+    DOMAttributes<HTMLDivElement> {}
 
 // Component ---------------------------------------------------------------------
 const Icon: React.FC<Props & { as: IconType }> = ({ as, ...props }) => {
@@ -21,6 +26,7 @@ const Wrapper = styled.div<Props>`
   cursor: pointer;
   ${size}
   ${space}
+  ${color}
 
   svg {
     width: 100%;

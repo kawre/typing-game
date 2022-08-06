@@ -5,7 +5,7 @@ const key = process.env["JWT_KEY"] as string;
 
 // create a session
 export const signJwt = (payload: object, options?: SignOptions) => {
-  return sign(payload, key, { expiresIn: "1y" });
+  return sign(payload, key, { expiresIn: "1y", ...options });
 };
 
 // verify token

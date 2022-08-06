@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { match } from "assert";
 import { Socket } from "socket.io";
 import { io } from "../app";
-import { findMatch, matches } from "../service/match.service";
+import { findMatch, matches, saveResults } from "../service/match.service";
 import { changeUserStatus } from "../service/user.service";
 
 const prisma = new PrismaClient();
@@ -18,20 +18,22 @@ const socketHandler = (socket: Socket) => {
   });
 
   socket.on("room:join", async (id: string) => {
-    socket.join(id);
     const match = matches.find((m) => m.matchId === id);
-
     if (!match) {
-      return socket.emit("error", "Match not found");
+      return socket.emit("error", "404");
+    } else if (!match.available) {
+      return socket.emit("error", "503");
     }
 
+    socket.join(id);
     await prisma.match.update({
       where: { id: match.matchId },
       data: { usersId: { push: userId } },
     });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
 
     match.state.push({
-      userId: userId,
+      user: user!,
       wpm: 0,
       progress: 0,
       matchId: match.matchId,
@@ -49,28 +51,17 @@ const socketHandler = (socket: Socket) => {
     const match = matches.find((m) => m.matchId === matchId);
     if (!match) return;
 
-    const idx = match.state.findIndex((s) => s.userId === userId);
+    const idx = match.state.findIndex((s) => s.user.id === userId);
     match.state[idx] = { ...match.state[idx], ...data };
+
+    if (data.progress === 100) {
+      match.finished++;
+      match.state[idx].place = match.finished;
+      saveResults(match.state[idx]);
+    }
 
     io.to(matchId).emit("room:state", match.state);
   });
-
-  // socket.on("room:finish", ({ roomId, data }) => {
-  //   const match = matches.find((m) => m.matchId === roomId);
-  //   if (!match) return;
-
-  //   const idx = match.state.findIndex((s) => s.userId === 2);
-
-  //   match.finished++;
-  //   match.state[idx] = {
-  //     ...match.state[idx],
-  //     ...data,
-  //     place: match.finished,
-  //   };
-
-  //   console.log(match);
-  //   io.to(roomId).emit("room:state", match.state);
-  // });
 
   socket.on("disconnect", () => {
     if (userId) changeUserStatus(userId, true);

@@ -1,3 +1,5 @@
+import { prisma } from "@prisma/client";
+import { compare } from "bcrypt";
 import { Router } from "express";
 import { userInfo } from "os";
 import { createUser } from "../service/auth.service";
@@ -8,7 +10,11 @@ const auth = Router();
 
 auth.put("/login", async (req, res) => {
   try {
-    const user = await findUser({ ...req.body });
+    const { password, username } = req.body;
+    const user = await findUser({ username });
+
+    const valid = await compare(password, user.password);
+
     const token = signJwt({ ...user });
 
     res.locals.user = user;
@@ -46,6 +52,10 @@ auth.get("/me", (req, res) => {
   if (!valid || !decoded) return res.send(null);
   const { password, ...user } = decoded;
   res.send(user);
+});
+
+auth.patch("/logout", (req, res) => {
+  res.status(200);
 });
 
 export { auth as authRouter };

@@ -39,7 +39,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
-  const [err, setErr] = useState<Err | null>(null);
+  const [errAt, setErrAt] = useState(0);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -62,6 +62,22 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
       return;
     }
 
+    const len = crntInput.length;
+    const word = words[crntWord];
+    const correctInput = word.slice(0, len);
+    let test = errAt;
+
+    if (crntInput !== correctInput) {
+      if (!errAt) {
+        setErrAt(len);
+        test = len;
+      }
+      setErrors(() => len - (test - 1));
+    } else {
+      setErrAt(0);
+      setErrors(0);
+    }
+
     setInput(crntInput);
   };
 
@@ -69,8 +85,15 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   useEffect(() => {
     const len = input.length;
     const word = words[crntWord];
+    let errs = errors ? word.slice(len - errors, len) : "";
 
-    const errs = errors ? word.slice(len - errors, len) : "";
+    let nextWords = " " + words.slice(crntWord + 1).join(" ");
+
+    if (len > word.length) {
+      const overflow = len - word.length;
+      errs += nextWords.slice(0, overflow);
+      nextWords = nextWords.slice(overflow);
+    }
 
     setPrev({
       errors: errs,
@@ -80,24 +103,24 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
 
     setNext({
       chars: word.slice(len + 1),
-      words: " " + words.slice(crntWord + 1).join(" "),
+      words: nextWords,
     });
   }, [crntWord, input]);
 
-  useEffect(() => {
-    const len = input.length - 1;
-    const word = words[crntWord];
-    const prevChars = prev.chars.length;
+  // useEffect(() => {
+  //   const len = input.length - 1;
+  //   const word = words[crntWord];
+  //   const prevChars = prev.chars.length;
 
-    if (word[len] === input[len]) {
-    } else if (word[len] !== input[len] && !err?.is) {
-      setErr({ ...err!, startAt: prevChars, is: true });
-    } else if (err?.is) {
-      setErr({ ...err, length: len + 1 - prevChars });
-    } else {
-      setErr(null);
-    }
-  }, [prev]);
+  //   if (word[len] === input[len]) {
+  //   } else if (word[len] !== input[len] && !err?.is) {
+  //     setErr({ ...err!, startAt: prevChars, is: true });
+  //   } else if (err?.is) {
+  //     setErr({ ...err, length: len + 1 - prevChars });
+  //   } else {
+  //     setErr(null);
+  //   }
+  // }, [prev]);
 
   // focus input on game start
   useEffect(() => {
@@ -107,18 +130,37 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   // progress
   useEffect(() => {
     setProgress((prev.words.length / (quote.length - 1)) * 100);
-  }, [input]);
+  }, [prev, next]);
 
   // calculate wpm
   useEffect(() => {
     if (!inGame) return;
-    const minute = time / 60;
-    const correct = prev.words.split(" ").join("").length + prev.chars.length;
-    const wpm = correct / 5 / minute;
+    const minute = (time - 6) / 60;
+
+    // const correct = prev.words.split(" ").join("").length + prev.chars.length;
+    const correct = prev.words.length + prev.chars.length;
+    const up = correct / 5;
+    const wpm = up / minute;
 
     if (!Number.isInteger(Math.round(wpm))) setWpm(0);
     else setWpm(wpm);
-  }, [input, time, inGame]);
+  }, [time, inGame]);
+
+  // useEffect(() => {
+  //   const len = input.length;
+  //   const word = words[crntWord];
+  //   const crntInput = input.slice(0, len);
+  //   const correctInput = word.slice(0, len);
+
+  //   if (crntInput !== correctInput) {
+  //     if (!errAt) {
+  //       setErrAt(prev.chars.length);
+  //     }
+  //     setErrors(() => len - (errAt - 1));
+  //   } else {
+  //     setErrAt(0);
+  //   }
+  // }, [prev]);
 
   return (
     <Wrapper>
