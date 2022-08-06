@@ -57,7 +57,9 @@ const socketHandler = (socket: Socket) => {
     if (data.progress === 100) {
       match.finished++;
       match.state[idx].place = match.finished;
-      saveResults(match.state[idx]);
+      const results = await saveResults(match.state[idx]);
+      console.log(results);
+      socket.emit("room:user:results", results);
     }
 
     io.to(matchId).emit("room:state", match.state);

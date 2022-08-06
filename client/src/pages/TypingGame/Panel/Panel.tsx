@@ -107,21 +107,6 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     });
   }, [crntWord, input]);
 
-  // useEffect(() => {
-  //   const len = input.length - 1;
-  //   const word = words[crntWord];
-  //   const prevChars = prev.chars.length;
-
-  //   if (word[len] === input[len]) {
-  //   } else if (word[len] !== input[len] && !err?.is) {
-  //     setErr({ ...err!, startAt: prevChars, is: true });
-  //   } else if (err?.is) {
-  //     setErr({ ...err, length: len + 1 - prevChars });
-  //   } else {
-  //     setErr(null);
-  //   }
-  // }, [prev]);
-
   // focus input on game start
   useEffect(() => {
     if (inGame && inputRef?.current) inputRef.current.focus();
@@ -137,30 +122,12 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
     if (!inGame) return;
     const minute = (time - 6) / 60;
 
-    // const correct = prev.words.split(" ").join("").length + prev.chars.length;
     const correct = prev.words.length + prev.chars.length;
-    const up = correct / 5;
-    const wpm = up / minute;
+    const wpm = correct / 5 / minute;
 
     if (!Number.isInteger(Math.round(wpm))) setWpm(0);
     else setWpm(wpm);
   }, [time, inGame]);
-
-  // useEffect(() => {
-  //   const len = input.length;
-  //   const word = words[crntWord];
-  //   const crntInput = input.slice(0, len);
-  //   const correctInput = word.slice(0, len);
-
-  //   if (crntInput !== correctInput) {
-  //     if (!errAt) {
-  //       setErrAt(prev.chars.length);
-  //     }
-  //     setErrors(() => len - (errAt - 1));
-  //   } else {
-  //     setErrAt(0);
-  //   }
-  // }, [prev]);
 
   return (
     <Wrapper>

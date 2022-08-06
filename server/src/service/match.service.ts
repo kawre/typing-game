@@ -28,7 +28,6 @@ export const matches = [] as Match[];
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
-    console.log(params.args.data);
     const quotesCount = await prisma.quote.count();
     const skip = Math.floor(Math.random() * quotesCount);
     const quote = await prisma.quote.findMany({ take: 1, skip });

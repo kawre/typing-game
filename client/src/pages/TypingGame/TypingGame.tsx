@@ -36,6 +36,7 @@ const TypingGame: React.FC<Props> = () => {
   const [quote, setQuote] = useState("");
   const [wpm, setWpm] = useState(0);
   const [countdown, setCountdown] = useState(6);
+  const [res, setRes] = useState<any>(null);
   const { socket } = useSockets();
 
   useEffect(() => {
@@ -75,6 +76,13 @@ const TypingGame: React.FC<Props> = () => {
       }
     });
 
+    socket.on("room:user:results", (results) => {
+      console.log("siema");
+      console.log(results);
+      setResults(true);
+      setRes(results);
+    });
+
     return () => {
       socket.emit("room:leave", roomId);
     };
@@ -104,7 +112,14 @@ const TypingGame: React.FC<Props> = () => {
           />
         )
       ) : (
-        <h1>res</h1>
+        <div>
+          {res ? (
+            <>
+              <h1>{res.wpm} wpm</h1>
+              <h1>{res.place} place</h1>
+            </>
+          ) : null}
+        </div>
       )}
     </Wrapper>
   );
