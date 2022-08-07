@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { findRoom } from "../../api/rooms";
 import Button from "../../components/Button";
 import { useAuth } from "../../contexts/AuthContext";
-import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 // Types -------------------------------------------------------------------------
 

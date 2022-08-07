@@ -23,13 +23,13 @@ const Header: React.FC<Props> = () => {
         </Link>
       </Left>
       <Right>
-        <Shop>
+        {/* <Shop>
           <Text>shop</Text>
           <Balance>
             <FaShoppingCart />
             <Text>30$</Text>
           </Balance>
-        </Shop>
+        </Shop> */}
         <Divider />
         <Menu>
           <Link to="/settings">
@@ -43,8 +43,10 @@ const Header: React.FC<Props> = () => {
           /> */}
           {user ? (
             <UserStats>
-              <Text fontSize={14}>{user.username}</Text>
-              <Avatar ml={3} />
+              <Text mx={3} fontWeight={600} fontSize={16}>
+                {user.username}
+              </Text>
+              <Avatar />
             </UserStats>
           ) : (
             <Avatar ml={3} />
@@ -128,7 +130,7 @@ const UserStats = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 10px 16px 10px 0;
   margin-left: 12px;
   background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.md};

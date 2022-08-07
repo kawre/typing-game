@@ -2,18 +2,16 @@ import React, { DOMAttributes } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled, { css } from "styled-components";
 import {
-  SpaceProps,
-  space,
   BackgroundColorProps,
-  backgroundColor,
+  space,
+  SpaceProps,
   variant,
-  WidthProps,
   width,
+  WidthProps,
 } from "styled-system";
-import { theme } from "../static/theme";
 // Types -------------------------------------------------------------------------
 
-const handleSize = (size: string) => {
+const handleSize = (size?: string) => {
   switch (size) {
     case "lg":
       return css`
@@ -50,16 +48,20 @@ const Button: React.FC<Props> = ({
   ...props
 }) => {
   return (
-    <Wrapper size={size} variant={variant} isLoading={isLoading} {...props}>
-      {isLoading ? (
-        <ThreeDots
-          color={theme.colors.background}
-          width={size === "lg" ? 40 : 30}
-          height="100%"
-        />
-      ) : (
-        children
-      )}
+    <Wrapper size={size} variant={variant} {...props}>
+      <ThreeDots
+        color="inherit"
+        width={size === "lg" ? 40 : 30}
+        height="100%"
+        visible={isLoading}
+        wrapperStyle={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+      <ChildrenWrapper isLoading={isLoading}>{children}</ChildrenWrapper>
     </Wrapper>
   );
 };
@@ -74,8 +76,10 @@ const Btn = styled.button<Props>`
   text-overflow: ellipsis;
   display: flex;
   box-shadow: ${({ theme }) => theme.shadow.sm};
+  position: relative;
+  font-weight: 500;
 
-  ${({ size }) => handleSize(size!)};
+  ${({ size }) => handleSize(size)};
   ${width}
   ${space}
 `;
@@ -86,12 +90,18 @@ const Wrapper = styled(Btn)<Props>(
     variants: {
       primary: {
         color: "text",
+        fill: "text",
         bg: "main",
       },
       secondary: {
         color: "background",
+        fill: "background",
         bg: "text",
       },
     },
   })
 );
+
+const ChildrenWrapper = styled.div<{ isLoading: boolean }>`
+  opacity: ${({ isLoading }) => (isLoading ? 0 : 1)};
+`;

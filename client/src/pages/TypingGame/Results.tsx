@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
+import { FaHome } from "react-icons/fa";
 import { TbRefresh } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -40,6 +41,10 @@ const Results: React.FC<Props> = ({ res, quote }) => {
           {ordinalSuffix(res.place)}
           <p>place</p>
         </Block>
+        <Block>
+          123
+          <p>place</p>
+        </Block>
       </Stats>
       <Buttons>
         <Button
@@ -56,6 +61,16 @@ const Results: React.FC<Props> = ({ res, quote }) => {
           }}
         >
           <Icon as={TbRefresh} />
+        </Button>
+        <Button
+          size="lg"
+          isLoading={loading}
+          variant="primary"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <Icon as={FaHome} />
         </Button>
       </Buttons>
     </Wrapper>
@@ -94,10 +109,17 @@ const Block = styled.div`
 `;
 
 const Buttons = styled.div`
-  margin-top: 1rem;
+  margin-top: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
+
+  /* 
+  button {
+    width: 100%;
+  } */
+
   svg {
     color: ${({ theme }) => theme.colors.background};
   }
