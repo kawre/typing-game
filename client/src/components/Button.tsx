@@ -1,5 +1,5 @@
 import React, { DOMAttributes } from "react";
-import Loader from "react-loader-spinner";
+import { ThreeDots } from "react-loader-spinner";
 import styled, { css } from "styled-components";
 import {
   SpaceProps,
@@ -52,8 +52,7 @@ const Button: React.FC<Props> = ({
   return (
     <Wrapper size={size} variant={variant} isLoading={isLoading} {...props}>
       {isLoading ? (
-        <Loader
-          type="ThreeDots"
+        <ThreeDots
           color={theme.colors.background}
           width={size === "lg" ? 40 : 30}
           height="100%"

@@ -8,8 +8,7 @@ const prisma = new PrismaClient();
 
 interface Match {
   users: number[];
-  matchId: string;
-  createdAt: Date;
+  id: string;
   quote: string;
   state: State[];
   available: boolean;
@@ -24,7 +23,7 @@ interface State {
   place?: number;
 }
 
-export const matches = [] as Match[];
+export const matches = {} as { [key: string]: Match };
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
@@ -37,54 +36,59 @@ prisma.$use(async (params, next) => {
   return next(params);
 });
 
-export const createRoom = async (id: number, socket: Socket) => {
-  const match = await prisma.match.create({
+export const createRoom = async (userId: number) => {
+  const { id, quote } = await prisma.match.create({
     data: { id: uuidv4() },
     include: { quote: true },
   });
 
-  const idx = matches.push({
-    users: [id],
-    quote: match.quote.text,
-    matchId: match.id,
-    createdAt: match.createdAt,
+  matches[id] = {
+    users: [userId],
+    quote: quote.text,
+    id,
     state: [],
     available: true,
     finished: 0,
-  });
+  };
+  const match = matches[id];
 
   let s = 0;
-  const interval = setInterval(() => {
+  const interval = setInterval(async () => {
     io.to(match.id).emit("room:time", s);
+    io.to(match.id).emit("room:state", match.state);
 
     if (s === 4) {
-      matches[idx - 1].available = false;
+      match.available = false;
     }
 
     if (s === 6) {
       io.to(match.id).emit("room:start", "start");
     }
 
-    if (s === 360) {
-      io.to(match.id).emit("room:end", "end");
-      matches.splice(idx - 1, 1);
+    if (s === 306) {
       clearInterval(interval);
+      io.to(match.id).emit("room:end", "end");
+      await prisma.match.update({
+        where: { id: match.id },
+        data: { usersId: match.users },
+      });
+      delete matches[match.id];
     }
 
     s++;
   }, 1000);
 
-  return matches[idx - 1].matchId;
+  return match.id;
 };
 
-export const findMatch = async (id: number, socket: Socket) => {
-  const latestMatch = matches[matches.length - 1];
+export const findMatch = async (userId: number) => {
+  const latestMatch = matches[userId];
 
   if (latestMatch && latestMatch.users.length <= 4 && latestMatch.available) {
-    latestMatch.users.push(id);
-    return latestMatch.matchId;
+    latestMatch.users.push(userId);
+    return latestMatch.id;
   } else {
-    return createRoom(id, socket);
+    return createRoom(userId);
   }
 };
 

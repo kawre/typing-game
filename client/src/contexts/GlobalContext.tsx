@@ -3,6 +3,8 @@ import { defaultConfig } from "../static/defaultConfig";
 import { useAuth } from "./AuthContext";
 // Types -------------------------------------------------------------------------
 
+interface Props extends React.PropsWithChildren {}
+
 interface Context {
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   isPlaying: boolean;
@@ -15,7 +17,7 @@ export const useGlobal = () => {
 };
 
 // Component ---------------------------------------------------------------------
-const GlobalProvider: React.FC = ({ children }) => {
+const GlobalProvider: React.FC<Props> = ({ children }) => {
   const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   // const [config, setConfig] = useState<Object>(

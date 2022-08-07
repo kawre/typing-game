@@ -8,7 +8,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (cfg) => {
-    cfg.headers.Authorization = Token.getWithBearer();
+    cfg.headers!["Authorization"] = Token.getWithBearer();
     return cfg;
   },
   (err) => Promise.reject(err)
@@ -30,7 +30,7 @@ instance.interceptors.response.use(
 
     return Token.refresh().then((tkn) => {
       const config = err.config;
-      config.headers["Authorization"] = `Bearer ${tkn}`;
+      config.headers!["Authorization"] = `Bearer ${tkn}`;
 
       return new Promise((resolve, reject) => {
         axios

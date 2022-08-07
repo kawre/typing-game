@@ -4,7 +4,10 @@ import { space, SpaceProps, typography, TypographyProps } from "styled-system";
 import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-type Props = SpaceProps & TypographyProps & ColorProps & { as?: any };
+type Props = SpaceProps &
+  TypographyProps &
+  ColorProps &
+  React.PropsWithChildren & { as?: any };
 
 // Component ---------------------------------------------------------------------
 const Text: React.FC<Props> = ({ children, ...props }) => {

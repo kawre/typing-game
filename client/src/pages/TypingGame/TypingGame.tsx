@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 import { User } from "../../types/auth.types";
@@ -27,7 +26,7 @@ export interface UserState {
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const roomId = (useParams() as any).id;
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { progress, inGame, setInGame, setResults, results, setTime, time } =
     useTyping();
@@ -35,7 +34,6 @@ const TypingGame: React.FC<Props> = () => {
   const [state, setState] = useState([{} as UserState]);
   const [quote, setQuote] = useState("");
   const [wpm, setWpm] = useState(0);
-  const [countdown, setCountdown] = useState(6);
   const [res, setRes] = useState<any>(null);
   const { socket } = useSockets();
 
@@ -50,11 +48,6 @@ const TypingGame: React.FC<Props> = () => {
 
     socket.on("room:quote", (text: string) => {
       setQuote(text);
-    });
-
-    // countdown
-    socket.on("countdown", (time) => {
-      setCountdown(time);
     });
 
     socket.on("room:start", () => {
@@ -72,13 +65,11 @@ const TypingGame: React.FC<Props> = () => {
 
     socket.on("error", (err) => {
       if (err === "404" || err === "503") {
-        history.push("/");
+        navigate("/");
       }
     });
 
     socket.on("room:user:results", (results) => {
-      console.log("siema");
-      console.log(results);
       setResults(true);
       setRes(results);
     });
@@ -101,16 +92,9 @@ const TypingGame: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Tracks cntdwn={countdown} data={state} />
+      <Tracks data={state} />
       {!results ? (
-        quote && (
-          <Panel
-            quote={quote}
-            wpm={wpm}
-            setWpm={setWpm}
-            countdown={countdown}
-          />
-        )
+        quote && <Panel quote={quote} wpm={wpm} setWpm={setWpm} />
       ) : (
         <div>
           {res ? (

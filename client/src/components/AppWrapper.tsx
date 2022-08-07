@@ -1,5 +1,5 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import AuthProvider from "../contexts/AuthContext";
@@ -11,7 +11,7 @@ import Header from "./Header/Header";
 import Layout from "./Layout";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props extends React.PropsWithChildren {}
 
 export const client = new QueryClient();
 

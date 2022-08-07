@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io-client/build/typed-events";
+import PrivateRoute from "../components/PrivateRoute";
+import TypingGame from "../pages/TypingGame/TypingGame";
 import { useAuth } from "./AuthContext";
 // Types -------------------------------------------------------------------------
 
@@ -29,8 +29,10 @@ export const useTyping = () => {
   return useContext(GameContext);
 };
 
+interface Props extends React.PropsWithChildren {}
+
 // Component ---------------------------------------------------------------------
-const GameProvider: React.FC = ({ children }) => {
+const GameProvider: React.FC<Props> = ({ children }) => {
   const { id } = useParams<any>();
   const { user } = useAuth();
 
@@ -54,7 +56,13 @@ const GameProvider: React.FC = ({ children }) => {
     time,
   };
 
-  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
+  return (
+    <GameContext.Provider value={value}>
+      <PrivateRoute>
+        <TypingGame />
+      </PrivateRoute>
+    </GameContext.Provider>
+  );
 };
 
 export default GameProvider;

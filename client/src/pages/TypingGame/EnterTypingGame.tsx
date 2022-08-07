@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { findRoom } from "../../api/rooms";
 import Button from "../../components/Button";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 // Types -------------------------------------------------------------------------
@@ -12,26 +13,38 @@ interface Props {}
 // Component ---------------------------------------------------------------------
 const EnterTypingGame: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { socket } = useSockets();
+  const { user } = useAuth();
 
   return (
     <Wrapper>
       <ButtonWrapper>
-        <Button
-          size="lg"
-          isLoading={loading}
-          variant="primary"
-          onClick={async () => {
-            setLoading(true);
-            socket.emit("room:find", "2");
-            socket.on("room:found", (xd) => {
-              history.push(`/games/${xd}`);
-            });
-          }}
-        >
-          Enter a Typing Game
-        </Button>
+        {user ? (
+          <Button
+            size="lg"
+            isLoading={loading}
+            variant="primary"
+            onClick={async () => {
+              setLoading(true);
+              socket.emit("room:find", user.id);
+              socket.on("room:found", (roomId) => {
+                navigate(`/games/${roomId}`);
+              });
+            }}
+          >
+            Enter a Typing Game
+          </Button>
+        ) : (
+          <Button
+            size="lg"
+            onClick={async () => {
+              navigate("/login");
+            }}
+          >
+            Log In to Play
+          </Button>
+        )}
       </ButtonWrapper>
     </Wrapper>
   );

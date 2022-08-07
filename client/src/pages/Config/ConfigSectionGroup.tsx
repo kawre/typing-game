@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Heading from "../../components/Heading";
 // Types -------------------------------------------------------------------------
 
-interface Props {
+interface Props extends React.PropsWithChildren {
   h: string;
 }
 

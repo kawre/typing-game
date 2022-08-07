@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import React from "react";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { login } from "../../api/auth";
@@ -15,7 +15,7 @@ interface Props {}
 
 // Component ---------------------------------------------------------------------
 const Login: React.FC<Props> = () => {
-  const { mutateAsync } = useMutation("me", login);
+  const { mutateAsync } = useMutation(["me"], login);
 
   return (
     <Formik

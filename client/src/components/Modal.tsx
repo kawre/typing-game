@@ -1,11 +1,11 @@
-import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import OutsideClickHandler from "react-outside-click-handler";
 import styled from "styled-components";
 // Types -------------------------------------------------------------------------
 
-interface Props {
+interface Props extends React.PropsWithChildren {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }

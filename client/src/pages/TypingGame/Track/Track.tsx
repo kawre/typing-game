@@ -14,7 +14,7 @@ interface Props {
 
 // Component ---------------------------------------------------------------------
 const Track: React.FC<Props> = ({ u }) => {
-  const { progress, matchId, user, wpm, place } = u;
+  const { progress, user, wpm, place } = u;
 
   return (
     <Wrapper>
@@ -24,7 +24,7 @@ const Track: React.FC<Props> = ({ u }) => {
         </Username>
         <Place>
           {place ? ordinalSuffix(place) : null}
-          {place === 1 && <Icon as={FaCrown} size={18} mb={1} ml={1} />}
+          {place === 1 && <Icon as={FaCrown} size={18} ml={1} />}
         </Place>
       </Info>
       <ProgressBarWrapper>
@@ -71,14 +71,8 @@ const ProgressBar = styled(motion.div)`
 `;
 
 const Wpm = styled.span`
-  /* text-align: left; */
   font-weight: 600;
   max-height: 60px;
-
-  /* span {
-    margin-right: 0.33ch;
-    font-weight: 600;
-  } */
 `;
 
 const Info = styled.div`
@@ -87,7 +81,7 @@ const Info = styled.div`
   justify-content: space-between;
 `;
 
-const Place = styled.p`
+const Place = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

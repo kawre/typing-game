@@ -1,18 +1,18 @@
 import React from "react";
-import { Redirect, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import Heading from "../Heading";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props extends React.PropsWithChildren {}
 
 // Component ---------------------------------------------------------------------
 const FormWrapper: React.FC<Props> = ({ children }) => {
   const { user } = useAuth();
   const { pathname } = useLocation();
 
-  if (user) return <Redirect to="/" />;
+  if (user) return <Navigate to="/" />;
 
   return (
     <Wrapper>

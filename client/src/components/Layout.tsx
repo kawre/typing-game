@@ -3,7 +3,7 @@ import styled from "styled-components";
 import GameProvider from "../contexts/GameContext";
 // Types -------------------------------------------------------------------------
 
-interface Props {}
+interface Props extends React.PropsWithChildren {}
 
 // Component ---------------------------------------------------------------------
 const Layout: React.FC<Props> = ({ children }) => {

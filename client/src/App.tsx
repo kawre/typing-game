@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import FormWrapper from "./components/Form/FormWrapper";
 import PrivateRoute from "./components/PrivateRoute";
 import GameProvider from "./contexts/GameContext";
@@ -15,32 +15,23 @@ interface Props {}
 // Component ---------------------------------------------------------------------
 const App: React.FC<Props> = () => {
   return (
-    <Switch>
-      <Route exact path="/" component={Home} />
-      <Route
-        exact
-        path="/games/:id"
-        component={() => (
-          <GameProvider>
-            <PrivateRoute>
-              <TypingGame />
-            </PrivateRoute>
-          </GameProvider>
-        )}
-      />
-      <Route exact path="/settings" component={Settings} />
-      <Route
-        exact
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/games/:id" element={<GameProvider />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      {/* <Route
         path={["/login", "/register"]}
-        component={() => (
+        element={
           <FormWrapper>
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </FormWrapper>
-        )}
-      />
-      <Route component={() => <h1>porvalo</h1>} />
-    </Switch>
+        }
+      /> */}
+      <Route element={<h1>porvalo</h1>} />
+    </Routes>
   );
 };
 

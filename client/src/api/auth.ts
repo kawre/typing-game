@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserRes } from "../types/auth.types";
 import { Token } from "../utils/Objects/Token";
 import auth from "./axios";

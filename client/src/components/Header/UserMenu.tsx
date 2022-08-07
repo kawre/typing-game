@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import React from "react";
 import { FaSignInAlt, FaSignOutAlt, FaUser, FaUserPlus } from "react-icons/fa";
 import OutsideClickHandler from "react-outside-click-handler";
-import { useMutation } from "react-query";
-import { Link, useHistory } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { logout } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthContext";
@@ -18,11 +18,11 @@ interface Props {
 
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
-  const { mutateAsync } = useMutation("me", logout, {
+  const { mutateAsync } = useMutation(["me"], logout, {
     onSuccess: () => client.invalidateQueries(),
   });
   const { user } = useAuth();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   if (!open) return null;
   return (
@@ -49,7 +49,7 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
               <Item
                 onClick={async () => {
                   const ok = await mutateAsync();
-                  if (ok) history.push("/");
+                  if (ok) navigate("/");
                 }}
               >
                 Log Out

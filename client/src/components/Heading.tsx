@@ -4,7 +4,11 @@ import { space, SpaceProps, typography, TypographyProps } from "styled-system";
 import { color, ColorProps } from "../types/styled-system.fix";
 // Types -------------------------------------------------------------------------
 
-interface Props extends SpaceProps, TypographyProps, ColorProps {
+interface Props
+  extends SpaceProps,
+    TypographyProps,
+    ColorProps,
+    React.PropsWithChildren {
   as?: any;
 }
 

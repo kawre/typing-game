@@ -2,13 +2,15 @@ import { createContext, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
 
+interface Props extends React.PropsWithChildren {}
+
 interface Context {
   socket: Socket;
 }
 
 const SocketContext = createContext<Context>(null!);
 
-const SocketsProvider: React.FC = ({ children }) => {
+const SocketsProvider: React.FC<Props> = ({ children }) => {
   const { user } = useAuth();
 
   const socket = io("http://localhost:5000", {

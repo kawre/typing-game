@@ -9,13 +9,10 @@ import Track from "./Track";
 
 interface Props {
   data: UserState[];
-  cntdwn: number;
 }
 
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = ({ data }) => {
-  const { time, inGame } = useTyping();
-
   const isEmpty = Object.keys(data[0]).length === 0;
   if (isEmpty && data.length === 1) return null;
   return (

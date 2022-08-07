@@ -1,28 +1,17 @@
-import { motion } from "framer-motion";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
-import Text from "../../../components/Text";
 import { useTyping } from "../../../contexts/GameContext";
 import { useSockets } from "../../../contexts/socket.context";
-import { theme } from "../../../static/theme";
-import { formatS } from "../../../utils/formatS";
 // Types -------------------------------------------------------------------------
 
 interface Props {
   quote: string;
   setWpm: React.Dispatch<React.SetStateAction<number>>;
   wpm: number;
-  countdown: number;
-}
-
-interface Err {
-  startAt: number;
-  length: number;
-  is: boolean;
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
+const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
   // ctx
   const { setProgress, setResults, inGame, time } = useTyping();
   const { socket } = useSockets();
@@ -32,8 +21,14 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
   const charRef = useRef<HTMLSpanElement>(null);
 
   // state
-  const [prev, setPrev] = useState({ words: "", chars: "", errors: "" });
-  const [next, setNext] = useState({ words: "", chars: "" });
+  const [game, setGame] = useState({
+    prevWords: "",
+    prevChars: "",
+    char: "",
+    nextChars: "",
+    nextWords: "",
+    errors: "",
+  });
   const [key, setKey] = useState("");
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
@@ -95,17 +90,15 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
       nextWords = nextWords.slice(overflow);
     }
 
-    setPrev({
+    setGame({
+      prevWords: words.slice(0, crntWord).join(" "),
+      prevChars: word.slice(0, len - errors),
+      char: word[len],
+      nextChars: word.slice(len + 1),
+      nextWords: nextWords,
       errors: errs,
-      chars: word.slice(0, len - errors),
-      words: words.slice(0, crntWord).join(" "),
     });
-
-    setNext({
-      chars: word.slice(len + 1),
-      words: nextWords,
-    });
-  }, [crntWord, input]);
+  }, [input, crntWord, errors, words]);
 
   // focus input on game start
   useEffect(() => {
@@ -114,31 +107,31 @@ const Panel: React.FC<Props> = ({ quote, setWpm, countdown, wpm }) => {
 
   // progress
   useEffect(() => {
-    setProgress((prev.words.length / (quote.length - 1)) * 100);
-  }, [prev, next]);
+    setProgress((game.prevWords.length / (quote.length - 1)) * 100);
+  }, [game, quote.length, setProgress]);
 
   // calculate wpm
   useEffect(() => {
     if (!inGame) return;
     const minute = (time - 6) / 60;
 
-    const correct = prev.words.length + prev.chars.length;
+    const correct = game.prevWords.length + game.prevChars.length;
     const wpm = correct / 5 / minute;
 
     if (!Number.isInteger(Math.round(wpm))) setWpm(0);
     else setWpm(wpm);
-  }, [time, inGame]);
+  }, [time, inGame, game.prevChars.length, game.prevWords.length, setWpm]);
 
   return (
     <Wrapper>
       <Container>
         <Game>
-          {prev.words && <Correct>{prev.words} </Correct>}
-          {prev.chars && <CharsCorrect>{prev.chars}</CharsCorrect>}
-          {errors !== 0 && <Incorrect>{prev.errors}</Incorrect>}
-          <Char ref={charRef}>{words[crntWord][input.length]}</Char>
-          {next.chars && <CharsComing>{next.chars}</CharsComing>}
-          {next.words && <Coming>{next.words}</Coming>}
+          <Correct>{game.prevWords} </Correct>
+          <CharsCorrect>{game.prevChars}</CharsCorrect>
+          <Incorrect>{game.errors}</Incorrect>
+          <Char ref={charRef}>{game.char}</Char>
+          <CharsComing>{game.nextChars}</CharsComing>
+          <Coming>{game.nextWords}</Coming>
         </Game>
       </Container>
       <InputWrapper error={errors !== 0}>

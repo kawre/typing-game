@@ -1,14 +1,13 @@
 import { createContext, useContext } from "react";
-import { useQuery } from "react-query";
-import { me } from "../api/auth";
 import { useMe } from "../hooks/hooks";
 import { UserRes } from "../types/auth.types";
-import { Token } from "../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Context {
   user: UserRes;
 }
+
+interface Props extends React.PropsWithChildren {}
 
 const AuthContext = createContext<Context>(null!);
 
@@ -17,7 +16,7 @@ export const useAuth = () => {
 };
 
 // Component ---------------------------------------------------------------------
-const AuthProvider: React.FC = ({ children }) => {
+const AuthProvider: React.FC<Props> = ({ children }) => {
   const { data: user } = useMe();
 
   const value = { user: user! };
