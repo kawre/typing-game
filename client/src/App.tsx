@@ -17,20 +17,10 @@ const App: React.FC<Props> = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/games/:id" element={<GameProvider />} />
+      <Route path="/match/:id" element={<GameProvider />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      {/* <Route
-        path={["/login", "/register"]}
-        element={
-          <FormWrapper>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </FormWrapper>
-        }
-      /> */}
-      <Route element={<h1>porvalo</h1>} />
     </Routes>
   );
 };

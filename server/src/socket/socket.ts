@@ -9,11 +9,8 @@ const prisma = new PrismaClient();
 const socketHandler = async (socket: Socket) => {
   // @ts-ignore
   const userId = parseInt(socket.handshake.headers["userid"]);
-  let user = null as User | null;
-  if (userId) {
-    changeUserStatus(userId, true);
-    user = await prisma.user.findUnique({ where: { id: userId } });
-  }
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (user?.id) changeUserStatus(user.id, true);
 
   socket.on("room:find", async (userId: string) => {
     const room = await findMatch(parseInt(userId));
@@ -54,6 +51,7 @@ const socketHandler = async (socket: Socket) => {
     if (!match) return;
 
     const idx = match.state.findIndex((s) => s.user.id === userId);
+    data.wpm = Math.round(data.wpm);
     match.state[idx] = { ...match.state[idx], ...data };
 
     if (data.progress === 100) {

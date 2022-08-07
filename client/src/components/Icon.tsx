@@ -36,5 +36,5 @@ const Wrapper = styled.div<Props>`
 
 Wrapper.defaultProps = {
   size: 26,
-  color: "main",
+  color: "inherit",
 };

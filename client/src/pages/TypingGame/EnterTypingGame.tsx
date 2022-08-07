@@ -29,7 +29,7 @@ const EnterTypingGame: React.FC<Props> = () => {
               setLoading(true);
               socket.emit("room:find", user.id);
               socket.on("room:found", (roomId) => {
-                navigate(`/games/${roomId}`);
+                navigate(`/match/${roomId}`);
               });
             }}
           >

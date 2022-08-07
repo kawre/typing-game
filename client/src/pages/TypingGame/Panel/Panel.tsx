@@ -35,6 +35,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
   const [errAt, setErrAt] = useState(0);
+  const [test, setTest] = useState(0);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -63,7 +64,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
     let test = errAt;
 
     if (crntInput !== correctInput) {
-      if (!errAt) {
+      if (!errAt || len < errAt) {
         setErrAt(len);
         test = len;
       }
@@ -105,22 +106,25 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
     if (inGame && inputRef?.current) inputRef.current.focus();
   }, [inGame]);
 
-  // progress
-  useEffect(() => {
-    setProgress((game.prevWords.length / (quote.length - 1)) * 100);
-  }, [game, quote.length, setProgress]);
-
-  // calculate wpm
   useEffect(() => {
     if (!inGame) return;
-    const minute = (time - 6) / 60;
+    const interval = setInterval(() => {
+      setTest((i) => (i += 1));
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, [inGame]);
+
+  useEffect(() => {
+    if (!test) return;
+    const minute = test / 100 / 60;
 
     const correct = game.prevWords.length + game.prevChars.length;
     const wpm = correct / 5 / minute;
 
-    if (!Number.isInteger(Math.round(wpm))) setWpm(0);
-    else setWpm(wpm);
-  }, [time, inGame, game.prevChars.length, game.prevWords.length, setWpm]);
+    setWpm(wpm);
+    setProgress((game.prevWords.length / (quote.length - 1)) * 100);
+  }, [test, game]);
 
   return (
     <Wrapper>
@@ -155,6 +159,7 @@ export default Panel;
 
 const Wrapper = styled.div`
   padding: 1.5rem;
+  margin-top: 2rem;
   background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
