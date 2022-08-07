@@ -34,17 +34,16 @@ const TypingGame: React.FC<Props> = () => {
   const roomId = (useParams() as any).id;
   const navigate = useNavigate();
 
-  const { progress, inGame, setInGame, setResults, setTime, time } =
-    useTyping();
+  const { inGame, setInGame, setResults, setTime, time } = useTyping();
 
   const [state, setState] = useState([{} as UserState]);
   const [quote, setQuote] = useState("");
   const [wpm, setWpm] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [res, setRes] = useState<IResults | null>(null);
   const { socket } = useSockets();
 
   useEffect(() => {
-    console.log(roomId);
     // join room
     socket.emit("room:join", roomId);
 
@@ -79,14 +78,13 @@ const TypingGame: React.FC<Props> = () => {
 
     // results
     socket.on("room:user:results", (results) => {
-      setResults(true);
       setRes(results);
     });
 
     return () => {
       socket.emit("room:leave", roomId);
     };
-  }, [roomId]);
+  }, []);
 
   useEffect(() => {
     if (!inGame) return;
@@ -100,9 +98,16 @@ const TypingGame: React.FC<Props> = () => {
     <Wrapper>
       <Tracks data={state} />
       {!res ? (
-        quote && <Panel quote={quote} wpm={wpm} setWpm={setWpm} />
+        quote && (
+          <Panel
+            quote={quote}
+            wpm={wpm}
+            setWpm={setWpm}
+            setProgress={setProgress}
+          />
+        )
       ) : (
-        <Results res={res} />
+        <Results res={res} quote={quote} />
       )}
     </Wrapper>
   );

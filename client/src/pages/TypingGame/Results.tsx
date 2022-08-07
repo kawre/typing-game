@@ -1,10 +1,12 @@
-import React from "react";
+import { motion } from "framer-motion";
+import React, { useState } from "react";
 import { TbRefresh } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../../components/Button";
 import Icon from "../../components/Icon";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 import { ordinalSuffix } from "../../utils/ordinalSuffix";
 import { IResults } from "./TypingGame";
@@ -12,36 +14,44 @@ import { IResults } from "./TypingGame";
 
 interface Props {
   res: IResults;
+  quote: string;
 }
 
 // Component ---------------------------------------------------------------------
-const Results: React.FC<Props> = ({ res }) => {
+const Results: React.FC<Props> = ({ res, quote }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const { socket } = useSockets();
+  const { setPlayAgain } = useTyping();
   const { user } = useAuth();
 
   return (
-    <Wrapper>
+    <Wrapper
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.2, delay: 0.1 } }}
+    >
+      <Quote>{quote}</Quote>
       <Stats>
         <Block>
           {res.wpm}
-          <p> wpm</p>
+          <p>wpm</p>
         </Block>
         <Block>
           {ordinalSuffix(res.place)}
-          <p> place</p>
+          <p>place</p>
         </Block>
       </Stats>
       <Buttons>
         <Button
           size="lg"
-          // isLoading={loading}
+          isLoading={loading}
           variant="primary"
           onClick={async () => {
-            // setLoading(true);
+            setLoading(true);
             socket.emit("room:find", user!.id);
             socket.on("room:found", (roomId) => {
               navigate(`/match/${roomId}`);
+              setPlayAgain(true);
             });
           }}
         >
@@ -56,7 +66,7 @@ export default Results;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled.div``;
+const Wrapper = styled(motion.div)``;
 
 const Stats = styled.div`
   margin-top: 2rem;
@@ -65,9 +75,9 @@ const Stats = styled.div`
 `;
 
 const Block = styled.div`
-  height: 12rem;
+  height: 8rem;
   width: 100%;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 700;
   background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.lg};
@@ -78,7 +88,7 @@ const Block = styled.div`
 
   p {
     margin-top: -0.5rem;
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: ${({ theme }) => theme.colors.text};
   }
 `;
@@ -91,4 +101,13 @@ const Buttons = styled.div`
   svg {
     color: ${({ theme }) => theme.colors.background};
   }
+`;
+
+const Quote = styled.div`
+  padding: 2rem;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  background-color: ${({ theme }) => theme.colors.main}0d;
+  border-radius: ${({ theme }) => theme.rounded.lg};
 `;

@@ -1,20 +1,19 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { useTyping } from "../../../contexts/GameContext";
-import { useSockets } from "../../../contexts/socket.context";
 // Types -------------------------------------------------------------------------
 
 interface Props {
   quote: string;
   setWpm: React.Dispatch<React.SetStateAction<number>>;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
   wpm: number;
 }
 
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
+const Panel: React.FC<Props> = ({ quote, setWpm, wpm, setProgress }) => {
   // ctx
-  const { setProgress, setResults, inGame, time } = useTyping();
-  const { socket } = useSockets();
+  const { setResults, inGame, time } = useTyping();
 
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,15 +38,15 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
+    const len = crntInput.length;
+    const word = words[crntWord];
+    const correctInput = word.slice(0, len);
 
-    if (
-      crntWord === words.length - 1 &&
-      crntInput.length === words[crntWord].length
-    ) {
-      if (words[crntWord].slice(-1) === crntInput.slice(-1)) {
-        setProgress(100);
+    if (crntWord === words.length - 1 && len === word.length) {
+      if (crntInput === word) {
         setResults(true);
-        return socket.emit("result", { wpm });
+        setProgress(100);
+        return;
       }
     }
 
@@ -58,9 +57,6 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
       return;
     }
 
-    const len = crntInput.length;
-    const word = words[crntWord];
-    const correctInput = word.slice(0, len);
     let test = errAt;
 
     if (crntInput !== correctInput) {
@@ -116,7 +112,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, wpm }) => {
   }, [inGame]);
 
   useEffect(() => {
-    if (!test) return;
+    if (!test || !inGame) return;
     const minute = test / 100 / 60;
 
     const correct = game.prevWords.length + game.prevChars.length;
