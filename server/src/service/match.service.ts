@@ -9,7 +9,6 @@ interface Match {
   id: string;
   quote: string;
   state: State[];
-  available: boolean;
   finished: number;
 }
 
@@ -22,6 +21,7 @@ interface State {
 }
 
 export const matches = {} as { [key: string]: Match };
+export const queue: string[] = [];
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
@@ -45,9 +45,9 @@ export const createRoom = async (userId: number) => {
     quote: quote.text,
     id,
     state: [],
-    available: true,
     finished: 0,
   };
+  queue.push(id);
   const match = matches[id];
 
   let s = 0;
@@ -56,7 +56,8 @@ export const createRoom = async (userId: number) => {
     io.to(match.id).emit("room:state", match.state);
 
     if (s === 4) {
-      match.available = false;
+      const queueIdx = queue.findIndex((q) => q === id);
+      queue.splice(queueIdx, 1);
     }
 
     if (s === 6) {
@@ -80,9 +81,9 @@ export const createRoom = async (userId: number) => {
 };
 
 export const findMatch = async (userId: number) => {
-  const latestMatch = matches[userId];
+  const latestMatch = matches[queue[0]];
 
-  if (latestMatch && latestMatch.users.length <= 4 && latestMatch.available) {
+  if (latestMatch && latestMatch.users.length <= 4) {
     latestMatch.users.push(userId);
     return latestMatch.id;
   } else {

@@ -23,9 +23,9 @@ const socketHandler = async (socket: Socket) => {
     if (!match) {
       return socket.emit("error", "404");
     }
-    if (!match.available) {
-      return socket.emit("error", "503");
-    }
+    // if (!match.available) {
+    //   return socket.emit("error", "503");
+    // }
 
     const userState = match.state.find((s) => s.user.id === userId);
     if (!userState) {
