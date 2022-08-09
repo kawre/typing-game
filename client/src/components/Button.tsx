@@ -1,4 +1,5 @@
-import React, { DOMAttributes } from "react";
+import { motion } from "framer-motion";
+import React, { DOMAttributes, PropsWithChildren, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled, { css } from "styled-components";
 import {
@@ -33,10 +34,11 @@ interface Props
   extends SpaceProps,
     BackgroundColorProps,
     WidthProps,
-    DOMAttributes<HTMLButtonElement> {
+    PropsWithChildren {
   size?: "default" | "lg";
   variant?: "primary" | "secondary";
   isLoading?: boolean;
+  onClick?: DOMAttributes<HTMLButtonElement>["onClick"];
 }
 
 // Component ---------------------------------------------------------------------
@@ -45,24 +47,34 @@ const Button: React.FC<Props> = ({
   size = "default",
   variant = "primary",
   isLoading = false,
-  ...props
+  onClick,
 }) => {
   return (
-    <Wrapper size={size} variant={variant} {...props}>
-      <ThreeDots
-        color="inherit"
-        width={size === "lg" ? 40 : 30}
-        height="100%"
-        visible={isLoading}
-        wrapperStyle={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-      <ChildrenWrapper isLoading={isLoading}>{children}</ChildrenWrapper>
-    </Wrapper>
+    <div style={{ position: "relative" }}>
+      <Bg />
+      <Wrapper
+        initial={{ translateY: 0 }}
+        whileHover={{ translateY: -5 }}
+        whileTap={{ translateY: 0 }}
+        size={size}
+        variant={variant}
+        onClick={onClick}
+      >
+        <ThreeDots
+          color="inherit"
+          width={size === "lg" ? 40 : 30}
+          height="100%"
+          visible={isLoading}
+          wrapperStyle={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+        <ChildrenWrapper isLoading={isLoading}>{children}</ChildrenWrapper>
+      </Wrapper>
+    </div>
   );
 };
 
@@ -70,12 +82,11 @@ export default Button;
 
 // Styled ------------------------------------------------------------------------
 
-const Btn = styled.button<Props>`
+const Btn = styled(motion.button)<Props>`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   display: flex;
-  box-shadow: ${({ theme }) => theme.shadow.sm};
   position: relative;
   font-weight: 500;
 
@@ -101,6 +112,19 @@ const Wrapper = styled(Btn)<Props>(
     },
   })
 );
+
+const Bg = styled.div`
+  top: 0;
+  left: 0;
+  user-select: none;
+  position: absolute;
+  /* background-color: ${({ theme }) => theme.colors.text}; */
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  border-radius: ${({ theme }) => theme.rounded.md};
+  box-shadow: ${({ theme }) => theme.shadow.sm};
+`;
 
 const ChildrenWrapper = styled.div<{ isLoading: boolean }>`
   opacity: ${({ isLoading }) => (isLoading ? 0 : 1)};

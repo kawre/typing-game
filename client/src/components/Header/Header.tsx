@@ -30,7 +30,9 @@ const Header: React.FC<Props> = () => {
             <Text>30$</Text>
           </Balance>
         </Shop> */}
-        <Divider />
+        <Icon as={FaMoon} size={22} />
+        {/* <Divider /> */}
+
         <Menu>
           <Link to="/settings">
             <Icon as={FaCog} size={22} />
@@ -66,16 +68,13 @@ const Wrapper = styled.div`
   display: flex;
   z-index: 999;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const Menu = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-
-  /* div:not(:first-child) {
-    margin-left: 12px;
-  } */
 
   z-index: 999;
 `;

@@ -22,10 +22,12 @@ model User {
 }
 
 model Config {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
-  font   String
+  id       Int     @id @default(autoincrement())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   Int     @unique
+  font     String  @default("Fira Code")
+  darkMode Boolean @default(false)
+  fontSize String  @default("1")
 }
 
 model Quote {
@@ -47,7 +49,8 @@ model Results {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  wpm       Int
+  wpm       Float    @default(0)
+  acc       Float    @default(0)
   place     Int      @default(0)
   match     Match    @relation(fields: [matchId], references: [id])
   matchId   String

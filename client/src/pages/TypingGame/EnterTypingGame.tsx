@@ -23,7 +23,7 @@ const EnterTypingGame: React.FC<Props> = () => {
             size="lg"
             isLoading={loading}
             variant="primary"
-            onClick={async () => {
+            onClick={() => {
               setLoading(true);
               socket.emit("room:find", user.id);
               socket.on("room:found", (roomId) => {
@@ -36,7 +36,7 @@ const EnterTypingGame: React.FC<Props> = () => {
         ) : (
           <Button
             size="lg"
-            onClick={async () => {
+            onClick={() => {
               navigate("/login");
             }}
           >

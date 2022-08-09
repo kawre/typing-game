@@ -32,9 +32,10 @@ auth.post("/register", async (req, res) => {
     const user = await createUser({ ...req.body });
     const token = signJwt({ ...user });
 
-    res.locals.user = user;
+    // res.locals.user = user;
     res.send({ success: true, accessToken: token });
   } catch (err: any) {
+    console.log(err);
     if (err.code === "P2002") {
       return res
         .status(400)

@@ -15,8 +15,6 @@ import { useAuth } from "./AuthContext";
 // }
 
 interface Context {
-  setResults: React.Dispatch<React.SetStateAction<boolean>>;
-  results: boolean;
   inGame: boolean;
   setInGame: React.Dispatch<React.SetStateAction<boolean>>;
   setTime: React.Dispatch<React.SetStateAction<number>>;
@@ -35,19 +33,13 @@ interface Props extends React.PropsWithChildren {}
 // Component ---------------------------------------------------------------------
 const GameProvider: React.FC<Props> = ({ children }) => {
   const [time, setTime] = useState(0);
-  const [results, setResults] = useState(false);
   const [inGame, setInGame] = useState(false);
   const [playAgain, setPlayAgain] = useState(false);
-
-  useEffect(() => {
-    if (results) setInGame(false);
-  }, [results]);
 
   useEffect(() => {
     if (playAgain) {
       setTimeout(() => {
         setPlayAgain(false);
-        setResults(false);
         setTime(0);
         setInGame(false);
       }, 50);
@@ -56,10 +48,8 @@ const GameProvider: React.FC<Props> = ({ children }) => {
 
   const value = {
     inGame,
-    results,
     time,
     setInGame,
-    setResults,
     setTime,
     setPlayAgain,
   };

@@ -20,7 +20,7 @@ const Track: React.FC<Props> = ({ u }) => {
     <Wrapper>
       <Info>
         <Username>
-          {user.username} • <Wpm>{wpm}wpm</Wpm>
+          {user.username} • <Wpm>{Math.round(wpm)}wpm</Wpm>
         </Username>
         <Place>
           {place ? ordinalSuffix(place) : null}

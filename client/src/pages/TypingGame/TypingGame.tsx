@@ -24,9 +24,13 @@ export interface UserState {
   place?: number;
 }
 
+export type GameState = UserState[];
+
 export interface IResults {
   wpm: number;
   place: number;
+  acc: number;
+  finished: boolean;
 }
 
 // Component ---------------------------------------------------------------------
@@ -34,13 +38,16 @@ const TypingGame: React.FC<Props> = () => {
   const roomId = (useParams() as any).id;
   const navigate = useNavigate();
 
-  const { inGame, setInGame, setResults, setTime, time } = useTyping();
+  // ctx
+  const { inGame, setInGame, setTime, time } = useTyping();
 
-  const [state, setState] = useState([{} as UserState]);
+  // state
+  const [state, setState] = useState([] as GameState);
   const [quote, setQuote] = useState("");
   const [wpm, setWpm] = useState(0);
+  const [acc, setAcc] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [res, setRes] = useState<IResults | null>(null);
+  const [results, setResults] = useState<IResults | null>(null);
   const { socket } = useSockets();
 
   useEffect(() => {
@@ -60,10 +67,6 @@ const TypingGame: React.FC<Props> = () => {
       setInGame(true);
     });
 
-    socket.on("room:end", () => {
-      setResults(true);
-    });
-
     // current game time
     socket.on("room:time", (time) => {
       setTime(time);
@@ -77,37 +80,59 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     // results
-    socket.on("room:user:results", (results) => {
-      setRes(results);
+    socket.on("room:user:results", (res) => {
+      setResults(res);
     });
 
     return () => {
       socket.emit("room:leave", roomId);
+      socket.off("room:state");
+      socket.off("room:quote");
+      socket.off("room:start");
+      socket.off("room:time");
+      socket.off("error");
+      socket.off("room:user:results");
     };
   }, []);
 
   useEffect(() => {
     if (!inGame) return;
+
     socket.emit("room:user:state", {
       matchId: roomId,
-      data: { progress, wpm },
+      data: { progress, wpm, acc },
     });
-  }, [time, progress]);
+  }, [time, progress, inGame]);
+
+  useEffect(() => {
+    if (progress === 100) setInGame(false);
+  }, [progress]);
+
+  useEffect(() => {
+    socket.on("room:end", () => {
+      setInGame(false);
+      socket.emit("room:user:timeout", { wpm, acc, progress });
+    });
+
+    return () => {
+      socket.off("room:end");
+    };
+  }, [wpm, acc]);
 
   return (
     <Wrapper>
       <Tracks data={state} />
-      {!res ? (
+      {results ? (
+        <Results res={results} quote={quote} />
+      ) : (
         quote && (
           <Panel
             quote={quote}
-            wpm={wpm}
             setWpm={setWpm}
             setProgress={setProgress}
+            setAcc={setAcc}
           />
         )
-      ) : (
-        <Results res={res} quote={quote} />
       )}
     </Wrapper>
   );

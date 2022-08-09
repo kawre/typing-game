@@ -8,3 +8,7 @@ export const updateConfig = (id: string, input: any) =>
   instance
     .post(`users/${id}/config`, input)
     .then(({ data }) => data.config as IConfig);
+
+export const getConfig = async (id: number) => {
+  return instance.get(`users/${id}/config`).then((res) => res.data);
+};

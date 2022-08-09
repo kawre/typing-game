@@ -1,20 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import Text from "../../../components/Text";
-import { useTyping } from "../../../contexts/GameContext";
-import { formatS } from "../../../utils/formatS";
-import { UserState } from "../TypingGame";
+import { GameState } from "../TypingGame";
 import Track from "./Track";
 // Types -------------------------------------------------------------------------
 
 interface Props {
-  data: UserState[];
+  data: GameState;
 }
 
 // Component ---------------------------------------------------------------------
 const Tracks: React.FC<Props> = ({ data }) => {
-  const isEmpty = Object.keys(data[0]).length === 0;
-  if (isEmpty && data.length === 1) return null;
   return (
     <Wrapper>
       {/* <Stats>
@@ -32,7 +27,8 @@ export default Tracks;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 1.5rem 3rem;
+  padding: 1.5rem 0;
+  padding-right: 6rem;
 `;
 
 const Stats = styled.div`

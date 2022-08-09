@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { TbRefresh } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Button from "../../components/Button";
 import Icon from "../../components/Icon";
 import { useAuth } from "../../contexts/AuthContext";
@@ -17,6 +17,27 @@ interface Props {
   res: IResults;
   quote: string;
 }
+
+interface ResultsProps extends PropsWithChildren {
+  content?: string;
+}
+
+const ResultsBlock: React.FC<ResultsProps> = ({ content, children }) => {
+  return (
+    <Block>
+      {content && (
+        <PopUpWrapper
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          whileHover={{ opacity: 1, translateY: -6 }}
+        >
+          <PopUp>{content}</PopUp>
+        </PopUpWrapper>
+      )}
+      {children}
+    </Block>
+  );
+};
 
 // Component ---------------------------------------------------------------------
 const Results: React.FC<Props> = ({ res, quote }) => {
@@ -33,18 +54,18 @@ const Results: React.FC<Props> = ({ res, quote }) => {
     >
       <Quote>{quote}</Quote>
       <Stats>
-        <Block>
-          {res.wpm}
+        <ResultsBlock content={res.wpm.toString()}>
+          {Math.round(res.wpm)}
           <p>wpm</p>
-        </Block>
-        <Block>
-          {ordinalSuffix(res.place)}
+        </ResultsBlock>
+        <ResultsBlock content={res.acc.toString()}>
+          {`${Math.floor(res.acc)}%`}
+          <p>acc</p>
+        </ResultsBlock>
+        <ResultsBlock>
+          {res.finished ? ordinalSuffix(res.place) : "Didn't Finish"}
           <p>place</p>
-        </Block>
-        <Block>
-          123
-          <p>place</p>
-        </Block>
+        </ResultsBlock>
       </Stats>
       <Buttons>
         <Button
@@ -62,14 +83,7 @@ const Results: React.FC<Props> = ({ res, quote }) => {
         >
           <Icon as={TbRefresh} />
         </Button>
-        <Button
-          size="lg"
-          isLoading={loading}
-          variant="primary"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
+        <Button size="lg" variant="primary" onClick={() => navigate("/")}>
           <Icon as={FaHome} />
         </Button>
       </Buttons>
@@ -90,6 +104,7 @@ const Stats = styled.div`
 `;
 
 const Block = styled.div`
+  position: relative;
   height: 8rem;
   width: 100%;
   font-size: 2rem;
@@ -108,17 +123,48 @@ const Block = styled.div`
   }
 `;
 
+const PopUpWrapper = styled(motion.div)`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: block;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.colors.background};
+  font-weight: 400;
+  user-select: none;
+  /* pointer-events: none; */
+`;
+
+const PopUp = styled.div`
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: ${({ theme }) => theme.colors.main};
+  border-radius: ${({ theme }) => theme.rounded.md};
+  padding: 0.6rem;
+
+  &::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    transform: rotate(-45deg);
+    background-color: ${({ theme }) => theme.colors.main};
+    position: absolute;
+    z-index: -1;
+    bottom: -5px;
+    left: calc(50% - 5px);
+  }
+`;
+
 const Buttons = styled.div`
   margin-top: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-
-  /* 
-  button {
-    width: 100%;
-  } */
 
   svg {
     color: ${({ theme }) => theme.colors.background};

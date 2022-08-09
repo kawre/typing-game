@@ -9,6 +9,7 @@ import GlobalStyle from "../global/GlobalStyle";
 import { themes } from "../static/themes";
 import Header from "./Header/Header";
 import Layout from "./Layout";
+import ConfigProvider from "../contexts/config.context";
 // Types -------------------------------------------------------------------------
 
 interface Props extends React.PropsWithChildren {}
@@ -33,7 +34,8 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
   const theme = {
     ...staticTheme,
     font: "Fira Code",
-    colors: themes["light"],
+    // colors: themes["dark"],
+    colors: themes["dark"],
     // colors: themes[!Config.get("darkMode") ? "light" : "dark"],
     // font: `"${Config.get("fontFamily")}", "Roboto Mono"`,
   };
@@ -42,17 +44,19 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
     <QueryClientProvider client={client}>
       <AuthProvider>
         <GlobalProvider>
-          <SocketsProvider>
-            <ThemeProvider theme={theme}>
-              <GlobalStyle />
-              <BrowserRouter>
-                <Layout>
-                  <Header />
-                  {children}
-                </Layout>
-              </BrowserRouter>
-            </ThemeProvider>
-          </SocketsProvider>
+          <ConfigProvider>
+            <SocketsProvider>
+              <ThemeProvider theme={theme}>
+                <GlobalStyle />
+                <BrowserRouter>
+                  <Layout>
+                    <Header />
+                    {children}
+                  </Layout>
+                </BrowserRouter>
+              </ThemeProvider>
+            </SocketsProvider>
+          </ConfigProvider>
         </GlobalProvider>
       </AuthProvider>
     </QueryClientProvider>

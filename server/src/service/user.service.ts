@@ -18,3 +18,7 @@ export const changeUserStatus = async (userId: any, status: boolean) => {
     data: { isOnline: status },
   });
 };
+
+export const getConfig = async (userId: number) => {
+  return prisma.config.findUnique({ where: { userId } });
+};

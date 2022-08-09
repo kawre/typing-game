@@ -10,4 +10,10 @@ matches.get("/", async (req: Request, res: Response) => {
   res.json(matches);
 });
 
+matches.post("/quote", async (req, res) => {
+  const { text } = req.body;
+  const quote = await prisma.quote.create({ data: { text } });
+  res.send(quote);
+});
+
 export { matches as matchesRouter };

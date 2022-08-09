@@ -1,33 +1,35 @@
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, Quote, User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "../app";
+import { emitState } from "../utils/emitState";
 
 const prisma = new PrismaClient();
 
-interface Match {
+export interface Match {
   users: number[];
   id: string;
   quote: string;
-  state: State[];
+  state: Map<number, State>;
   finished: number;
 }
 
-interface State {
+export interface State {
   user: User;
   wpm: number;
+  acc: number;
   progress: number;
   matchId: string;
   place?: number;
 }
 
-export const matches = {} as { [key: string]: Match };
+export const matches = new Map<string, Match>();
 export const queue: string[] = [];
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
-    const quotesCount = await prisma.quote.count();
-    const skip = Math.floor(Math.random() * quotesCount);
-    const quote = await prisma.quote.findMany({ take: 1, skip });
+    const quote =
+      (await prisma.$queryRaw`SELECT * FROM "Quote" ORDER BY random() LIMIT 1;
+    `) as Quote[];
     params.args.data.quoteId = quote[0].id;
   }
 
@@ -35,28 +37,28 @@ prisma.$use(async (params, next) => {
 });
 
 export const createRoom = async (userId: number) => {
-  const { id, quote } = await prisma.match.create({
+  const { id: matchId, quote } = await prisma.match.create({
     data: { id: uuidv4() },
     include: { quote: true },
   });
 
-  matches[id] = {
+  matches.set(matchId, {
     users: [userId],
     quote: quote.text,
-    id,
-    state: [],
+    id: matchId,
+    state: new Map(),
     finished: 0,
-  };
-  queue.push(id);
-  const match = matches[id];
+  });
+  queue.push(matchId);
+  const match = matches.get(matchId)!;
 
   let s = 0;
   const interval = setInterval(async () => {
     io.to(match.id).emit("room:time", s);
-    io.to(match.id).emit("room:state", match.state);
+    io.to(match.id).emit("room:state", emitState(match.state));
 
     if (s === 4) {
-      const queueIdx = queue.findIndex((q) => q === id);
+      const queueIdx = queue.findIndex((q) => q === matchId);
       queue.splice(queueIdx, 1);
     }
 
@@ -64,14 +66,14 @@ export const createRoom = async (userId: number) => {
       io.to(match.id).emit("room:start", "start");
     }
 
-    if (s === 306) {
+    if (s === 186) {
       clearInterval(interval);
-      io.to(match.id).emit("room:end", "end");
+      io.to(match.id).emit("room:end");
       await prisma.match.update({
         where: { id: match.id },
         data: { usersId: match.users },
       });
-      delete matches[match.id];
+      matches.delete(match.id);
     }
 
     s++;
@@ -81,7 +83,7 @@ export const createRoom = async (userId: number) => {
 };
 
 export const findMatch = async (userId: number) => {
-  const latestMatch = matches[queue[0]];
+  const latestMatch = matches.get(queue[0]);
 
   if (latestMatch && latestMatch.users.length <= 4) {
     latestMatch.users.push(userId);
@@ -98,6 +100,7 @@ export const saveResults = async (data: any) => {
       userId: data.user.id,
       place: data.place,
       matchId: data.matchId,
+      acc: data.acc,
     },
   });
 };

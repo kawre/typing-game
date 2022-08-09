@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Config" ADD COLUMN     "darkMode" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "fontSize" TEXT NOT NULL DEFAULT '1',
+ALTER COLUMN "font" SET DEFAULT 'Fira Code';

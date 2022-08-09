@@ -14,7 +14,7 @@ const SocketsProvider: React.FC<Props> = ({ children }) => {
   const { user } = useAuth();
 
   const socket = io("http://localhost:5000", {
-    extraHeaders: { userId: user ? user.id : "" },
+    extraHeaders: { userId: user ? `${user.id}` : "" },
   });
 
   return (
