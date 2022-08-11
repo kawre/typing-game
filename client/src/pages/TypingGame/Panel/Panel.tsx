@@ -10,6 +10,14 @@ interface Props {
   quote: string;
 }
 
+export interface History {
+  game: typeof initGame;
+  createdAt: number;
+  correctInputs: number;
+  allCorrectInputs: number;
+  allInputs: number;
+}
+
 const initGame = {
   prevWords: "",
   prevChars: "",
@@ -30,7 +38,6 @@ const Panel: React.FC<Props> = ({ quote }) => {
 
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
-  const charRef = useRef<HTMLSpanElement>(null);
 
   // state
   const [game, setGame] = useState(initGame);
@@ -43,6 +50,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
   const [allErrs, setAllErrs] = useState(0);
   const [allInputs, setAllInputs] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [history, setHistory] = useState([] as History[]);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -112,6 +120,20 @@ const Panel: React.FC<Props> = ({ quote }) => {
     });
   }, [input, crntWord, errors]);
 
+  useEffect(() => {
+    if (!inGame) return;
+
+    const history: History = {
+      createdAt: new Date().getTime(),
+      game,
+      correctInputs: (game.prevWords + game.prevChars).length,
+      allCorrectInputs: allInputs - allErrs,
+      allInputs,
+    };
+
+    setHistory((prev) => [...prev, history]);
+  }, [game, inGame]);
+
   // focus input on game start
   useEffect(() => {
     if (inGame && inputRef?.current) inputRef.current.focus();
@@ -137,7 +159,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
   useEffect(() => {
     if (!inGame || progress !== 100) return;
     setInGame(false);
-    socket.emit("room:user:finish", roomId);
+    socket.emit("room:user:finish", { matchId: roomId, history });
   }, [inGame, progress]);
 
   // useEffect(() => {
@@ -163,7 +185,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
           {game.prevChars && <CharsCorrect>{game.prevChars}</CharsCorrect>}
           {game.errors && <Incorrect>{game.errors}</Incorrect>}
           {game.errorsOverflow && <Overflow>{game.errorsOverflow}</Overflow>}
-          {game.char && <Char ref={charRef}>{game.char}</Char>}
+          {game.char && <Char>{game.char}</Char>}
           {game.nextChars && <CharsComing>{game.nextChars}</CharsComing>}
           {game.nextWords && <Coming>{game.nextWords}</Coming>}
         </Game>
@@ -195,7 +217,7 @@ const Wrapper = styled.div`
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
 
-const Char = styled.span`
+export const Char = styled.span`
   text-decoration: underline;
   text-decoration-color: inherit;
 
@@ -210,7 +232,7 @@ const Char = styled.span`
 
 const Container = styled.div``;
 
-const Game = styled.div`
+export const Game = styled.div`
   font-size: 1.25rem;
   color: ${({ theme }) => theme.colors.text};
   font-weight: 500;
@@ -221,29 +243,29 @@ const Game = styled.div`
   }
 `;
 
-const Correct = styled.span`
+export const Correct = styled.span`
   color: ${({ theme }) => theme.colors.correct};
 `;
 
-const CharsCorrect = styled.span`
+export const CharsCorrect = styled.span`
   color: ${({ theme }) => theme.colors.correct};
   text-decoration: underline;
 `;
 
-const CharsComing = styled.span`
+export const CharsComing = styled.span`
   text-decoration: underline;
 `;
 
-const Incorrect = styled.span`
+export const Incorrect = styled.span`
   text-decoration: underline;
   background-color: ${({ theme }) => theme.colors.error};
 `;
 
-const Overflow = styled.span`
+export const Overflow = styled.span`
   background-color: ${({ theme }) => theme.colors.error};
 `;
 
-const Coming = styled.span``;
+export const Coming = styled.span``;
 
 const InputWrapper = styled.div<{ error: boolean }>`
   margin-top: 1.5rem;

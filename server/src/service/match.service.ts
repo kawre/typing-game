@@ -47,7 +47,7 @@ export const createRoom = async (userId: number) => {
     quote,
     createdAt,
   } = await prisma.match.create({
-    data: { id: uuidv4() },
+    data: {},
     include: { quote: true },
   });
 
@@ -111,13 +111,20 @@ export const findMatch = async (userId: number) => {
 };
 
 export const saveResults = async (data: any) => {
+  const history = await prisma.history.create({
+    data: { history: data.history },
+  });
+
+  const { wpm, acc, place, user, matchId } = data.finalState;
   return prisma.results.create({
     data: {
-      wpm: data.wpm,
-      acc: data.acc,
-      place: data.place,
-      userId: data.user.id,
-      matchId: data.matchId,
+      wpm,
+      acc,
+      place,
+      userId: user.id,
+      matchId,
+      historyId: history.id,
     },
+    include: { history: true },
   });
 };

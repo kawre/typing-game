@@ -12,9 +12,6 @@ interface Props {
 const Tracks: React.FC<Props> = ({ data }) => {
   return (
     <Wrapper>
-      {/* <Stats>
-        <Text>{inGame ? formatS(306 - time) : 6 - time}</Text>
-      </Stats> */}
       {data.map((u) => (
         <Track key={u.user.id} u={u} />
       ))}

@@ -10,6 +10,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 import { ordinalSuffix } from "../../utils/ordinalSuffix";
+import GameReplay from "./GameReplay";
 import { IResults } from "./TypingGame";
 // Types -------------------------------------------------------------------------
 
@@ -54,7 +55,11 @@ const Results: React.FC<Props> = ({ res, quote }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, delay: 0.1 }}
     >
-      <Quote>{quote}</Quote>
+      <GameReplay
+        history={res.history}
+        quote={quote}
+        createdAt={res.createdAt}
+      />
       <Stats>
         <ResultsBlock content={res.wpm.toString()}>
           {Math.round(res.wpm)}
@@ -173,12 +178,4 @@ const Buttons = styled.div`
   svg {
     color: ${({ theme }) => theme.colors.background};
   }
-`;
-
-const Quote = styled.div`
-  padding: 2rem;
-  font-size: 1.2rem;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.colors.main}0d;
-  border-radius: ${({ theme }) => theme.rounded.lg};
 `;

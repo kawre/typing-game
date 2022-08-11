@@ -73,7 +73,7 @@ const socketHandler = async (socket: Socket) => {
     matches.set(match.id, match);
   });
 
-  socket.on("room:user:finish", (matchId) => {
+  socket.on("room:user:finish", ({ matchId, history }) => {
     const match = matches.get(matchId);
     if (!match) return;
 
@@ -96,8 +96,15 @@ const socketHandler = async (socket: Socket) => {
       progress: 100,
     };
 
-    saveResults(finalState).then((results) => {
-      socket.emit("room:user:results", { ...results, finished: true });
+    const payload = { finalState, history };
+    saveResults(payload).then((results) => {
+      const timeInMs = new Date(match.createdAt).getTime() + 6000;
+      socket.emit("room:user:results", {
+        ...results,
+        finished: true,
+        history: results.history.history,
+        createdAt: timeInMs,
+      });
     });
 
     match.state.set(userId, finalState);

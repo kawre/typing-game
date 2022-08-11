@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
 import { User } from "../../types/auth.types";
-import Panel from "./Panel/Panel";
+import Panel, { History } from "./Panel/Panel";
 import Results from "./Results";
 import Tracks from "./Track/Tracks";
 // Types -------------------------------------------------------------------------
@@ -32,6 +32,8 @@ export interface IResults {
   place: number;
   acc: number;
   finished: boolean;
+  history: History[];
+  createdAt: number;
 }
 
 // Component ---------------------------------------------------------------------
@@ -89,6 +91,7 @@ const TypingGame: React.FC<Props> = () => {
 
     // results
     socket.on("room:user:results", (res) => {
+      console.log(res);
       setResults(res);
     });
 
