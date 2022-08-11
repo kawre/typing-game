@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 import { useTyping } from "../../contexts/GameContext";
 import { useSockets } from "../../contexts/socket.context";
@@ -72,6 +73,16 @@ const TypingGame: React.FC<Props> = () => {
     // handle errors
     socket.on("error", (err) => {
       if (err === "404" || err === "503") {
+        toast.error("Match not found", {
+          toastId: err,
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         navigate("/");
       }
     });

@@ -1,6 +1,14 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
+:root {
+	--toastify-color-error: ${({ theme }) => theme.colors.error};
+	--toastify-color-progress-error: ${({ theme }) => theme.colors.error};
+	--toastify-color-success: ${({ theme }) => theme.colors.correct};
+	--toastify-font-family: ${({ theme }) => theme.font};
+	--toastify-text-color-error: ${({ theme }) => theme.colors.textAlt};
+}
+
 * {
 	margin: 0;
 	padding: 0;

@@ -10,6 +10,8 @@ import { themes } from "../static/themes";
 import Header from "./Header/Header";
 import Layout from "./Layout";
 import ConfigProvider from "../contexts/config.context";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // Types -------------------------------------------------------------------------
 
 interface Props extends React.PropsWithChildren {}
@@ -34,10 +36,7 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
   const theme = {
     ...staticTheme,
     font: "Fira Code",
-    // colors: themes["dark"],
     colors: themes[localStorage.getItem("theme") || "light"],
-    // colors: themes[!Config.get("darkMode") ? "light" : "dark"],
-    // font: `"${Config.get("fontFamily")}", "Roboto Mono"`,
   };
 
   return (
@@ -47,6 +46,17 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
           <ConfigProvider>
             <SocketsProvider>
               <ThemeProvider theme={theme}>
+                <StyledContainer
+                  position="top-left"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                />
                 <GlobalStyle />
                 <BrowserRouter>
                   <Layout>
@@ -67,4 +77,17 @@ export default AppWrapper;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled.div``;
+const StyledContainer = styled(ToastContainer)`
+  // https://styled-components.com/docs/faqs#how-can-i-override-styles-with-higher-specificity
+  &&&.Toastify__toast-container {
+  }
+  .Toastify__toast {
+    border-radius: ${({ theme }) => theme.rounded.lg};
+    background-color: ${({ theme }) => theme.colors.main};
+    color: ${({ theme }) => theme.colors.textAlt};
+  }
+  .Toastify__toast-body {
+  }
+  .Toastify__progress-bar {
+  }
+`;

@@ -88,7 +88,6 @@ const socketHandler = async (socket: Socket) => {
     const { correctInputs, allInputs, allCorrectInputs } = userState;
     const wpm = correctInputs / 5 / (endTime / 60);
     const acc = (allCorrectInputs / allInputs) * 100;
-    console.log({ finalWpm: wpm, endTime });
 
     const finalState = {
       ...userState,
