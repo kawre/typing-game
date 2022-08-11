@@ -22,6 +22,9 @@ export interface State {
   allInputs: number;
   matchId: string;
   place?: number;
+  wpm: number;
+  acc: number;
+  progress: number;
 }
 
 export const matches = new Map<string, Match>();
@@ -62,32 +65,35 @@ export const createRoom = async (userId: number) => {
 
   const interval = setInterval(async () => {
     const match = matches.get(matchId)!;
+    match.time++;
     const s = match.time;
-
     io.to(match.id).emit("room:time", s);
-    if (s >= 0) io.to(match.id).emit("room:state", emitState(match));
+
+    if (s === 0) {
+      io.to(match.id).emit("room:start", "start");
+    }
+
+    if (s > 0) {
+      io.to(match.id).emit("room:state", emitState(match));
+    }
 
     if (s === -2) {
       const queueIdx = queue.findIndex((q) => q === matchId);
       queue.splice(queueIdx, 1);
     }
 
-    if (s === 0) {
-      io.to(match.id).emit("room:start", "start");
-    }
-
     if (s === 180) {
       clearInterval(interval);
       io.to(match.id).emit("room:end");
-      await prisma.match.update({
-        where: { id: match.id },
-        data: { usersId: match.users },
-      });
-      matches.delete(match.id);
+      prisma.match
+        .update({
+          where: { id: match.id },
+          data: { usersId: match.users },
+        })
+        .then(() => matches.delete(match.id));
     }
 
-    // const match = matches.get(matchId)!;
-    matches.set(matchId, { ...match, time: s + 1 });
+    matches.set(matchId, { ...match, time: s });
   }, 1000);
 
   return match.id;

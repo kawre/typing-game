@@ -53,8 +53,8 @@ const Panel: React.FC<Props> = ({ quote }) => {
 
     // space handler
     if (key === " " && input === word) {
-      setCrntWord((i) => (i += 1));
-      setAllInputs((i) => (i += 1));
+      setCrntWord((i) => i + 1);
+      setAllInputs((i) => i + 1);
       setInput("");
       return;
     }
@@ -62,9 +62,9 @@ const Panel: React.FC<Props> = ({ quote }) => {
     // track all inputs
     if (key !== "Backspace") {
       if (key !== word[len - 1]) {
-        setAllErrs((i) => (i += 1));
+        setAllErrs((i) => i + 1);
       }
-      setAllInputs((i) => (i += 1));
+      setAllInputs((i) => i + 1);
     }
 
     if (crntInput !== correctInput) {
@@ -73,7 +73,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
         test = len;
       }
 
-      setErrors(() => len - (test - 1));
+      setErrors(len - (test - 1));
     } else {
       setErrAt(0);
       setErrors(0);
