@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Socket } from "socket.io";
 import { io } from "../app";
 import {
@@ -7,7 +7,6 @@ import {
   queue,
   saveResults,
 } from "../service/match.service";
-import { changeUserStatus } from "../service/user.service";
 import { emitState } from "../utils/emitState";
 
 const prisma = new PrismaClient();
@@ -16,6 +15,10 @@ const socketHandler = async (socket: Socket) => {
   // @ts-ignore
   const userId = parseInt(socket.handshake.headers["userid"]);
   const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  // await prisma.config.deleteMany();
+  // await prisma.results.deleteMany();
+  // await prisma.user.deleteMany();
 
   if (user) {
     // changeUserStatus(user.id, true);
@@ -39,15 +42,16 @@ const socketHandler = async (socket: Socket) => {
       if (!match.state.get(userId)) {
         match.state.set(userId, {
           user,
-          wpm: 0,
-          acc: 0,
-          progress: 0,
           matchId: match.id,
+          allCorrectInputs: 0,
+          allInputs: 0,
+          correctInputs: 0,
         });
       }
 
       socket.join(id);
-      io.to(id).emit("room:state", emitState(match.state));
+      io.to(id).emit("room:state", emitState(match));
+      socket.emit("room:time", match.time);
       socket.emit("room:quote", match.quote);
     });
 
@@ -63,22 +67,42 @@ const socketHandler = async (socket: Socket) => {
       if (!state) return;
       const userState = { ...state, ...data };
 
-      let emit = false;
-      if (userState.progress === 100) {
-        match.finished++;
-        userState.place = match.finished;
-        emit = true;
-
-        saveResults(userState).then((results) => {
-          socket.emit("room:user:results", { ...results, finished: true });
-        });
-      }
-
       match.state.set(userId, userState);
-      if (emit) io.to(match.id).emit("room:state", emitState(match.state));
       matches.set(match.id, match);
     });
   }
+
+  socket.on("room:user:finish", (matchId) => {
+    const match = matches.get(matchId);
+    if (!match) return;
+
+    const userState = match.state.get(userId);
+    if (!userState) return;
+
+    const timestampInMs = new Date(match.createdAt).getTime() + 6000;
+    const endTime = (Date.now() - timestampInMs) / 1000;
+
+    match.finished++;
+    userState.place = match.finished;
+    const { correctInputs, allInputs, allCorrectInputs } = userState;
+    const wpm = correctInputs / 5 / (endTime / 60);
+    const acc = (allCorrectInputs / allInputs) * 100;
+
+    const finalState = {
+      ...userState,
+      place: userState.place,
+      wpm,
+      acc,
+    };
+
+    saveResults(finalState).then((results) => {
+      socket.emit("room:user:results", { ...results, finished: true });
+    });
+
+    match.state.set(userId, userState);
+    matches.set(match.id, match);
+    io.to(matchId).emit("room:state", emitState(match));
+  });
 
   socket.on("room:user:timeout", (data) => {
     socket.emit("room:user:results", { ...data, finished: false });

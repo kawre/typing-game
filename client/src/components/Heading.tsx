@@ -29,5 +29,5 @@ const Wrapper = styled.h1<Props>`
 `;
 
 Wrapper.defaultProps = {
-  textColor: "main",
+  textColor: "text",
 };

@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { useTyping } from "../../../contexts/GameContext";
 import { useSockets } from "../../../contexts/socket.context";
@@ -7,39 +8,41 @@ import { formatS } from "../../../utils/formatS";
 
 interface Props {
   quote: string;
-  setWpm: React.Dispatch<React.SetStateAction<number>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setAcc: React.Dispatch<React.SetStateAction<number>>;
 }
 
+const initGame = {
+  prevWords: "",
+  prevChars: "",
+  char: "",
+  nextChars: "",
+  nextWords: "",
+  errors: "",
+  errorsOverflow: "",
+};
+
 // Component ---------------------------------------------------------------------
-const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
+const Panel: React.FC<Props> = ({ quote }) => {
+  const roomId = (useParams() as any).id;
+
   // ctx
   const { inGame, time, setInGame } = useTyping();
+  const { socket } = useSockets();
 
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
   const charRef = useRef<HTMLSpanElement>(null);
 
   // state
-  const [game, setGame] = useState({
-    prevWords: "",
-    prevChars: "",
-    char: "",
-    nextChars: "",
-    nextWords: "",
-    errors: "",
-    errorsOverflow: "",
-  });
+  const [game, setGame] = useState(initGame);
   const [key, setKey] = useState("");
   const [crntWord, setCrntWord] = useState(0);
   const [input, setInput] = useState("");
   const [words] = useState(quote.split(" "));
   const [errors, setErrors] = useState(0);
   const [errAt, setErrAt] = useState(0);
-  const [test, setTest] = useState(0);
   const [allErrs, setAllErrs] = useState(0);
   const [allInputs, setAllInputs] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const crntInput = e.target.value;
@@ -84,7 +87,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
     const len = input.length;
     const word = words[crntWord];
     let errs = errors ? word.slice(len - errors, len) : "";
-    let errsOverflow = "";
+    let errorsOverflow = "";
     let nextWords = " " + words.slice(crntWord + 1).join(" ");
     let prevWords = words.slice(0, crntWord).join(" ");
 
@@ -94,7 +97,7 @@ const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
 
     if (len > word.length) {
       const overflow = len - word.length;
-      errsOverflow = nextWords.slice(0, overflow);
+      errorsOverflow = nextWords.slice(0, overflow);
       nextWords = nextWords.slice(overflow);
     }
 
@@ -103,9 +106,9 @@ const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
       prevChars: word.slice(0, len - errors),
       char: word[len] ? word[len] : "",
       nextChars: word.slice(len + 1),
-      nextWords: nextWords,
+      nextWords,
       errors: errs,
-      errorsOverflow: errsOverflow,
+      errorsOverflow,
     });
   }, [input, crntWord, errors]);
 
@@ -116,33 +119,41 @@ const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
 
   useEffect(() => {
     if (!inGame) return;
-    const interval = setInterval(() => {
-      setTest((i) => (i += 10));
-    }, 10);
+    const correct = (game.prevWords + game.prevChars).length;
+    const correctInputs = allInputs - allErrs;
+    const progress = (correct / quote.length) * 100;
+    setProgress(progress);
 
-    return () => clearInterval(interval);
-  }, [inGame]);
+    socket.emit("room:user:state", {
+      matchId: roomId,
+      data: {
+        correctInputs: correct,
+        allCorrectInputs: correctInputs,
+        allInputs,
+      },
+    });
+  }, [game, inGame]);
 
   useEffect(() => {
-    if (!test || !inGame) return;
+    if (!inGame || progress !== 100) return;
+    setInGame(false);
+    socket.emit("room:user:finish", roomId);
+  }, [inGame, progress]);
 
-    // acc
-    const correctInputs = allInputs - allErrs;
-    const acc = correctInputs / allInputs;
-    setAcc(acc ? acc * 100 : 0);
+  // useEffect(() => {
+  //   if (!inGame) return;
+  //   if (progress === 100) setInGame(false);
 
-    // wpm
-    const seconds = test / 1000;
-    const minute = seconds / 60;
-    const correct = game.prevWords.length + game.prevChars.length;
-    const wpm = correct / 5 / minute;
-    setWpm(wpm);
+  //   socket.on("room:end", () => {
+  //     if (!inGame) return;
+  //     setInGame(false);
+  //     socket.emit("room:user:timeout", { wpm, acc, progress });
+  //   });
 
-    // progress
-    const len = game.prevWords.length + (input.length - errors);
-    const progress = len / quote.length;
-    setProgress(progress * 100);
-  }, [test, game, inGame]);
+  //   return () => {
+  //     socket.off("room:end");
+  //   };
+  // }, [progress, inGame]);
 
   return (
     <Wrapper>
@@ -151,22 +162,20 @@ const Panel: React.FC<Props> = ({ quote, setWpm, setProgress, setAcc }) => {
           {game.prevWords && <Correct>{game.prevWords}</Correct>}
           {game.prevChars && <CharsCorrect>{game.prevChars}</CharsCorrect>}
           {game.errors && <Incorrect>{game.errors}</Incorrect>}
-          {game.errorsOverflow && (
-            <IncorrectOverflow>{game.errorsOverflow}</IncorrectOverflow>
-          )}
+          {game.errorsOverflow && <Overflow>{game.errorsOverflow}</Overflow>}
           {game.char && <Char ref={charRef}>{game.char}</Char>}
           {game.nextChars && <CharsComing>{game.nextChars}</CharsComing>}
           {game.nextWords && <Coming>{game.nextWords}</Coming>}
         </Game>
       </Container>
-      <InputWrapper error={errors !== 0}>
-        {inGame && <Timer>{formatS(186 - time)}</Timer>}
+      <InputWrapper error={!!errors}>
+        {inGame && <Timer>{formatS(180 - time)}</Timer>}
         <Input
           ref={inputRef}
           disabled={!inGame}
           onKeyDown={(e) => setKey(e.key)}
           onChange={handleInput}
-          value={inGame ? input : 6 - time}
+          value={inGame ? input : time * -1}
           maxLength={words[crntWord].length + 6}
         />
         {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}
@@ -181,8 +190,8 @@ export default Panel;
 
 const Wrapper = styled.div`
   padding: 1.5rem;
-  margin-top: 2rem;
-  background-color: ${({ theme }) => theme.colors.main}0d;
+  /* margin-top: 2rem; */
+  background-color: ${({ theme }) => theme.colors.sub};
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
 
@@ -203,7 +212,7 @@ const Container = styled.div``;
 
 const Game = styled.div`
   font-size: 1.25rem;
-  color: ${({ theme }) => theme.colors.main};
+  color: ${({ theme }) => theme.colors.text};
   font-weight: 500;
   user-select: none;
 
@@ -230,7 +239,7 @@ const Incorrect = styled.span`
   background-color: ${({ theme }) => theme.colors.error};
 `;
 
-const IncorrectOverflow = styled.span`
+const Overflow = styled.span`
   background-color: ${({ theme }) => theme.colors.error};
 `;
 

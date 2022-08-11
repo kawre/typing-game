@@ -13,6 +13,7 @@ html {
 
 body, input, button {
 	font-family: ${({ theme }) => theme.font};
+	color: ${({ theme }) => theme.colors.text};
 }
 
 #portal {

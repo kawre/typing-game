@@ -19,7 +19,7 @@ const Header: React.FC<Props> = () => {
     <Wrapper>
       <Left>
         <Link to="/">
-          <Heading>TypeRacer</Heading>
+          <Heading fontWeight={500}>TypeRacer</Heading>
         </Link>
       </Left>
       <Right>
@@ -30,7 +30,18 @@ const Header: React.FC<Props> = () => {
             <Text>30$</Text>
           </Balance>
         </Shop> */}
-        <Icon as={FaMoon} size={22} />
+        <Icon
+          as={FaMoon}
+          size={22}
+          onClick={() => {
+            const theme = localStorage.getItem("theme");
+            if (theme === "light") {
+              localStorage.setItem("theme", "dark");
+            } else {
+              localStorage.setItem("theme", "light");
+            }
+          }}
+        />
         {/* <Divider /> */}
 
         <Menu>
@@ -131,10 +142,10 @@ const UserStats = styled.div`
   justify-content: center;
   padding: 10px 16px 10px 0;
   margin-left: 12px;
-  background-color: ${({ theme }) => theme.colors.main}0d;
+  background-color: ${({ theme }) => theme.colors.sub};
   border-radius: ${({ theme }) => theme.rounded.md};
 
   p {
-    color: ${({ theme }) => theme.colors.main};
+    color: ${({ theme }) => theme.colors.text};
   }
 `;

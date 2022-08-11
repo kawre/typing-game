@@ -42,14 +42,12 @@ export default Track;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  /* background: ${({ theme }) => theme.colors.main}; */
-  /* height: 60px; */
   position: relative;
 
   p {
     flex-grow: 0;
     font-weight: 500;
-    color: ${({ theme }) => theme.colors.main};
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 
@@ -58,7 +56,7 @@ const ProgressBarWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   border-radius: ${({ theme }) => theme.rounded.lg};
-  background-color: ${({ theme }) => theme.colors.main}0d;
+  background-color: ${({ theme }) => theme.colors.sub};
   width: 100%;
   position: relative;
   padding: 0.6rem;
@@ -67,7 +65,7 @@ const ProgressBarWrapper = styled.div`
 const ProgressBar = styled(motion.div)`
   border-radius: ${({ theme }) => theme.rounded.md};
   height: 1rem;
-  background-color: ${({ theme }) => theme.colors.caret};
+  background-color: ${({ theme }) => theme.colors.text};
 `;
 
 const Wpm = styled.span`
@@ -90,7 +88,6 @@ const Place = styled.div`
 `;
 
 const Username = styled.p`
-  /* text-align: right; */
   overflow: hidden;
   overflow-wrap: break-word;
   flex-shrink: 0;

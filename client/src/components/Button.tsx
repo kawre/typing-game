@@ -100,8 +100,8 @@ const Wrapper = styled(Btn)<Props>(
     prop: "variant",
     variants: {
       primary: {
-        color: "text",
-        fill: "text",
+        color: "textAlt",
+        fill: "textAlt",
         bg: "main",
       },
       secondary: {
@@ -118,8 +118,7 @@ const Bg = styled.div`
   left: 0;
   user-select: none;
   position: absolute;
-  /* background-color: ${({ theme }) => theme.colors.text}; */
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.subAlt};
   width: 100%;
   height: 100%;
   border-radius: ${({ theme }) => theme.rounded.md};

@@ -56,7 +56,7 @@ const Wrapper = styled.div`
   position: relative;
   width: 100%;
   height: 350px;
-  background-color: ${({ theme }) => theme.colors.main}1a;
+  background-color: ${({ theme }) => theme.colors.sub};
   border-radius: ${({ theme }) => theme.rounded.md};
 `;
 

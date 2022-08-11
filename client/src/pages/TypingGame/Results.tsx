@@ -23,15 +23,16 @@ interface ResultsProps extends PropsWithChildren {
 }
 
 const ResultsBlock: React.FC<ResultsProps> = ({ content, children }) => {
+  const cntnt = content?.slice(0, 6);
   return (
     <Block>
       {content && (
         <PopUpWrapper
           initial={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
           whileHover={{ opacity: 1, translateY: -6 }}
         >
-          <PopUp>{content}</PopUp>
+          <PopUp>{cntnt}</PopUp>
         </PopUpWrapper>
       )}
       {children}
@@ -50,7 +51,8 @@ const Results: React.FC<Props> = ({ res, quote }) => {
   return (
     <Wrapper
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.2, delay: 0.1 } }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, delay: 0.1 }}
     >
       <Quote>{quote}</Quote>
       <Stats>
@@ -95,7 +97,9 @@ export default Results;
 
 // Styled ------------------------------------------------------------------------
 
-const Wrapper = styled(motion.div)``;
+const Wrapper = styled(motion.div)`
+  opacity: 0;
+`;
 
 const Stats = styled.div`
   margin-top: 2rem;
@@ -173,7 +177,6 @@ const Buttons = styled.div`
 
 const Quote = styled.div`
   padding: 2rem;
-  margin-top: 1rem;
   font-size: 1.2rem;
   font-weight: 500;
   background-color: ${({ theme }) => theme.colors.main}0d;

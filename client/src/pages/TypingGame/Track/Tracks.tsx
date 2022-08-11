@@ -27,8 +27,7 @@ export default Tracks;
 // Styled ------------------------------------------------------------------------
 
 const Wrapper = styled.div`
-  padding: 1.5rem 0;
-  padding-right: 6rem;
+  padding: 2rem 0;
 `;
 
 const Stats = styled.div`

@@ -7,12 +7,12 @@
 interface Theme {
   background: string;
   main: string;
-  caret: string;
   sub: string;
+  subAlt?: string;
   text: string;
+  textAlt?: string;
   correct: string;
   error: string;
-  errorExtra: string;
 }
 
 type Themes = Record<string, Theme>;
@@ -29,23 +29,23 @@ export const themes: Themes = {
   //   errorExtra: "#d22a2a",
   // },
   dark: {
-    background: "#2b2b2c",
-    main: "#76689a",
-    caret: "#76689a",
-    sub: "#d8a0a6",
-    text: "#f1e2e4",
+    background: "#111",
+    main: "#454545",
+    sub: "#191919",
+    subAlt: "#959595",
+    text: "#EDEDED",
+    textAlt: "#EDEDED",
     correct: "#66DE93",
-    error: "#d44729",
-    errorExtra: "#8f2f19",
+    error: "#da3333",
   },
   light: {
-    background: "#EDEDED",
+    background: "#ededed",
     main: "#454545",
-    sub: "#454545",
-    text: "#B3B3B3",
-    caret: "#454545",
+    sub: "#e2e2e2",
+    subAlt: "#222222",
+    text: "#454545",
+    textAlt: "#ededed",
     correct: "#66DE93",
     error: "#FF616D",
-    errorExtra: "#D60000",
   },
 };

@@ -35,7 +35,7 @@ const AppWrapper: React.FC<Props> = ({ children }) => {
     ...staticTheme,
     font: "Fira Code",
     // colors: themes["dark"],
-    colors: themes["dark"],
+    colors: themes[localStorage.getItem("theme") || "light"],
     // colors: themes[!Config.get("darkMode") ? "light" : "dark"],
     // font: `"${Config.get("fontFamily")}", "Roboto Mono"`,
   };

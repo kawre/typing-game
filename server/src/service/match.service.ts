@@ -11,13 +11,15 @@ export interface Match {
   quote: string;
   state: Map<number, State>;
   finished: number;
+  time: number;
+  createdAt: Date;
 }
 
 export interface State {
   user: User;
-  wpm: number;
-  acc: number;
-  progress: number;
+  correctInputs: number;
+  allCorrectInputs: number;
+  allInputs: number;
   matchId: string;
   place?: number;
 }
@@ -37,7 +39,11 @@ prisma.$use(async (params, next) => {
 });
 
 export const createRoom = async (userId: number) => {
-  const { id: matchId, quote } = await prisma.match.create({
+  const {
+    id: matchId,
+    quote,
+    createdAt,
+  } = await prisma.match.create({
     data: { id: uuidv4() },
     include: { quote: true },
   });
@@ -48,25 +54,29 @@ export const createRoom = async (userId: number) => {
     id: matchId,
     state: new Map(),
     finished: 0,
+    time: -6,
+    createdAt,
   });
   queue.push(matchId);
   const match = matches.get(matchId)!;
 
-  let s = 0;
   const interval = setInterval(async () => {
-    io.to(match.id).emit("room:time", s);
-    io.to(match.id).emit("room:state", emitState(match.state));
+    const match = matches.get(matchId)!;
+    const s = match.time;
 
-    if (s === 4) {
+    io.to(match.id).emit("room:time", s);
+    if (s >= 0) io.to(match.id).emit("room:state", emitState(match));
+
+    if (s === -2) {
       const queueIdx = queue.findIndex((q) => q === matchId);
       queue.splice(queueIdx, 1);
     }
 
-    if (s === 6) {
+    if (s === 0) {
       io.to(match.id).emit("room:start", "start");
     }
 
-    if (s === 186) {
+    if (s === 180) {
       clearInterval(interval);
       io.to(match.id).emit("room:end");
       await prisma.match.update({
@@ -76,7 +86,8 @@ export const createRoom = async (userId: number) => {
       matches.delete(match.id);
     }
 
-    s++;
+    // const match = matches.get(matchId)!;
+    matches.set(matchId, { ...match, time: s + 1 });
   }, 1000);
 
   return match.id;
@@ -97,10 +108,10 @@ export const saveResults = async (data: any) => {
   return prisma.results.create({
     data: {
       wpm: data.wpm,
-      userId: data.user.id,
-      place: data.place,
-      matchId: data.matchId,
       acc: data.acc,
+      place: data.place,
+      userId: data.user.id,
+      matchId: data.matchId,
     },
   });
 };
