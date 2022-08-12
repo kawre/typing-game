@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Request, Response, Router } from "express";
-import { findUser, findUserById, getConfig } from "../service/user.service";
+import { Router } from "express";
+import { findUserById, getConfig } from "../service/user.service";
 
 const users = Router();
 const prisma = new PrismaClient();

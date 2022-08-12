@@ -1,5 +1,5 @@
+import { faCog, faMoon } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
-import { FaCog, FaMoon, FaShoppingCart, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
@@ -31,7 +31,7 @@ const Header: React.FC<Props> = () => {
           </Balance>
         </Shop> */}
         <Icon
-          as={FaMoon}
+          as={faMoon}
           size={22}
           onClick={() => {
             const theme = localStorage.getItem("theme");
@@ -46,7 +46,7 @@ const Header: React.FC<Props> = () => {
 
         <Menu>
           <Link to="/settings">
-            <Icon as={FaCog} size={22} />
+            <Icon as={faCog} size={22} />
           </Link>
           {/* <Icon
             as={!Config.get("darkMode") ? FaMoon : FaSun}

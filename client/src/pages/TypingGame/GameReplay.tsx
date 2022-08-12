@@ -1,6 +1,13 @@
+import {
+  faArrowsRotate,
+  faBackward,
+  faForward,
+  faPause,
+  faPlay,
+  faRepeat,
+  faRotateRight,
+} from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
-import { FaBackward, FaForward, FaPause, FaPlay } from "react-icons/fa";
-import { GrRefresh } from "react-icons/gr";
 import Select from "react-select";
 import styled from "styled-components";
 import Icon from "../../components/Icon";
@@ -11,7 +18,7 @@ import {
   CharsCorrect,
   Coming,
   Correct,
-  Game,
+  Game as Game2,
   History,
   Incorrect,
   Overflow,
@@ -38,6 +45,8 @@ const customStyle = {
     ...base,
     fontFamily: "Fira Code",
     fontSize: "1rem",
+    height: 32,
+    minHeight: 32,
   }),
   menu: (base: any) => ({
     ...base,
@@ -53,14 +62,9 @@ const GameReplay: React.FC<Props> = ({ history, quote, createdAt }) => {
   const [crnt, setCrnt] = useState(0);
   const [stats, setStats] = useState({ wpm: 0, acc: 0, time: 0 });
   const [speed, setSpeed] = useState(1);
-  const [reset, setReset] = useState(false);
 
   useEffect(() => {
-    if (!inGame) return;
-    if (crnt + 1 > history.length - 1) {
-      setReset(true);
-      return;
-    }
+    if (!inGame || crnt + 1 > history.length - 1) return;
 
     const delay = history[crnt + 1].createdAt - history[crnt].createdAt;
     const timeout = setTimeout(() => {
@@ -78,7 +82,8 @@ const GameReplay: React.FC<Props> = ({ history, quote, createdAt }) => {
     const seconds = (history[crnt].createdAt - createdAt) / 1000;
     const wpm = correctInputs / 5 / (seconds / 60);
     const acc = (allCorrectInputs / allInputs) * 100;
-    setStats({ wpm, acc: acc ? acc : 0, time: Math.floor(seconds) });
+    const time = history[crnt].time;
+    setStats({ wpm, acc: acc ? acc : 0, time });
   }, [crnt]);
 
   return (
@@ -94,9 +99,17 @@ const GameReplay: React.FC<Props> = ({ history, quote, createdAt }) => {
       </Game>
       <ControlsWrapper>
         <Stats>
-          <Stat>Speed: {Math.round(stats.wpm)} WPM</Stat>|
-          <Stat>Accuracy: {stats.acc.toFixed(1)}%</Stat>|
-          <Stat>Time: {formatS(stats.time)}</Stat>
+          <Stat>
+            Speed: <strong>{Math.round(stats.wpm)} WPM</strong>
+          </Stat>
+          |
+          <Stat>
+            Accuracy: <strong>{stats.acc.toFixed(1)}%</strong>
+          </Stat>
+          |
+          <Stat>
+            Time: <strong>{formatS(stats.time)}</strong>
+          </Stat>
         </Stats>
         <Buttons>
           <Select
@@ -114,11 +127,23 @@ const GameReplay: React.FC<Props> = ({ history, quote, createdAt }) => {
               setCrnt(0);
             }}
           >
-            <Icon as={FaBackward} size={16} />
+            <Icon as={faBackward} size={16} />
           </Button>
-          <Button onClick={() => setInGame(!inGame)}>
-            <Icon as={inGame ? FaPause : FaPlay} size={16} />
-          </Button>
+          {crnt === history.length - 1 ? (
+            <Button
+              onClick={() => {
+                setInGame(true);
+                setGame(history[0].game);
+                setCrnt(0);
+              }}
+            >
+              <Icon as={faRotateRight} size={16} />
+            </Button>
+          ) : (
+            <Button onClick={() => setInGame(!inGame)}>
+              <Icon as={inGame ? faPause : faPlay} size={16} />
+            </Button>
+          )}
           <Button
             onClick={() => {
               setInGame(false);
@@ -127,7 +152,7 @@ const GameReplay: React.FC<Props> = ({ history, quote, createdAt }) => {
               setCrnt(len);
             }}
           >
-            <Icon as={FaForward} size={16} />
+            <Icon as={faForward} size={16} />
           </Button>
         </Buttons>
       </ControlsWrapper>
@@ -142,21 +167,22 @@ export default GameReplay;
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.lg};
-  padding: 2rem;
-  padding-bottom: 0;
   font-size: 1.25rem;
   color: ${({ theme }) => theme.colors.text};
   font-weight: 500;
   user-select: none;
 `;
 
-const Quote = styled.div``;
+const Game = styled(Game2)`
+  padding: 1.5rem;
+`;
 
 const ControlsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
+  padding: 0 1.5rem;
 `;
 
 const Buttons = styled.div`
@@ -178,6 +204,6 @@ const Stats = styled.div`
   gap: 1rem;
 `;
 
-const Stat = styled.div`
+const Stat = styled.p`
   font-size: 1rem;
 `;

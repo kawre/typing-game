@@ -1,8 +1,13 @@
+import {
+  faSignInAlt,
+  faSignOutAlt,
+  faUser,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import React from "react";
-import { FaSignInAlt, FaSignOutAlt, FaUser, FaUserPlus } from "react-icons/fa";
 import OutsideClickHandler from "react-outside-click-handler";
-import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { logout } from "../../api/auth";
@@ -43,7 +48,7 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
               <Link to={`/user/${user.id}`}>
                 <Item>
                   Profile
-                  <Icon as={FaUser} ml={2} size={16} />
+                  <Icon as={faUser} ml={2} size={16} />
                 </Item>
               </Link>
               <Item
@@ -53,7 +58,7 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
                 }}
               >
                 Log Out
-                <Icon as={FaSignOutAlt} ml={2} size={18} />
+                <Icon as={faSignOutAlt} ml={2} size={18} />
               </Item>
             </>
           ) : (
@@ -61,13 +66,13 @@ const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
               <Link to="/login">
                 <Item>
                   Log In
-                  <Icon as={FaSignInAlt} ml={2} size={18} />
+                  <Icon as={faSignInAlt} ml={2} size={18} />
                 </Item>
               </Link>
               <Link to="/register">
                 <Item>
                   Sign Up
-                  <Icon as={FaUserPlus} ml={2} size={18} />
+                  <Icon as={faUserPlus} ml={2} size={18} />
                 </Item>
               </Link>
             </>

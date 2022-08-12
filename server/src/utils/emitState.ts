@@ -1,4 +1,4 @@
-import { Match, matches } from "../service/match.service";
+import { Match } from "../service/match.service";
 
 export const emitState = (match: Match) => {
   return Array.from(match.state.values()).map((s) => {

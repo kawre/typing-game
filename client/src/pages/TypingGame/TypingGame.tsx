@@ -39,10 +39,9 @@ export interface IResults {
 // Component ---------------------------------------------------------------------
 const TypingGame: React.FC<Props> = () => {
   const roomId = (useParams() as any).id;
-  const navigate = useNavigate();
 
   // ctx
-  const { setInGame, setTime } = useTyping();
+  const { setTime, setStage, stage } = useTyping();
 
   // state
   const [state, setState] = useState([] as GameState);
@@ -64,7 +63,7 @@ const TypingGame: React.FC<Props> = () => {
     });
 
     socket.on("room:start", () => {
-      setInGame(true);
+      setStage("game");
     });
 
     // current game time
@@ -72,26 +71,8 @@ const TypingGame: React.FC<Props> = () => {
       setTime(time);
     });
 
-    // handle errors
-    socket.on("error", (err) => {
-      if (err === "404" || err === "503") {
-        toast.error("Match not found", {
-          toastId: err,
-          position: "top-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        navigate("/");
-      }
-    });
-
     // results
     socket.on("room:user:results", (res) => {
-      console.log(res);
       setResults(res);
     });
 
@@ -101,7 +82,6 @@ const TypingGame: React.FC<Props> = () => {
       socket.off("room:quote");
       socket.off("room:start");
       socket.off("room:time");
-      socket.off("error");
       socket.off("room:user:results");
     };
   }, []);
@@ -109,11 +89,9 @@ const TypingGame: React.FC<Props> = () => {
   return (
     <Wrapper>
       <Tracks data={state} />
-      {results ? (
-        <Results res={results} quote={quote} />
-      ) : (
-        quote && <Panel quote={quote} />
-      )}
+      {stage === "post"
+        ? results && <Results res={results} quote={quote} />
+        : quote && <Panel quote={quote} />}
     </Wrapper>
   );
 };

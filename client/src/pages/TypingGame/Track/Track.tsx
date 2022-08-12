@@ -1,11 +1,10 @@
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 import React from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import Car from "../../../static/images/Car";
+import Icon from "../../../components/Icon";
 import { ordinalSuffix } from "../../../utils/ordinalSuffix";
 import { UserState } from "../TypingGame";
-import Icon from "../../../components/Icon";
-import { FaCrown } from "react-icons/fa";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -24,7 +23,7 @@ const Track: React.FC<Props> = ({ u }) => {
         </Username>
         <Place>
           {place ? ordinalSuffix(place) : null}
-          {place === 1 && <Icon as={FaCrown} size={18} ml={1} />}
+          {place === 1 && <Icon as={faCrown} size={18} ml={1} />}
         </Place>
       </Info>
       <ProgressBarWrapper>

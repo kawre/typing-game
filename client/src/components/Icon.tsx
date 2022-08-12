@@ -1,6 +1,6 @@
-import React from "react";
-import { DOMAttributes } from "react";
-import { IconType } from "react-icons";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { DOMAttributes } from "react";
 import styled from "styled-components";
 import { size, SizeProps, space, SpaceProps } from "styled-system";
 import { color, ColorProps } from "../types/styled-system.fix";
@@ -13,8 +13,9 @@ interface Props
     DOMAttributes<HTMLDivElement> {}
 
 // Component ---------------------------------------------------------------------
-const Icon: React.FC<Props & { as: IconType }> = ({ as, ...props }) => {
-  return <Wrapper {...props}>{React.createElement(as)}</Wrapper>;
+const Icon: React.FC<Props & { as: IconDefinition }> = ({ as, ...props }) => {
+  const element = <FontAwesomeIcon icon={as} />;
+  return <Wrapper {...props}>{element}</Wrapper>;
 };
 
 export default Icon;

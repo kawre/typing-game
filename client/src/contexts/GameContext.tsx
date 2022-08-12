@@ -15,10 +15,10 @@ import { useAuth } from "./AuthContext";
 // }
 
 interface Context {
-  inGame: boolean;
-  setInGame: React.Dispatch<React.SetStateAction<boolean>>;
   setTime: React.Dispatch<React.SetStateAction<number>>;
   setPlayAgain: React.Dispatch<React.SetStateAction<boolean>>;
+  setStage: React.Dispatch<React.SetStateAction<Stage>>;
+  stage: Stage;
   time: number;
 }
 
@@ -28,12 +28,13 @@ export const useTyping = () => {
   return useContext(GameContext);
 };
 
-interface Props extends React.PropsWithChildren {}
+interface Props {}
+type Stage = "pre" | "game" | "post";
 
 // Component ---------------------------------------------------------------------
-const GameProvider: React.FC<Props> = ({ children }) => {
+const GameProvider: React.FC<Props> = () => {
   const [time, setTime] = useState(0);
-  const [inGame, setInGame] = useState(false);
+  const [stage, setStage] = useState<Stage>("pre");
   const [playAgain, setPlayAgain] = useState(false);
 
   useEffect(() => {
@@ -41,17 +42,17 @@ const GameProvider: React.FC<Props> = ({ children }) => {
       setTimeout(() => {
         setPlayAgain(false);
         setTime(0);
-        setInGame(false);
+        setStage("pre");
       }, 50);
     }
   }, [playAgain]);
 
   const value = {
-    inGame,
     time,
-    setInGame,
+    stage,
     setTime,
     setPlayAgain,
+    setStage,
   };
 
   return (

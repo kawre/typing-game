@@ -16,6 +16,7 @@ export interface History {
   correctInputs: number;
   allCorrectInputs: number;
   allInputs: number;
+  time: number;
 }
 
 const initGame = {
@@ -33,7 +34,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
   const roomId = (useParams() as any).id;
 
   // ctx
-  const { inGame, time, setInGame } = useTyping();
+  const { time, stage, setStage } = useTyping();
   const { socket } = useSockets();
 
   // ref
@@ -121,7 +122,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
   }, [input, crntWord, errors]);
 
   useEffect(() => {
-    if (!inGame) return;
+    if (stage !== "game") return;
 
     const history: History = {
       createdAt: new Date().getTime(),
@@ -129,18 +130,19 @@ const Panel: React.FC<Props> = ({ quote }) => {
       correctInputs: (game.prevWords + game.prevChars).length,
       allCorrectInputs: allInputs - allErrs,
       allInputs,
+      time,
     };
 
     setHistory((prev) => [...prev, history]);
-  }, [game, inGame]);
+  }, [game, stage, time]);
 
   // focus input on game start
   useEffect(() => {
-    if (inGame && inputRef?.current) inputRef.current.focus();
-  }, [inGame]);
+    if (stage === "game" && inputRef?.current) inputRef.current.focus();
+  }, [stage]);
 
   useEffect(() => {
-    if (!inGame) return;
+    if (stage !== "game") return;
     const correct = (game.prevWords + game.prevChars).length;
     const correctInputs = allInputs - allErrs;
     const progress = (correct / quote.length) * 100;
@@ -154,28 +156,13 @@ const Panel: React.FC<Props> = ({ quote }) => {
         allInputs,
       },
     });
-  }, [game, inGame]);
+  }, [game, stage]);
 
   useEffect(() => {
-    if (!inGame || progress !== 100) return;
-    setInGame(false);
+    if (stage !== "game" || progress !== 100) return;
+    setStage("post");
     socket.emit("room:user:finish", { matchId: roomId, history });
-  }, [inGame, progress]);
-
-  // useEffect(() => {
-  //   if (!inGame) return;
-  //   if (progress === 100) setInGame(false);
-
-  //   socket.on("room:end", () => {
-  //     if (!inGame) return;
-  //     setInGame(false);
-  //     socket.emit("room:user:timeout", { wpm, acc, progress });
-  //   });
-
-  //   return () => {
-  //     socket.off("room:end");
-  //   };
-  // }, [progress, inGame]);
+  }, [stage, progress]);
 
   return (
     <Wrapper>
@@ -191,16 +178,19 @@ const Panel: React.FC<Props> = ({ quote }) => {
         </Game>
       </Container>
       <InputWrapper error={!!errors}>
-        {inGame && <Timer>{formatS(180 - time)}</Timer>}
+        {stage === "game" && <Timer>{formatS(180 - time)}</Timer>}
         <Input
           ref={inputRef}
-          disabled={!inGame}
+          // disabled={!inGame}
+          disabled={stage !== "game"}
           onKeyDown={(e) => setKey(e.key)}
           onChange={handleInput}
-          value={inGame ? input : time * -1}
+          value={stage === "game" ? input : time * -1}
           maxLength={words[crntWord].length + 6}
         />
-        {errors === 0 && inGame && <CurrentWord>{words[crntWord]}</CurrentWord>}
+        {errors === 0 && stage === "game" && (
+          <CurrentWord>{words[crntWord]}</CurrentWord>
+        )}
       </InputWrapper>
     </Wrapper>
   );

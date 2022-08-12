@@ -1,9 +1,8 @@
+import { faHome, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import React, { PropsWithChildren, useState } from "react";
-import { FaHome } from "react-icons/fa";
-import { TbRefresh } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Button from "../../components/Button";
 import Icon from "../../components/Icon";
 import { useAuth } from "../../contexts/AuthContext";
@@ -53,7 +52,7 @@ const Results: React.FC<Props> = ({ res, quote }) => {
     <Wrapper
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.2, delay: 0.1 }}
+      transition={{ duration: 0.2 }}
     >
       <GameReplay
         history={res.history}
@@ -88,10 +87,10 @@ const Results: React.FC<Props> = ({ res, quote }) => {
             });
           }}
         >
-          <Icon as={TbRefresh} />
+          <Icon as={faRotateRight} />
         </Button>
         <Button size="lg" variant="primary" onClick={() => navigate("/")}>
-          <Icon as={FaHome} />
+          <Icon as={faHome} />
         </Button>
       </Buttons>
     </Wrapper>
