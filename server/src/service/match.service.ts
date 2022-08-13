@@ -5,7 +5,7 @@ import { emitState } from "../utils/emitState";
 const prisma = new PrismaClient();
 
 export interface Match {
-  users: number[];
+  users: Set<number>;
   id: string;
   quote: string;
   state: Map<number, State>;
@@ -27,7 +27,8 @@ export interface State {
 }
 
 export const matches = new Map<string, Match>();
-export const queue: string[] = [];
+// export const queue = new Set<string>();
+export let queue = "";
 
 prisma.$use(async (params, next) => {
   if (params.model === "Match" && params.action === "create") {
@@ -51,7 +52,7 @@ export const createRoom = async (userId: number) => {
   });
 
   matches.set(matchId, {
-    users: [userId],
+    users: new Set([userId]),
     quote: quote.text,
     id: matchId,
     state: new Map(),
@@ -59,8 +60,7 @@ export const createRoom = async (userId: number) => {
     time: -6,
     createdAt,
   });
-  queue.push(matchId);
-  const match = matches.get(matchId)!;
+  queue = matchId;
 
   const interval = setInterval(async () => {
     const match = matches.get(matchId)!;
@@ -77,8 +77,7 @@ export const createRoom = async (userId: number) => {
     }
 
     if (s === -2) {
-      const queueIdx = queue.findIndex((q) => q === matchId);
-      queue.splice(queueIdx, 1);
+      queue = "";
     }
 
     if (s === 180) {
@@ -87,7 +86,7 @@ export const createRoom = async (userId: number) => {
       prisma.match
         .update({
           where: { id: match.id },
-          data: { usersId: match.users },
+          data: { usersId: Array.from(match.users) },
         })
         .then(() => matches.delete(match.id));
     }
@@ -95,14 +94,14 @@ export const createRoom = async (userId: number) => {
     matches.set(matchId, { ...match, time: s });
   }, 1000);
 
-  return match.id;
+  return matchId;
 };
 
 export const findMatch = async (userId: number) => {
-  const latestMatch = matches.get(queue[0]);
+  const latestMatch = matches.get(queue);
 
-  if (latestMatch && latestMatch.users.length <= 4) {
-    latestMatch.users.push(userId);
+  if (latestMatch && latestMatch.users.size <= 4) {
+    latestMatch.users.add(userId);
     return latestMatch.id;
   } else {
     return createRoom(userId);

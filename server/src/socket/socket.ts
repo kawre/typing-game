@@ -34,10 +34,12 @@ const socketHandler = async (socket: Socket) => {
       return socket.emit("error", "404");
     }
 
-    if (!queue.find((id) => id === match.id)) {
+    // if (!queue.has(match.id)) {
+    if (queue !== match.id) {
       return socket.emit("error", "503");
     }
 
+    socket.join(id);
     if (!match.state.get(userId)) {
       match.state.set(userId, {
         user: user!,
@@ -51,7 +53,6 @@ const socketHandler = async (socket: Socket) => {
       });
     }
 
-    socket.join(id);
     io.to(id).emit("room:state", emitState(match));
     socket.emit("room:time", match.time);
     socket.emit("room:quote", match.quote);
