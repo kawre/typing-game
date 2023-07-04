@@ -1,6 +1,6 @@
 # Typing game
 
-TypingGame is a website about multiplayer typing speed competitions inspired by [TypeRacer](play.typeracer.com). Users can compete against each other to test and improve their typing skills in real-time battles. Website is built using the React, Express.js and PostgreSQL, providing a seamless and interactive experience for players.
+TypingGame is a website about multiplayer typing speed competitions inspired by [TypeRacer](https://play.typeracer.com/). Users can compete against each other to test and improve their typing skills in real-time battles. Website is built using the React, Express.js and PostgreSQL, providing a seamless and interactive experience for players.
 
 # Requirements
 
