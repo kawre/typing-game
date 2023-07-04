@@ -7,10 +7,11 @@ interface Props {
   btns: string[];
   name: string;
   text?: string;
+  onClick: React.MouseEventHandler<HTMLDivElement> | undefined;
 }
 
 // Component ---------------------------------------------------------------------
-const ConfigSection: React.FC<Props> = ({ btns, text, name }) => {
+const ConfigSection: React.FC<Props> = ({ btns, text, name, onClick }) => {
   const { user } = useAuth();
 
   return (
@@ -25,9 +26,9 @@ const ConfigSection: React.FC<Props> = ({ btns, text, name }) => {
               <Button
                 key={i}
                 active={!active}
-                // onClick={() =>
-                // Config.set({ [toCamelCase(name)]: btn }, user?._id)
-                // }
+                onClick={() => {
+                  console.log("asdf");
+                }}
               >
                 {btn}
               </Button>

@@ -7,6 +7,7 @@ import Avatar from "../Avatar";
 import Heading from "../Heading";
 import Icon from "../Icon";
 import Text from "../Text";
+import { toast } from "react-toastify";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -34,6 +35,7 @@ const Header: React.FC<Props> = () => {
           as={faMoon}
           size={22}
           onClick={() => {
+            toast.info("Refresh the page to apply the theme change");
             const theme = localStorage.getItem("theme");
             if (theme === "light") {
               localStorage.setItem("theme", "dark");
@@ -45,9 +47,9 @@ const Header: React.FC<Props> = () => {
         {/* <Divider /> */}
 
         <Menu>
-          <Link to="/settings">
+          {/* <Link to="/settings">
             <Icon as={faCog} size={22} />
-          </Link>
+          </Link> */}
           {/* <Icon
             as={!Config.get("darkMode") ? FaMoon : FaSun}
             onClick={() =>

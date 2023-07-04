@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { findUserById } from "../service/user.service";
 import { authRouter } from "./auth.routes";
 import { matchesRouter } from "./match.routes";
 import { quotesRouter } from "./quote.routes";

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import GameProvider from "./contexts/GameContext";
@@ -7,6 +7,7 @@ import Settings from "./pages/Config/Settings";
 import Login from "./pages/Entry/Login";
 import Register from "./pages/Entry/Register";
 import Home from "./pages/Home/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
 // Types -------------------------------------------------------------------------
 
 interface Props {}
@@ -27,7 +28,6 @@ const App: React.FC<Props> = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
         });
         navigate("/");
       }
@@ -39,9 +39,30 @@ const App: React.FC<Props> = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/match/:id" element={<GameProvider />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/match/:id"
+        element={
+          <ProtectedRoute>
+            <GameProvider />
+          </ProtectedRoute>
+        }
+      />
+      {/* <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      /> */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>

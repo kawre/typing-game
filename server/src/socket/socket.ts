@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { Socket } from "socket.io";
 import { io } from "../app";
 import {
@@ -8,12 +7,12 @@ import {
   saveResults,
 } from "../service/match.service";
 import { emitState } from "../utils/emitState";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/client";
 
 const socketHandler = async (socket: Socket) => {
   // @ts-ignore
   const userId = parseInt(socket.handshake.headers["userid"]);
+  if (!userId) return;
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   // await prisma.config.deleteMany();

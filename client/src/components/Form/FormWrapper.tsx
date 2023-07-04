@@ -34,6 +34,7 @@ const Wrapper = styled.div`
   padding: 24px;
   background: ${({ theme }) => theme.colors.main}0d;
   border-radius: ${({ theme }) => theme.rounded.md};
+  /* position: absolute; */
 
   & form {
     display: flex;

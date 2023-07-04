@@ -183,7 +183,7 @@ const Panel: React.FC<Props> = ({ quote }) => {
           ref={inputRef}
           // disabled={!inGame}
           disabled={stage !== "game"}
-          onKeyDown={(e) => setKey(e.key)}
+          onKeyDown={(e: any) => setKey(e.key)}
           onChange={handleInput}
           value={stage === "game" ? input : time * -1}
           maxLength={words[crntWord].length + 6}

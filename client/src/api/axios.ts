@@ -23,7 +23,6 @@ instance.interceptors.response.use(
     }
 
     if (err.config.url == "/auth/token/refresh") {
-      console.log(err);
       Token.clear();
       return new Promise((_, reject) => reject(err));
     }

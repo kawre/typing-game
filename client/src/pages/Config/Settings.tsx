@@ -15,12 +15,20 @@ const Settings: React.FC<Props> = () => {
           name="font size"
           text="Change the font size of the test words."
           btns={["1", "1.25", "1.5", "2", "3", "4"]}
+          onClick={() => {
+            console.log("siema");
+          }}
         />
-        <ConfigSection btns={fontFamilies} name="font family" />
+        <ConfigSection
+          btns={fontFamilies}
+          name="font family"
+          onClick={() => {}}
+        />
         <ConfigSection
           name="theme"
           text="Change the appearance of the site"
           btns={["light", "dark"]}
+          onClick={() => {}}
         />
       </ConfigSectionGroup>
     </Wrapper>

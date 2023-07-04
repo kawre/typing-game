@@ -14,6 +14,7 @@ import { logout } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthContext";
 import { client } from "../AppWrapper";
 import Icon from "../Icon";
+import { Token } from "../../utils/Objects/Token";
 // Types -------------------------------------------------------------------------
 
 interface Props {
@@ -24,7 +25,11 @@ interface Props {
 // Component ---------------------------------------------------------------------
 const UserMenu: React.FC<Props> = ({ open, setOpen }) => {
   const { mutateAsync } = useMutation(["me"], logout, {
-    onSuccess: () => client.invalidateQueries(),
+    onSuccess: () => {
+      console.log("siema");
+      Token.clear();
+      client.invalidateQueries();
+    },
   });
   const { user } = useAuth();
   const navigate = useNavigate();

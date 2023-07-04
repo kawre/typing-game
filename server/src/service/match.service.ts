@@ -1,8 +1,7 @@
 import { PrismaClient, Quote, User } from "@prisma/client";
 import { io } from "../app";
 import { emitState } from "../utils/emitState";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/client";
 
 export interface Match {
   users: Set<number>;

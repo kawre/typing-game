@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
-import { compare, hash } from "bcrypt";
-
-const prisma = new PrismaClient();
+import { hash } from "bcrypt";
+import prisma from "../utils/client";
 
 prisma.$use(async (params, next) => {
   if (params.model === "User" && params.action === "create") {

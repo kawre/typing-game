@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.3-alpine
+    container_name: psql
+    restart: always
+    environment:
+      POSTGRES_USER: kawre
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: typing-game
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - shared-net
+
+  api:
+    image: typing-game-api
+    container_name: server
+    restart: unless-stopped
+    build:
+      context: ./server
+    ports:
+      - 5000:5000
+    networks:
+      - shared-net
+    depends_on:
+      - postgres
+
+  web:
+    image: typing-game-web
+    container_name: client
+    restart: unless-stopped
+    build:
+      context: ./client
+    ports:
+      - 3000:80
+    networks:
+      - shared-net
+    depends_on:
+      - api
+
+networks:
+  shared-net:
+    name: shared-net

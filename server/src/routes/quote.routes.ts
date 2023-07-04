@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
+import prisma from "../utils/client";
 
 const quotes = Router();
-const prisma = new PrismaClient();
 
 // create quote
 quotes.post("/", async (req, res) => {
